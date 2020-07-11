@@ -2,11 +2,11 @@
     <v-container id="upload-form" class="fill-height">
         <v-row align="center" justify="center" no-gutters>
             <v-col>
-                <v-card class="elevation-6 card">
+                <v-card class="elevation-2 card">
                     <v-card-text>
                         <h1 class="text-start display-1 mb-10" :class="`${bgColor}--text`"> Upload your team </h1>
                         <ValidationObserver ref="observer" v-slot="{ validate }">
-                            <v-form class="upload-form-form" @submit.prevent="loginRequest">
+                            <v-form class="upload-form-form" @submit.prevent="submit">
                                 <ValidationProvider v-slot="{ errors }" name="Title" rules="required|max:50">
                                     <v-text-field
                                             id="title"
@@ -45,7 +45,7 @@
                                             :error-messages="errors"
                                     />
                                 </ValidationProvider>
-                                <ValidationProvider v-slot="{ errors }" name="format" rules="required">
+                                <ValidationProvider v-slot="{ errors }" name="Format" rules="required">
                                     <v-autocomplete
                                             id="format"
                                             v-model="form.format"
@@ -58,19 +58,79 @@
                                             :error-messages="errors"
                                     ></v-autocomplete>
                                 </ValidationProvider>
+                                <ValidationProvider v-slot="{ errors }" name="Pokemon" rules="required|minmax:1,6">
+                                    <v-autocomplete
+                                            v-model="form.pokemon"
+                                            :items="pokemon"
+                                            outlined
+                                            chips
+                                            label="Pokemon"
+                                            persistent-hint
+                                            :hint="hint.pokemon"
+                                            item-text="name"
+                                            item-value="name"
+                                            multiple
+                                            :counter="6"
+                                            :error-messages="errors"
+                                    >
+                                        <template v-slot:selection="data">
+                                            <v-chip
+                                                    v-bind="data.attrs"
+                                                    :input-value="data.selected"
+                                                    close
+                                                    @click="data.select"
+                                                    @click:close="removePokemon(data.item)"
+                                            >
+                                                <v-avatar left>
+                                                    <v-img :src="iconUrl + data.item.avatar"></v-img>
+                                                </v-avatar>
+                                                {{ data.item.name }}
+                                            </v-chip>
+                                        </template>
+                                        <template v-slot:item="data">
+                                            <template v-if="typeof data.item !== 'object'">
+                                                <v-list-item-content v-text="data.item"></v-list-item-content>
+                                            </template>
+                                            <template v-else>
+                                                <v-list-item-avatar>
+                                                    <img :src="iconUrl + data.item.avatar">
+                                                </v-list-item-avatar>
+                                                <v-list-item-content>
+                                                    <v-list-item-title v-html="data.item.name"></v-list-item-title>
+                                                    <v-list-item-subtitle
+                                                            v-html="data.item.group"></v-list-item-subtitle>
+                                                </v-list-item-content>
+                                            </template>
+                                        </template>
+                                    </v-autocomplete>
+                                </ValidationProvider>
                                 <ValidationProvider v-slot="{ errors }" name="Showdown" rules="required|max:1600">
                                     <v-textarea
                                             id="showdown"
                                             v-model="form.showdown"
                                             label="Showdown"
                                             outlined
-                                            persistent-hint
                                             :hint="hint.showdown"
                                             :auto-grow="true"
                                             :clearable="true"
                                             :counter="1600"
                                     ></v-textarea>
                                 </ValidationProvider>
+                                <!--                                https://developer.mozilla.org/zh-CN/docs/Web/API/File/Using_files_from_web_applications#Example.3A_Using_object_URLs_to_display_images-->
+                                <v-file-input
+                                        ref="image"
+                                        v-model="form.image"
+                                        show-size
+                                        :rules="fileRules"
+                                        outlined
+                                        persistent-hint
+                                        :hint="hint.image"
+                                        accept="image/png, image/jpeg, image/jpg"
+                                        placeholder="Pick a rental team preview photo. "
+                                        prepend-icon=""
+                                        append-icon="mdi-camera"
+                                        label="Image"
+                                ></v-file-input>
                                 <ValidationProvider v-slot="{ errors }" name="Description" rules="required|max:2800">
                                     <v-textarea
                                             id="description"
@@ -82,6 +142,12 @@
                                             :counter="2800"
                                     ></v-textarea>
                                 </ValidationProvider>
+                                <div class="text-center mt-6">
+                                    <v-btn type="submit" large dark :color="bgColor" :loading="loading">
+                                        <v-icon left dark>mdi-upload</v-icon>
+                                        Submit
+                                    </v-btn>
+                                </div>
                             </v-form>
                         </ValidationObserver>
                     </v-card-text>
@@ -94,6 +160,7 @@
 <script>
     import {formats} from "../assets/formats"
     import {pmNames4Select} from "../assets/pokemonNames"
+    import {toBase64} from "../assets/utils"
     import {required, max} from 'vee-validate/dist/rules'
     import {extend, ValidationObserver, ValidationProvider, setInteractionMode} from 'vee-validate'
 
@@ -101,11 +168,19 @@
     extend('required', {
         ...required,
         message: '{_field_} can not be empty',
-    })
+    });
     extend('max', {
         ...max,
         message: '{_field_} may not be greater than {length} characters',
-    })
+    });
+    extend('minmax', {
+        validate(value, {min, max}) {
+            return value.length >= min && value.length <= max;
+        },
+        params: ['min', 'max'],
+        message: 'The {_field_} field must have at least {min} items and {max} items at most',
+    });
+
 
     export default {
         name: "Upload",
@@ -125,7 +200,15 @@
         },
         data() {
             return {
+                // author field will be autofilled as username when switch on.
                 sameAsUploader: true,
+                // Sprites paths
+                iconUrl: process.env.VUE_APP_STATIC_ASSET_URL + '2d/',
+                // image upload rules
+                fileRules: [
+                    value => !value || value.size < 2000000 || 'Photo size should be less than 2 MB!',
+                    type => !type || ['image/png', 'image/jpeg', 'image/jpg'].includes(type.type) || 'Only accept .png, .jpg or .jpeg image file!',
+                ],
                 // form
                 form: {
                     title: '',
@@ -133,7 +216,7 @@
                     format: '',
                     pokemon: [],
                     showdown: '',
-                    image: '',
+                    image: undefined,
                     description: '',
                     uploader: '',
                     state: 1
@@ -144,6 +227,7 @@
                     format: 'You can type words here to search for desired format. ',
                     pokemon: 'Please select up to 6 Pokemon. You can type words here to filter Pokemon',
                     showdown: 'Please paste the Showdown team here (if applicable). ',
+                    image: 'Only accept .png, .jpg or .jpeg image file. ',
                 },
             }
         },
@@ -151,8 +235,23 @@
             formats() {
                 return formats
             },
-            pokemonNames() {
+            pokemon() {
                 return pmNames4Select
+            },
+            loading() {
+                return this.$store.state.loading.loading
+            },
+        },
+        methods: {
+            async submit() {
+                console.log(this.form.image)
+                //https://stackoverflow.com/questions/36280818/how-to-convert-file-to-base64-in-javascript
+                //https://www.npmjs.com/package/compress-images
+                console.log(await toBase64(this.form.image));
+            },
+            removePokemon(item) {
+                const index = this.form.pokemon.indexOf(item.name)
+                if (index >= 0) this.form.pokemon.splice(index, 1)
             },
         }
     }

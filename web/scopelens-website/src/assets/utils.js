@@ -16,9 +16,16 @@ export function DateConversion(timestamp) {
  * @return {string}
  */
 export function ProcessStr(s) {
-    return s.replace(/[^a-z0-9]/gi, '').toLowerCase();
+    return s.toString().replace(/[^a-z0-9]/gi, '').toLowerCase();
 }
 
 export function SortObjectArrayByValue(arr) {
     return arr.sort((a, b) => (b.value - a.value));
 }
+
+export const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+});
