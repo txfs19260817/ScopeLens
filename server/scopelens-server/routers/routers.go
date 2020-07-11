@@ -8,6 +8,9 @@ import (
 func InitRouters() *gin.Engine {
 	r := gin.Default()
 
+	// static resources
+	r.Static("/assets", "./assets")
+
 	// middleware
 	r.Use(middleware.Cors())
 
@@ -20,6 +23,8 @@ func InitRouters() *gin.Engine {
 	apiGroups := r.Group("api")
 	InitUserRouter(apiGroups)
 	InitAuthRouter(apiGroups)
+	InitFormatRouter(apiGroups)
+	InitTeamRouter(apiGroups)
 
 	return r
 }

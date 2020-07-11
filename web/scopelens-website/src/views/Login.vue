@@ -3,7 +3,7 @@
     <v-container id="signinup-form" class="fill-height">
         <v-row align="center" justify="center" no-gutters>
             <v-col cols="12" sm="8" md="8" class="">
-                <v-card class="evelation-12 card">
+                <v-card class="elevation-12 card">
                     <v-window v-model="step">
                         <!--SignIn-->
                         <v-window-item :value="1">
