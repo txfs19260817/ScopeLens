@@ -13,7 +13,7 @@
                 <v-list>
                     <v-list-item two-line>
                         <v-list-item-avatar>
-                            <v-img :src="isLogin ? require('@/assets/logo.png') : require('@/assets/outline.png')"></v-img>
+                            <v-img :src="require('@/assets/logo.png')"></v-img>
                         </v-list-item-avatar>
                     </v-list-item>
 

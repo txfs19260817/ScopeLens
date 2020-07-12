@@ -25,12 +25,12 @@
                                 </ValidationProvider>
                                 <ValidationProvider v-slot="{ errors }" name="Author" rules="max:50">
                                     <v-switch
-                                            v-model="sameAsUploader"
+                                            v-model="notAuthor"
                                             class="shrink mr-2 mt-0"
                                             label="I am not the team author. "
                                     ></v-switch>
                                     <v-text-field
-                                            v-if="sameAsUploader"
+                                            v-if="notAuthor"
                                             id="author"
                                             v-model="form.author"
                                             label="Author"
@@ -104,34 +104,32 @@
                                         </template>
                                     </v-autocomplete>
                                 </ValidationProvider>
-                                <ValidationProvider v-slot="{ errors }" name="Showdown" rules="required|max:1600">
+                                <ValidationProvider v-slot="{ errors }" name="Showdown" rules="max:1600">
                                     <v-textarea
                                             id="showdown"
                                             v-model="form.showdown"
                                             label="Showdown"
                                             outlined
                                             :hint="hint.showdown"
-                                            :auto-grow="true"
                                             :clearable="true"
                                             :counter="1600"
                                     ></v-textarea>
                                 </ValidationProvider>
-                                <!--                                https://developer.mozilla.org/zh-CN/docs/Web/API/File/Using_files_from_web_applications#Example.3A_Using_object_URLs_to_display_images-->
                                 <v-file-input
                                         ref="image"
-                                        v-model="form.image"
+                                        v-model="imageFile"
                                         show-size
-                                        :rules="fileRules"
                                         outlined
                                         persistent-hint
                                         :hint="hint.image"
+                                        :rules="fileRules"
                                         accept="image/png, image/jpeg, image/jpg"
                                         placeholder="Pick a rental team preview photo. "
                                         prepend-icon=""
                                         append-icon="mdi-camera"
                                         label="Image"
                                 ></v-file-input>
-                                <ValidationProvider v-slot="{ errors }" name="Description" rules="required|max:2800">
+                                <ValidationProvider v-slot="{ errors }" name="Description" rules="max:2800">
                                     <v-textarea
                                             id="description"
                                             v-model="form.description"
@@ -163,6 +161,8 @@
     import {toBase64} from "../assets/utils"
     import {required, max} from 'vee-validate/dist/rules'
     import {extend, ValidationObserver, ValidationProvider, setInteractionMode} from 'vee-validate'
+    import {insertTeam} from "../api/upload";
+    import {ERROR} from "../api";
 
     setInteractionMode('eager')
     extend('required', {
@@ -201,7 +201,7 @@
         data() {
             return {
                 // author field will be autofilled as username when switch on.
-                sameAsUploader: true,
+                notAuthor: true,
                 // Sprites paths
                 iconUrl: process.env.VUE_APP_STATIC_ASSET_URL + '2d/',
                 // image upload rules
@@ -209,6 +209,7 @@
                     value => !value || value.size < 2000000 || 'Photo size should be less than 2 MB!',
                     type => !type || ['image/png', 'image/jpeg', 'image/jpg'].includes(type.type) || 'Only accept .png, .jpg or .jpeg image file!',
                 ],
+                imageFile: undefined,
                 // form
                 form: {
                     title: '',
@@ -216,12 +217,12 @@
                     format: '',
                     pokemon: [],
                     showdown: '',
-                    image: undefined,
+                    image: '',
                     description: '',
                     uploader: '',
                     state: 1
                 },
-                // hint
+                // hints
                 hint: {
                     author: 'Please fill the name of the team author here. ',
                     format: 'You can type words here to search for desired format. ',
@@ -244,10 +245,35 @@
         },
         methods: {
             async submit() {
-                console.log(this.form.image)
-                //https://stackoverflow.com/questions/36280818/how-to-convert-file-to-base64-in-javascript
-                //https://www.npmjs.com/package/compress-images
-                console.log(await toBase64(this.form.image));
+                // loading
+                this.$store.commit('LOADING_ON')
+                // validate
+                const v = await this.$refs.observer.validate()
+                if (v) {
+                    // form preparation
+                    // convert image to base64 string
+                    if(this.imageFile !== undefined) this.form.image = await toBase64(this.imageFile)
+                    // process Pokemon names ('A/B/C' --> 'A')
+                    this.form.pokemon.forEach((item, idx) => this.form.pokemon[idx] = item.toString().split('/', 1)[0])
+                    // assign uploader
+                    this.form.uploader = this.$store.state.user.username
+                    if (!this.notAuthor) this.form.author = this.form.uploader
+
+                    const res = await insertTeam(this.form, this.$store.state.user.token);
+                    if (res.data.code === ERROR || res.status === 401) {
+                        this.$store.dispatch('snackbar/openSnackbar', {
+                            "msg": "Upload team error: " + res.data.msg,
+                            "color": "error"
+                        });
+                    } else {
+                        this.$store.dispatch('snackbar/openSnackbar', {
+                            "msg": "Upload team success!",
+                            "color": "success"
+                        });
+                        await this.$router.push("/")
+                    }
+                }
+                this.$store.commit('LOADING_OFF')
             },
             removePokemon(item) {
                 const index = this.form.pokemon.indexOf(item.name)

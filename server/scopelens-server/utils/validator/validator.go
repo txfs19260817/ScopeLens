@@ -11,7 +11,6 @@ import (
 
 var (
 	formats      []string
-	pokemonNames []string
 )
 
 // custom rules

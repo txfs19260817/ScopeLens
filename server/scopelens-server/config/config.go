@@ -12,6 +12,8 @@ var (
 	Server   *server
 	Database *database
 	Jwt      *jwt
+	Path     *path
+	Aws      *aws
 )
 
 type app struct {
@@ -35,6 +37,19 @@ type database struct {
 
 type jwt struct {
 	SigningKey string
+}
+
+type path struct {
+	ImageSavePath string
+	SpritePath string
+}
+
+type aws struct {
+	AccessKey string
+	SecretKey string
+	Region string
+	Bucket string
+	TeamPath string
 }
 
 func init() {
@@ -71,5 +86,17 @@ func init() {
 	Jwt = new(jwt)
 	if err := cfg.Section("jwt").MapTo(Jwt); err != nil {
 		log.Fatalf("Fail to map [jwt] to Jwt: %v", err)
+	}
+
+	// [jwt]
+	Path = new(path)
+	if err := cfg.Section("path").MapTo(Path); err != nil {
+		log.Fatalf("Fail to map [path] to Path: %v", err)
+	}
+
+	// [aws]
+	Aws = new(aws)
+	if err := cfg.Section("aws").MapTo(Aws); err != nil {
+		log.Fatalf("Fail to map [aws] to Aws: %v", err)
 	}
 }

@@ -37,7 +37,9 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     // Already logged in, redirect to Homepage
-    if (to.name === 'Login' && store.state.user.isLogin) next({ name: 'Home' })
+    if (to.name === 'Login' && store.state.user.isLogin) next({name: 'Home'})
+    // Not login, redirect to Login page
+    else if (to.name === 'Upload' && !store.state.user.isLogin) next({name: 'Login'})
     else next()
 })
 

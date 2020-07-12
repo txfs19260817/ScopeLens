@@ -191,6 +191,7 @@
                 if (!v) return
                 const success = await this.$store.dispatch('user/register', {data: this.register});
                 if (success) {
+                    // back to login window
                     this.step = 1;
                     this.login.username = this.register.username;
                     this.login.password = this.register.password;
@@ -199,7 +200,8 @@
             async loginRequest() {
                 const success = await this.$store.dispatch('user/login', {data: this.login});
                 if (success) {
-                    await this.$router.push("/")
+                    // back to last page
+                    await this.$router.go(-1)
                 }
             }
         },
