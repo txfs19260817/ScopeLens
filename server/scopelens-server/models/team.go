@@ -3,7 +3,9 @@ package models
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
 	"scopelens-server/config"
 	"scopelens-server/utils/file"
@@ -79,4 +81,53 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+// Get teams ordered by time
+func (d *DBDriver) GetTeams(pageNum, pageSize int, orderby string) ([]Team, error) {
+	// get skip number
+	var skip int64
+	if pageNum > 0 {
+		skip = int64((pageNum - 1) * pageSize)
+	}
+
+	// options
+	opts := options.Find()
+	opts.SetLimit(int64(pageSize))
+	opts.SetSkip(skip)
+	if orderby == "likes" {
+		opts.SetSort(bson.D{{"likes", -1}}) // order by likes dec
+	} else {
+		opts.SetSort(bson.D{{"created_at", -1}}) // order by time dec
+	}
+
+	// filter
+	filter := bson.M{"state": 1}
+
+	// query
+	paginatedCursor, err := d.DB.Collection("teams").Find(context.Background(), filter, opts)
+	if err != nil {
+		return nil, err
+	}
+	// unmarshal retrieved data to struct and append to list
+	var res []Team
+	if err = paginatedCursor.All(context.Background(), &res); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (d *DBDriver) GetTeamByID(id string) (*Team, error) {
+	hex, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	var team *Team
+	err = d.DB.Collection("teams").
+		FindOne(context.Background(), bson.M{"_id": hex}).
+		Decode(&team)
+	if err != nil {
+		return nil, err
+	}
+	return team, nil
 }
