@@ -104,17 +104,17 @@
                         text: 'Search',
                         link: '/friends'
                     },
+                    {divider: true},
+                    {heading: 'Extra'},
+                    {
+                        icon: 'forum',
+                        text: 'Forum',
+                        link: '/Forum'
+                    },
                     {
                         icon: 'mdi-information',
                         text: 'About',
                         link: '/About'
-                    },
-                    {divider: true},
-                    {heading: 'Components'},
-                    {
-                        icon: 'mdi-account-outline',
-                        text: 'All',
-                        link: '/components/all'
                     },
                     {divider: true},
                     {heading: 'Navigation'},

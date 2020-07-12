@@ -37,9 +37,9 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 	var filename string // image save path
 
 	// Replenish fields
-
 	team.ID = primitive.NewObjectID()
 	team.CreatedAt = time.Now()
+	// Use uploaded image first
 	if len(team.Image) != 0 {
 		// decode uploaded base64 string to file
 		filename, err = file.DecodeBase64AndSave(team.Image)

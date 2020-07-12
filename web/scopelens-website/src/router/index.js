@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 import store from '../store'
+import Home from '../views/Home.vue'
 
 Vue.use(VueRouter);
 
@@ -22,6 +22,11 @@ const routes = [
         component: () => import('../views/Upload.vue')
     },
     {
+        path: '/forum',
+        name: 'Forum',
+        component: () => import('../views/Forum.vue')
+    },
+    {
         path: '/about',
         name: 'About',
         // route level code-splitting
@@ -32,7 +37,8 @@ const routes = [
 ]
 
 const router = new VueRouter({
-    routes
+    //mode: 'history',
+    routes: routes,
 });
 
 router.beforeEach((to, from, next) => {
