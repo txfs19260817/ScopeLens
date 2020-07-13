@@ -31,11 +31,16 @@ func GetTeams(c *gin.Context) {
 	if err != nil {
 		page = 0
 	}
-	teams, err := models.Db.GetTeams(page, config.App.PageSize, "time")
-	if err != nil {
+	// Get the total number of teams
+	data := make(map[string]interface{})
+	if data["total"], err = models.Db.GetTeamsCount(); err != nil {
+		response.FailWithMessage(err.Error(), c)
+	}
+	// retrieve data
+	if data["teams"], err = models.Db.GetTeams(page, config.App.PageSize, "time"); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
-		response.OkWithData(teams, c)
+		response.OkWithData(data, c)
 	}
 }
 
@@ -44,15 +49,20 @@ func GetTeamsOrderbyLikes(c *gin.Context) {
 	if err != nil {
 		page = 0
 	}
-	teams, err := models.Db.GetTeams(page, config.App.PageSize, "likes")
-	if err != nil {
+	// Get the total number of teams
+	data := make(map[string]interface{})
+	if data["total"], err = models.Db.GetTeamsCount(); err != nil {
+		response.FailWithMessage(err.Error(), c)
+	}
+	// retrieve data
+	if data["teams"], err = models.Db.GetTeams(page, config.App.PageSize, "likes"); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
-		response.OkWithData(teams, c)
+		response.OkWithData(data, c)
 	}
 }
 
-func GetTeamByID(c *gin.Context)  {
+func GetTeamByID(c *gin.Context) {
 	id := c.Param("id")
 	team, err := models.Db.GetTeamByID(id)
 	if err != nil {

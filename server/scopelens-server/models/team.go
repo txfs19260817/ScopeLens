@@ -83,6 +83,16 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 	return true, nil
 }
 
+// Count teams
+func (d *DBDriver) GetTeamsCount() (int, error) {
+	countTeams, err := d.DB.Collection("teams").
+		CountDocuments(context.Background(), bson.M{"state": 1})
+	if err != nil {
+		return -1, err
+	}
+	return int(countTeams), nil
+}
+
 // Get teams ordered by time
 func (d *DBDriver) GetTeams(pageNum, pageSize int, orderby string) ([]Team, error) {
 	// get skip number
@@ -117,6 +127,7 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, orderby string) ([]Team, erro
 	return res, nil
 }
 
+// Get a team by _id
 func (d *DBDriver) GetTeamByID(id string) (*Team, error) {
 	hex, err := primitive.ObjectIDFromHex(id)
 	if err != nil {

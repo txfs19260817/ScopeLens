@@ -25,6 +25,7 @@ func InitRouters() *gin.Engine {
 	InitAuthRouter(apiGroups)
 	InitFormatRouter(apiGroups)
 	InitTeamRouter(apiGroups)
+	InitTeamAUTHRouter(apiGroups)
 
 	return r
 }

@@ -1,13 +1,98 @@
 <template>
-  <div class="home">
-    <h1>HP</h1>
-  </div>
+    <v-container id="home" class="fill-height">
+        <v-row align="start" justify="space-between">
+            <v-col v-for="(t, i) in teams" :key="i" xs="12" cols="6" md="4" xl="3">
+                <v-hover v-slot:default="{ hover }">
+                    <v-skeleton-loader
+                            v-if="loading"
+                            class="mx-auto"
+                            height="340"
+                            max-width="640"
+                            type="card, list-item-two-line"
+                            elevation="2"
+                    >
+                    </v-skeleton-loader>
+                    <v-card v-else link class="mx-auto" max-width="640" :elevation="hover ? 10 : 2"
+                            :class="{ 'on-hover': hover }">
+                        <v-img class="white--text align-end" :src="t.image"></v-img>
+                        <v-card-subtitle class="pb-0 font-weight-bold">
+                            {{ "[" + t.format + "] " }}{{ t.title }}
+                        </v-card-subtitle>
+                        <v-card-text class="text--primary">
+                            <div>by {{ t.author }}</div>
+                            <div>{{ DateConversion(t.created_at) }}</div>
+                        </v-card-text>
+                    </v-card>
+                </v-hover>
+            </v-col>
+            <v-col>
+                <v-pagination v-model="curPage" :length="pageLen" total-visible="8" @input="getTeamsByTime"></v-pagination>
+            </v-col>
+        </v-row>
+
+    </v-container>
 </template>
 
 <script>
-// @ is an alias to /src
+    import {DateConversion} from "../assets/utils"
+    import {getTeams} from "../api/team";
+    import {SUCCESS, logErrors} from "../api";
 
-export default {
-  name: 'Home',
-}
+    export default {
+        name: 'Home',
+        data: () => ({
+            teams: [{},{},{},{},{},{},{},{},{},{},{},{},],// dummy obj * pageSize
+            // page
+            total: 1, // total data size
+            pageSize: 12, // data size per page
+            curPage: 1,
+        }),
+        methods: {
+            async getTeamsByTime(page) {
+                // loading
+                this.$store.commit('LOADING_ON')
+                await getTeams(page).then(res => {
+                    if (res.data.code === SUCCESS) {
+                        this.total = res.data.data.total
+                        this.teams = res.data.data.teams
+                    } else {
+                        this.$store.dispatch('snackbar/openSnackbar', {
+                            "msg": "Failed to retrieve teams from server! " + res.data.msg,
+                            "color": "error"
+                        });
+                    }
+                }).catch(error => {
+                    logErrors(error)
+                    this.$store.dispatch('snackbar/openSnackbar', {
+                        "msg": "Failed to connect to server! ",
+                        "color": "error"
+                    });
+                }).finally(() => {
+                    this.$store.commit('LOADING_OFF')
+                })
+            },
+            DateConversion: DateConversion
+        },
+        created() {
+            this.getTeamsByTime(1);
+        },
+        computed: {
+            loading() {
+                return this.$store.state.loading.loading
+            },
+            pageLen() {
+                return Math.ceil(this.total / this.pageSize)
+            }
+        }
+    }
 </script>
+
+<style scoped>
+    .v-card {
+        transition: opacity .3s ease-in-out;
+    }
+
+    .v-card:not(.on-hover) {
+        opacity: 0.88;
+    }
+</style>

@@ -9,3 +9,11 @@ export const insertTeam = (data, token) => {
         headers: headers
     });
 }
+
+export const getTeams = (page) => {
+    return http.get("/team/teams", {
+        params: {
+            page: page
+        }
+    })
+};

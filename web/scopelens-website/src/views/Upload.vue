@@ -161,7 +161,7 @@
     import {toBase64} from "../assets/utils"
     import {required, max} from 'vee-validate/dist/rules'
     import {extend, ValidationObserver, ValidationProvider, setInteractionMode} from 'vee-validate'
-    import {insertTeam} from "../api/upload";
+    import {insertTeam} from "../api/team";
     import {ERROR} from "../api";
 
     setInteractionMode('eager')
