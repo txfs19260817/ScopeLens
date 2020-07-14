@@ -1,6 +1,31 @@
 <template>
-    <v-container>
-        <ResultsLayout :teams="teams"></ResultsLayout>
+    <v-container class="fill-height">
+        <v-row align="start" justify="space-around">
+            <v-col v-for="(t, i) in teams" :key="i" xs="12" cols="6" md="4" xl="3">
+                <v-hover v-slot:default="{ hover }">
+                    <v-skeleton-loader
+                            v-if="loading"
+                            class="mx-auto"
+                            height="340"
+                            max-width="640"
+                            type="card, list-item-two-line"
+                            elevation="2"
+                    >
+                    </v-skeleton-loader>
+                    <v-card v-else link class="mx-auto" max-width="640" :elevation="hover ? 10 : 2"
+                            :class="{ 'on-hover': hover }">
+                        <v-img class="white--text align-end" :src="t.image"></v-img>
+                        <v-card-subtitle class="pb-0 font-weight-bold">
+                            {{ "[" + t.format + "] " }}{{ t.title }}
+                        </v-card-subtitle>
+                        <v-card-text class="text--primary">
+                            <div>by {{ t.author }}</div>
+                            <div>{{ DateConversion(t.created_at) }}</div>
+                        </v-card-text>
+                    </v-card>
+                </v-hover>
+            </v-col>
+        </v-row>
         <v-col>
             <v-pagination v-model="curPage" :length="pageLen" total-visible="8" @input="getTeamsByTime"></v-pagination>
         </v-col>
@@ -8,15 +33,12 @@
 </template>
 
 <script>
+    import {DateConversion} from "../assets/utils"
     import {getTeams} from "../api/team";
     import {SUCCESS, logErrors} from "../api";
-    import ResultsLayout from "../components/layouts/ResultsLayout";
 
     export default {
         name: 'Home',
-        components:{
-            ResultsLayout
-        },
         data: () => ({
             teams: [{},{},{},{},{},{},{},{},{},{},{},{},],// dummy obj * pageSize
             // page
@@ -48,11 +70,15 @@
                     this.$store.commit('LOADING_OFF')
                 })
             },
+            DateConversion: DateConversion
         },
         created() {
             this.getTeamsByTime(1);
         },
         computed: {
+            loading() {
+                return this.$store.state.loading.loading
+            },
             pageLen() {
                 return Math.ceil(this.total / this.pageSize)
             }

@@ -22,6 +22,11 @@ const routes = [
         component: () => import('../views/Upload.vue')
     },
     {
+        path: '/search',
+        name: 'Search',
+        component: () => import('../views/Search.vue')
+    },
+    {
         path: '/forum',
         name: 'Forum',
         component: () => import('../views/Forum.vue')

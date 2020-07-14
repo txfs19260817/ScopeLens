@@ -102,7 +102,7 @@
                     {
                         icon: 'mdi-card-search',
                         text: 'Search',
-                        link: '/friends'
+                        link: '/search'
                     },
                     {divider: true},
                     {heading: 'Extra'},

@@ -1,0 +1,128 @@
+<template>
+    <v-container>
+        <v-container v-if="!gotResult" id="searchbar" class="fill-height">
+            <v-row align="center" justify="center" no-gutters>
+                <v-col>
+                    <v-card class="elevation-2 card">
+                        <v-card-text>
+                            <h1 class="text-start display-1 mb-10 blue--text"> Search </h1>
+                            <v-form class="searchbar-form" @submit.prevent="goSearch">
+                                <FormatSelector :value.sync="criteria.format"></FormatSelector>
+                                <PokemonSelector :value.sync="criteria.pokemon"></PokemonSelector>
+                                <div class="text-center mt-6">
+                                    <v-btn class="blue" type="submit" large dark :loading="loading">
+                                        <v-icon left dark>search</v-icon>
+                                        Search
+                                    </v-btn>
+                                </div>
+                            </v-form>
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+        <v-container v-else>
+            <v-btn color="primary" fab large dark @click="reset">
+                <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+            <ResultsLayout :teams="teams"></ResultsLayout>
+            <v-col>
+                <v-pagination v-model="curPage" :length="pageLen" total-visible="8" @input="getTeamsBySearchCriteria"></v-pagination>
+            </v-col>
+        </v-container>
+    </v-container>
+</template>
+
+<script>
+    import ResultsLayout from "../components/layouts/ResultsLayout";
+    import {GetTeamsBySearchCriteria} from "../api/team";
+    import {ERROR} from "../api";
+    import FormatSelector from "../components/selectors/FormatSelector";
+    import PokemonSelector from "../components/selectors/PokemonSelector";
+    export default {
+        name: "Search",
+        components:{
+            FormatSelector,
+            PokemonSelector,
+            ResultsLayout
+        },
+        data(){
+            return{
+                teams: [{},{},{},{},{},{},{},{},{},{},{},{},],
+                gotResult: false,
+                // search criteria form to be uploaded
+                criteria: {
+                    format: '',
+                    pokemon: []
+                },
+                // page
+                total: 1, // total data size
+                pageSize: 12, // data size per page
+                curPage: 1,
+            }
+        },
+        methods:{
+            async getTeamsBySearchCriteria(page) {
+                // format and pokemon should not be empty at the same time
+                if (this.criteria.format.length === 0 && this.criteria.pokemon.length === 0) return
+
+                // loading
+                this.$store.commit('LOADING_ON')
+
+                // process Pokemon names ('A/B/C' --> 'A')
+                this.criteria.pokemon.forEach((item, idx) => this.criteria.pokemon[idx] = item.toString().split('/', 1)[0])
+
+                const res = await GetTeamsBySearchCriteria(page, this.criteria)
+                if (res.data.code === ERROR) {
+                    this.$store.dispatch('snackbar/openSnackbar', {
+                        "msg": "Search for teams error: " + res.data.msg,
+                        "color": "error"
+                    });
+                } else {
+                    this.$emit("results", res.data.data)
+                    this.teams = res.data.data.teams
+                    this.total = res.data.data.total
+                    console.log(res.data.data)
+                }
+                this.gotResult = true
+                this.$store.commit('LOADING_OFF')
+            },
+            goSearch(){
+                this.getTeamsBySearchCriteria(1)
+            },
+            reset() {
+                this.gotResult=false
+                this.criteria.pokemon = []
+                this.criteria.format = ''
+                this.curPage = this.total = 1;
+            }
+        },
+        computed: {
+            loading() {
+                return this.$store.state.loading.loading
+            },
+            pageLen() {
+                return Math.ceil(this.total / this.pageSize)
+            }
+        }
+    }
+</script>
+
+<style scoped lang="scss">
+    a.no-text-decoration {
+        text-decoration: none;
+    }
+
+    #searchbar {
+        max-width: 70rem;
+    }
+
+    .searchbar-form {
+        max-width: 40rem;
+        margin: 0 auto;
+    }
+
+    .card {
+        overflow: hidden;
+    }
+</style>

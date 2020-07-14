@@ -45,65 +45,10 @@
                                             :error-messages="errors"
                                     />
                                 </ValidationProvider>
-                                <ValidationProvider v-slot="{ errors }" name="Format" rules="required">
-                                    <v-autocomplete
-                                            id="format"
-                                            v-model="form.format"
-                                            label="Format"
-                                            :items="formats"
-                                            persistent-hint
-                                            :hint="hint.format"
-                                            menu-props="auto"
-                                            outlined
-                                            :error-messages="errors"
-                                    ></v-autocomplete>
-                                </ValidationProvider>
-                                <ValidationProvider v-slot="{ errors }" name="Pokemon" rules="required|minmax:1,6">
-                                    <v-autocomplete
-                                            v-model="form.pokemon"
-                                            :items="pokemon"
-                                            outlined
-                                            chips
-                                            label="Pokemon"
-                                            persistent-hint
-                                            :hint="hint.pokemon"
-                                            item-text="name"
-                                            item-value="name"
-                                            multiple
-                                            :counter="6"
-                                            :error-messages="errors"
-                                    >
-                                        <template v-slot:selection="data">
-                                            <v-chip
-                                                    v-bind="data.attrs"
-                                                    :input-value="data.selected"
-                                                    close
-                                                    @click="data.select"
-                                                    @click:close="removePokemon(data.item)"
-                                            >
-                                                <v-avatar left>
-                                                    <v-img :src="iconUrl + data.item.avatar"></v-img>
-                                                </v-avatar>
-                                                {{ data.item.name }}
-                                            </v-chip>
-                                        </template>
-                                        <template v-slot:item="data">
-                                            <template v-if="typeof data.item !== 'object'">
-                                                <v-list-item-content v-text="data.item"></v-list-item-content>
-                                            </template>
-                                            <template v-else>
-                                                <v-list-item-avatar>
-                                                    <img :src="iconUrl + data.item.avatar">
-                                                </v-list-item-avatar>
-                                                <v-list-item-content>
-                                                    <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                                                    <v-list-item-subtitle
-                                                            v-html="data.item.group"></v-list-item-subtitle>
-                                                </v-list-item-content>
-                                            </template>
-                                        </template>
-                                    </v-autocomplete>
-                                </ValidationProvider>
+                                <FormatSelector :value.sync="form.format" :hint="hint.format" :required="true">
+                                </FormatSelector>
+                                <PokemonSelector :value.sync="form.pokemon" :hint="hint.pokemon" :required="true">
+                                </PokemonSelector>
                                 <ValidationProvider v-slot="{ errors }" name="Showdown" rules="max:1600">
                                     <v-textarea
                                             id="showdown"
@@ -156,8 +101,8 @@
 </template>
 
 <script>
-    import {formats} from "../assets/formats"
-    import {pmNames4Select} from "../assets/pokemonNames"
+    import FormatSelector from "../components/selectors/FormatSelector";
+    import PokemonSelector from "../components/selectors/PokemonSelector";
     import {toBase64} from "../assets/utils"
     import {required, max} from 'vee-validate/dist/rules'
     import {extend, ValidationObserver, ValidationProvider, setInteractionMode} from 'vee-validate'
@@ -173,13 +118,6 @@
         ...max,
         message: '{_field_} may not be greater than {length} characters',
     });
-    extend('minmax', {
-        validate(value, {min, max}) {
-            return value.length >= min && value.length <= max;
-        },
-        params: ['min', 'max'],
-        message: 'The {_field_} field must have at least {min} items and {max} items at most',
-    });
 
 
     export default {
@@ -187,6 +125,8 @@
         components: {
             ValidationProvider,
             ValidationObserver,
+            FormatSelector,
+            PokemonSelector
         },
         props: {
             bgColor: {
@@ -202,8 +142,6 @@
             return {
                 // author field will be autofilled as username when switch on.
                 notAuthor: true,
-                // Sprites paths
-                iconUrl: process.env.VUE_APP_STATIC_ASSET_URL + '2d/',
                 // image upload rules
                 fileRules: [
                     value => !value || value.size < 2000000 || 'Photo size should be less than 2 MB!',
@@ -226,19 +164,13 @@
                 hint: {
                     author: 'Please fill the name of the team author here. ',
                     format: 'You can type words here to search for desired format. ',
-                    pokemon: 'Please select up to 6 Pokemon. You can type words here to filter Pokemon',
+                    pokemon: 'Please select up to 6 Pokemon. You can type words here to filter Pokemon.',
                     showdown: 'Please paste the Showdown team here (if applicable). ',
                     image: 'Only accept .png, .jpg or .jpeg image file. ',
                 },
             }
         },
         computed: {
-            formats() {
-                return formats
-            },
-            pokemon() {
-                return pmNames4Select
-            },
             loading() {
                 return this.$store.state.loading.loading
             },
@@ -274,10 +206,6 @@
                     }
                 }
                 this.$store.commit('LOADING_OFF')
-            },
-            removePokemon(item) {
-                const index = this.form.pokemon.indexOf(item.name)
-                if (index >= 0) this.form.pokemon.splice(index, 1)
             },
         }
     }

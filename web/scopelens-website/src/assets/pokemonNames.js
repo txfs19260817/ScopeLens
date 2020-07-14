@@ -40,7 +40,7 @@ for (let i = 0; i < pmNames.length; i++) {
     pmNames4Select.push({
         name: pmNames[i],
         group: 'Generation ' + currentGroup,
-        avatar: ProcessStr(pmNames[i]) + '.png'
+        avatar: ProcessStr(en[i]) + '.png'
     })
 }
 

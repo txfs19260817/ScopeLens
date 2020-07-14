@@ -31,13 +31,10 @@ func GetTeams(c *gin.Context) {
 	if err != nil {
 		page = 0
 	}
-	// Get the total number of teams
 	data := make(map[string]interface{})
-	if data["total"], err = models.Db.GetTeamsCount(); err != nil {
-		response.FailWithMessage(err.Error(), c)
-	}
+
 	// retrieve data
-	if data["teams"], err = models.Db.GetTeams(page, config.App.PageSize, "time"); err != nil {
+	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, "time", "", []string{}); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithData(data, c)
@@ -51,11 +48,9 @@ func GetTeamsOrderbyLikes(c *gin.Context) {
 	}
 	// Get the total number of teams
 	data := make(map[string]interface{})
-	if data["total"], err = models.Db.GetTeamsCount(); err != nil {
-		response.FailWithMessage(err.Error(), c)
-	}
+
 	// retrieve data
-	if data["teams"], err = models.Db.GetTeams(page, config.App.PageSize, "likes"); err != nil {
+	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, "likes", "", []string{}); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithData(data, c)
@@ -69,5 +64,35 @@ func GetTeamByID(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithData(team, c)
+	}
+}
+
+func GetTeamsBySearchCriteria(c *gin.Context) {
+	page, err := com.StrTo(c.Query("page")).Int()
+	if err != nil {
+		page = 0
+	}
+
+	// define search criteria struct
+	type Search struct {
+		Format  string   `bson:"format" json:"format"`
+		Pokemon []string `bson:"pokemon" json:"pokemon"`
+	}
+
+	// Validate JSON form
+	var s Search
+	if err := c.ShouldBindJSON(&s); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	// Get the total number of teams
+	data := make(map[string]interface{})
+
+	// retrieve data
+	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, "time", s.Format, s.Pokemon); err != nil {
+		response.FailWithMessage(err.Error(), c)
+	} else {
+		response.OkWithData(data, c)
 	}
 }

@@ -17,3 +17,15 @@ export const getTeams = (page) => {
         }
     })
 };
+
+export const GetTeamsBySearchCriteria = (page, data) => {
+    const headers = {
+        'Content-Type': 'application/json',
+    }
+    return http.post("team/search", data, {
+        headers: headers,
+        params: {
+            page: page
+        }
+    });
+};
