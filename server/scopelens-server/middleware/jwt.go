@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"scopelens-server/config"
+	"scopelens-server/utils/response"
 	"strings"
 	"time"
 
@@ -174,4 +175,29 @@ func (j *JWT) UpdateToken(tokenString string) (string, error) {
 		return j.CreateToken(*claims)
 	}
 	return "", err
+}
+
+// token generator
+func GenerateToken(c *gin.Context, username string) {
+	// 构造SignKey: 签名和解签名需要使用一个值
+	j := NewJWT()
+
+	// 构造用户claims信息(payload)
+	claims := CustomClaims{
+		UserName: username,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: int64(time.Now().Unix() - 1000),          // 签名生效时间
+			ExpiresAt: int64(time.Now().Unix() + 60*60*24*30), // 签名过期时间30days
+			Issuer:    "ZeminJiang",                             // 签名颁发者
+		},
+	}
+
+	// 根据claims生成token对象
+	token, err := j.CreateToken(claims)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		c.Abort()
+	} else {
+		response.OkWithData(token, c)
+	}
 }

@@ -3,6 +3,7 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	v1 "scopelens-server/api/v1"
+	"scopelens-server/middleware"
 )
 
 func InitAuthRouter(Router *gin.RouterGroup) {
@@ -10,5 +11,12 @@ func InitAuthRouter(Router *gin.RouterGroup) {
 	{
 		AuthRouter.POST("/register", v1.Register)
 		AuthRouter.POST("/login", v1.Login)
+	}
+}
+
+func InitAuthAUTHRouter(Router *gin.RouterGroup) {
+	UserRouter := Router.Group("auth").Use(middleware.JWTAuth())
+	{
+		UserRouter.GET("/checktoken", v1.CheckToken)
 	}
 }

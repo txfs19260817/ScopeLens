@@ -23,6 +23,7 @@ func InitRouters() *gin.Engine {
 	apiGroups := r.Group("api")
 	InitUserRouter(apiGroups)
 	InitAuthRouter(apiGroups)
+	InitAuthAUTHRouter(apiGroups)
 	InitFormatRouter(apiGroups)
 	InitTeamRouter(apiGroups)
 	InitTeamAUTHRouter(apiGroups)

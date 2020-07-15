@@ -1,12 +1,10 @@
 package v1
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"scopelens-server/middleware"
 	"scopelens-server/models"
 	"scopelens-server/utils/response"
-	"time"
 )
 
 func Register(c *gin.Context) {
@@ -48,31 +46,11 @@ func Login(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		// respond a token
-		generateToken(c, loginReq.UserName)
+		middleware.GenerateToken(c, loginReq.UserName)
 	}
 }
 
-// token generator
-func generateToken(c *gin.Context, username string) {
-	// 构造SignKey: 签名和解签名需要使用一个值
-	j := middleware.NewJWT()
-
-	// 构造用户claims信息(payload)
-	claims := middleware.CustomClaims{
-		UserName: username,
-		StandardClaims: jwt.StandardClaims{
-			NotBefore: int64(time.Now().Unix() - 1000),          // 签名生效时间
-			ExpiresAt: int64(time.Now().Unix() + + 60*60*24*30), // 签名过期时间30days
-			Issuer:    "ZeminJiang",                             // 签名颁发者
-		},
-	}
-
-	// 根据claims生成token对象
-	token, err := j.CreateToken(claims)
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-		c.Abort()
-	} else {
-		response.OkWithData(token, c)
-	}
+func CheckToken(c *gin.Context)  {
+	// api combined with JWTAuth middleware to check if token is still valid
+	response.Ok(c)
 }

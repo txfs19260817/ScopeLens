@@ -4,9 +4,9 @@ import {ERROR} from "../../api";
 const user = {
     namespaced: true,
     state: {
-        username: null,
-        token: null,
-        isLogin: false,
+        username: localStorage.getItem('username'),
+        token: localStorage.getItem('token'),
+        isLogin: localStorage.getItem('token') !== null,
     },
     mutations: {
         LOGIN(state, options) {
@@ -64,6 +64,11 @@ const user = {
             commit('LOADING_OFF', null, {root: true})
             return success
         },
+        logout(context, options) {
+            localStorage.removeItem('username');
+            localStorage.removeItem('token');
+            context.commit('LOGOUT')
+        }
     },
 };
 

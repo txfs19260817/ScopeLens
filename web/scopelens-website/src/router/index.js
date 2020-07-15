@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
 import Home from '../views/Home.vue'
+import {checkToken} from "../api/auth";
+import {SUCCESS} from "../api";
 
 Vue.use(VueRouter);
 
@@ -19,7 +21,10 @@ const routes = [
     {
         path: '/upload',
         name: 'Upload',
-        component: () => import('../views/Upload.vue')
+        component: () => import('../views/Upload.vue'),
+        meta: {
+            requireAuth: true
+        },
     },
     {
         path: '/search',
@@ -38,7 +43,12 @@ const routes = [
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-    }
+    },
+    {
+        path: '/logout',
+        name: 'Logout',
+        component: () => import('../views/Logout.vue')
+    },
 ]
 
 const router = new VueRouter({
@@ -50,8 +60,17 @@ router.beforeEach((to, from, next) => {
     // Already logged in, redirect to Homepage
     if (to.name === 'Login' && store.state.user.isLogin) next({name: 'Home'})
     // Not login, redirect to Login page
-    else if (to.name === 'Upload' && !store.state.user.isLogin) next({name: 'Login'})
-    else next()
+    else if (to.meta.requireAuth) {
+        if (!store.state.user.isLogin) next({name: 'Login'})
+        else {
+            // check if token is still valid
+            checkToken(store.state.user.token).then(res => {
+                console.log(res.data)
+                if (res.data.code === SUCCESS) next()
+                // else guarded by http.interceptors.response
+            })
+        }
+    } else next()
 })
 
 export default router

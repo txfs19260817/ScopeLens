@@ -47,13 +47,15 @@ http.interceptors.response.use(
         if (error.response) {
             switch (error.response.status) {
                 case 401:
+                    console.log(error.response)
                     store.commit('LOADING_OFF');
+                    store.dispatch("user/logout")
                     store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Token expired. Please login. ",
+                        "msg": "Token is invalid: " + error.response.data.msg + " Please login.",
                         "color": "error"
                     });
                     router.replace({
-                        path: 'login',
+                        path: '/login',
                         query: {redirect: "/"} // 将跳转的路由path作为参数，登录成功后跳转到该路由
                     }).then(r => null)
             }

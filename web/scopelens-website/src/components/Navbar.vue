@@ -21,12 +21,14 @@
                         <template v-slot:activator>
                             <v-list-item-title class="font-weight-bold">{{ username }}</v-list-item-title>
                         </template>
-                        <v-list-item v-for="(item, i) in user.list" :key="i" link>
-                            <v-list-item-icon>
-                                <v-icon v-text="item.icon"></v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content class="text-body-2">{{ item.text }}</v-list-item-content>
-                        </v-list-item>
+                        <template v-for="(item, i) in user.list">
+                            <v-list-item :key="i" link :to="item.link">
+                                <v-list-item-icon>
+                                    <v-icon v-text="item.icon"></v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content class="text-body-2">{{ item.text }}</v-list-item-content>
+                            </v-list-item>
+                        </template>
                     </v-list-group>
 
                     <v-list-item v-else link to="/login">
@@ -137,12 +139,12 @@
                     {
                         icon: 'mdi-text-box',
                         text: 'My Teams',
-                        link: '/'
+                        link: '/',
                     },
                     {
                         icon: 'logout',
                         text: 'Logout',
-                        link: '/'
+                        link: '/logout',
                     },
                 ],
             },
