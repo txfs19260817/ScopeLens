@@ -18,7 +18,11 @@ export const getTeams = (page) => {
     })
 };
 
-export const GetTeamsBySearchCriteria = (page, data) => {
+export const getTeamByID = (id) => {
+    return http.get("/team/teams/" + id)
+};
+
+export const getTeamsBySearchCriteria = (page, data) => {
     const headers = {
         'Content-Type': 'application/json',
     }

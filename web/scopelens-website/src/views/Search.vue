@@ -27,7 +27,7 @@
             </v-btn>
             <ResultsLayout :teams="teams"></ResultsLayout>
             <v-col>
-                <v-pagination v-model="curPage" :length="pageLen" total-visible="8" @input="getTeamsBySearchCriteria"></v-pagination>
+                <v-pagination v-model="curPage" :length="pageLen" total-visible="8" @input="getTeamsSearch"></v-pagination>
             </v-col>
         </v-container>
     </v-container>
@@ -35,7 +35,7 @@
 
 <script>
     import ResultsLayout from "../components/layouts/ResultsLayout";
-    import {GetTeamsBySearchCriteria} from "../api/team";
+    import {getTeamsBySearchCriteria} from "../api/team";
     import {ERROR} from "../api";
     import FormatSelector from "../components/selectors/FormatSelector";
     import PokemonSelector from "../components/selectors/PokemonSelector";
@@ -62,7 +62,7 @@
             }
         },
         methods:{
-            async getTeamsBySearchCriteria(page) {
+            async getTeamsSearch(page) {
                 // format and pokemon should not be empty at the same time
                 if (this.criteria.format.length === 0 && this.criteria.pokemon.length === 0) return
 
@@ -72,7 +72,7 @@
                 // process Pokemon names ('A/B/C' --> 'A')
                 this.criteria.pokemon.forEach((item, idx) => this.criteria.pokemon[idx] = item.toString().split('/', 1)[0])
 
-                const res = await GetTeamsBySearchCriteria(page, this.criteria)
+                const res = await getTeamsBySearchCriteria(page, this.criteria)
                 if (res.data.code === ERROR) {
                     this.$store.dispatch('snackbar/openSnackbar', {
                         "msg": "Search for teams error: " + res.data.msg,
@@ -88,7 +88,7 @@
                 this.$store.commit('LOADING_OFF')
             },
             goSearch(){
-                this.getTeamsBySearchCriteria(1)
+                this.getTeamsSearch(1)
             },
             reset() {
                 this.gotResult=false

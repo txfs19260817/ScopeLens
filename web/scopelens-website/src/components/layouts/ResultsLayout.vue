@@ -12,10 +12,10 @@
                             elevation="2"
                     >
                     </v-skeleton-loader>
-                    <v-card v-else link class="mx-auto" max-width="640" :elevation="hover ? 10 : 2"
-                            :class="{ 'on-hover': hover }">
-                        <v-img class="white--text align-end" :src="t.image"></v-img>
-                        <v-card-subtitle class="pb-0 font-weight-bold">
+                    <v-card v-else class="mx-auto" max-width="640" :elevation="hover ? 10 : 2"
+                            :class="{ 'on-hover': hover }" link :to="'/team/' + t.id">
+                        <v-img class="align-end" :src="t.image"></v-img>
+                        <v-card-subtitle class="pb-0 font-weight-bold team-title">
                             {{ "[" + t.format + "] " }}{{ t.title }}
                         </v-card-subtitle>
                         <v-card-text class="text--primary">
@@ -52,5 +52,16 @@
 </script>
 
 <style scoped>
+    .team-title {
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    @media screen and (max-width: 1300px) {
+        .team-title {
+            white-space: nowrap;
+            overflow: auto;
+        }
+    }
 
 </style>
