@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
 	"scopelens-server/config"
@@ -31,6 +32,12 @@ type Team struct {
 	CreatedAt time.Time `bson:"created_at" json:"created_at"`
 	Likes     int       `bson:"likes" json:"likes"` // 0
 	State     int       `bson:"state" json:"state"` // 0
+}
+
+// Usage struct
+type Usage struct {
+	Pokemon string `bson:"_id"   json:"name"`
+	Count   int    `bson:"count" json:"value"`
 }
 
 // Insert a team
@@ -156,4 +163,23 @@ func (d *DBDriver) GetTeamByID(id string) (*Team, error) {
 		return nil, err
 	}
 	return team, nil
+}
+
+// Get pokemon usage by format
+func (d *DBDriver) GetPokemonUsageByFormat(format string) ([]Usage, error) {
+	unwindStage := bson.D{{"$unwind", bson.D{{"path", "$pokemon"}, {"preserveNullAndEmptyArrays", false}}}}
+	matchStage0 := bson.D{{"$match", bson.D{{"format", format}}}}
+	groupStage := bson.D{{"$group", bson.D{{"_id", "$pokemon"}, {"count", bson.D{{"$sum", 1}}}}}}
+	matchStage1 := bson.D{{"$match", bson.D{{"count", bson.D{{"$gt", 1}}}}}}
+	sortStage := bson.D{{"$sort", bson.D{{"count", -1}}}}
+
+	cursor, err := d.DB.Collection("teams").Aggregate(context.Background(), mongo.Pipeline{unwindStage, matchStage0, groupStage, matchStage1, sortStage})
+	if err != nil {
+		return nil, err
+	}
+	var usages []Usage
+	if err = cursor.All(context.Background(), &usages); err != nil {
+		return nil, err
+	}
+	return usages, nil
 }

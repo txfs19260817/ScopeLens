@@ -96,3 +96,13 @@ func GetTeamsBySearchCriteria(c *gin.Context) {
 		response.OkWithData(data, c)
 	}
 }
+
+func GetPokemonUsageByFormat(c *gin.Context) {
+	format := c.Param("format")
+	usages, err := models.Db.GetPokemonUsageByFormat(format)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+	} else {
+		response.OkWithData(usages, c)
+	}
+}

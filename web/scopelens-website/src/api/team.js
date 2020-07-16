@@ -33,3 +33,7 @@ export const getTeamsBySearchCriteria = (page, data) => {
         }
     });
 };
+
+export const getPokemonUsageByFormat = (format) => {
+    return http.get("/team/usage/" + format)
+}

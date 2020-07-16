@@ -9,6 +9,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
+    "echarts": "^4.8.0",
     "vee-validate": "^3.3.7",
     "vue": "^2.6.11",
     "vue-disqus": "^4.0.1",

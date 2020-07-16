@@ -30,7 +30,7 @@
                 <v-breadcrumbs :items="team.pokemon">
                     <template v-slot:item="{ item }">
                         <v-breadcrumbs-item>
-                            <v-img max-height="50" max-width="50"
+                            <v-img max-height="50" max-width="50" :alt="item"
                                    :src="iconUrl + ProcessStr(item) + `.png`"></v-img>
                         </v-breadcrumbs-item>
                     </template>

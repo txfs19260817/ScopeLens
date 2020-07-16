@@ -106,6 +106,11 @@
                         text: 'Search',
                         link: '/search'
                     },
+                    {
+                        icon: 'mdi-card-search',
+                        text: 'Usage',
+                        link: '/usage'
+                    },
                     {divider: true},
                     {heading: 'Extra'},
                     {
