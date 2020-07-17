@@ -1,11 +1,7 @@
 <template>
     <nav>
-        <!--        TODO: move tabs to Team page || children pass tabs to parents-->
         <v-app-bar v-if="appbar.tabs" app fixed flat color="bg_primary">
             <v-app-bar-nav-icon @click="drawer.display = !drawer.display" class="d-lg-none"></v-app-bar-nav-icon>
-            <!--            <v-tabs color="black" slider-color="primary" background-color="bg_primary">-->
-            <!--                <v-tab v-for="(item, i) in appbar.tabs" :key="i" class="font-weight-bold title">{{ item }}</v-tab>-->
-            <!--            </v-tabs>-->
         </v-app-bar>
 
         <v-navigation-drawer v-model="drawer.display" color="bg_secondary" app fixed left flat>
@@ -15,6 +11,10 @@
                         <v-list-item-avatar>
                             <v-img :src="require('@/assets/logo.png')"></v-img>
                         </v-list-item-avatar>
+                        <v-list-item-title>
+                            <span class="font-weight-medium title">Scope</span>
+                            <span class="font-weight-light title">Lens</span>
+                        </v-list-item-title>
                     </v-list-item>
 
                     <v-list-group v-if="isLogin" prepend-icon="account_circle">
@@ -61,7 +61,7 @@
                                 :target="item.target ? '_black' : ''"
                                 :disabled="!item.link"
                                 link
-                                active-class="red--text"
+                                active-class="amber--text"
                         >
                             <v-list-item-action>
                                 <v-icon v-text="item.icon"></v-icon>
@@ -107,7 +107,7 @@
                         link: '/search'
                     },
                     {
-                        icon: 'mdi-card-search',
+                        icon: 'mdi-chart-pie',
                         text: 'Usage',
                         link: '/usage'
                     },
@@ -128,15 +128,15 @@
                     {
                         icon: 'mdi-github',
                         text: 'GitHub',
-                        link: 'https://github.com/OpenEpicData/FlamingoWeb',
+                        link: 'https://github.com/txfs19260817/ScopeLens',
                         target: true
                     },
-                    {
-                        icon: 'mdi-twitter',
-                        text: 'Twitter',
-                        link: 'https://twitter.com/stackFlam1ngo',
-                        target: true
-                    }
+                    // {
+                    //     icon: 'mdi-twitter',
+                    //     text: 'Twitter',
+                    //     link: 'https://twitter.com/stackFlam1ngo',
+                    //     target: true
+                    // }
                 ]
             },
             user: {
@@ -144,7 +144,7 @@
                     {
                         icon: 'mdi-text-box',
                         text: 'My Teams',
-                        link: '/',
+                        link: '/myteams',
                     },
                     {
                         icon: 'logout',

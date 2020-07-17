@@ -5,11 +5,11 @@
                 <v-col>
                     <v-card class="elevation-2 card">
                         <v-card-text>
-                            <h1 class="text-start display-1 mb-10 blue--text"> Pokemon Usage </h1>
+                            <h1 class="text-start display-1 mb-10 fg-text"> Pokemon Usage </h1>
                             <v-form class="searchbar-form" @submit.prevent="getUsage">
                                 <FormatSelector :value.sync="format"></FormatSelector>
                                 <div class="text-center mt-6">
-                                    <v-btn class="blue" type="submit" large dark :loading="loading">
+                                    <v-btn color="primary" type="submit" large dark :loading="loading">
                                         <v-icon left dark>search</v-icon>
                                         Search
                                     </v-btn>
@@ -117,24 +117,6 @@
                             data: d
                         }
                     ],
-                    // media: [
-                    //     {
-                    //         query: {
-                    //             maxWidth: 600               // 当容器宽度小于 600 时。
-                    //         },
-                    //         option: {
-                    //             series: [                   // 两个饼图上下布局。
-                    //                 {
-                    //                     name: this.format + ' Usage',
-                    //                     type: 'pie',
-                    //                     radius: '50%',
-                    //                     roseType: 'angle',
-                    //                     data: d
-                    //                 },
-                    //             ]
-                    //         }
-                    //     },
-                    // ]
                 });
             },
         },
@@ -161,6 +143,10 @@
 
     .card {
         overflow: hidden;
+    }
+
+    .fg-text {
+        color: #4768A1;
     }
 
     #pie {

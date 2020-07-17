@@ -19,6 +19,14 @@ const routes = [
         component: () => import('../views/Login.vue')
     },
     {
+        path: '/myteams',
+        name: 'MyTeams',
+        component: () => import('../views/MyTeams.vue'),
+        meta: {
+            requireAuth: true
+        },
+    },
+    {
         path: '/upload',
         name: 'Upload',
         component: () => import('../views/Upload.vue'),

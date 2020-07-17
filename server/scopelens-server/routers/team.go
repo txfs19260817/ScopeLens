@@ -21,5 +21,7 @@ func InitTeamRouter(Router *gin.RouterGroup) {
 		TeamRouter.GET("/teams/:id", v1.GetTeamByID)
 		TeamRouter.POST("/search", v1.GetTeamsBySearchCriteria)
 		TeamRouter.GET("/usage/:format", v1.GetPokemonUsageByFormat)
+		TeamRouter.GET("/likes/:username", v1.GetLikedTeamsByUsername)
+		TeamRouter.GET("/uploaded/:username", v1.GetUploadedTeamsByUsername)
 	}
 }

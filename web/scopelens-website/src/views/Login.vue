@@ -11,7 +11,7 @@
                                 <v-col cols="12" md="8" class="pt-6 pb-6">
                                     <v-card-text>
                                         <v-form class="signup-form-form" @submit.prevent="loginRequest">
-                                            <h1 class="text-center display-1 mb-10" :class="`${bgColor}--text`">
+                                            <h1 class="text-center display-1 mb-10 fg-text">
                                                 Sign in
                                             </h1>
                                             <v-text-field
@@ -45,9 +45,9 @@
                                         </v-form>
                                     </v-card-text>
                                 </v-col>
-                                <v-col cols="12" md="4" class="darken-2 vcenter" :class="`${bgColor}`">
+                                <v-col cols="12" md="4" class="darken-2 vcenter fg">
                                     <div>
-                                        <v-card-text :class="`${fgColor}--text`">
+                                        <v-card-text class="bg-text">
                                             <h1 class="text-center headline mb-3">No User?</h1>
                                             <h5 class="text-center overline mb-3">Please Sign Up to continue</h5>
                                         </v-card-text>
@@ -62,9 +62,9 @@
                         <!--SignUp-->
                         <v-window-item :value="2">
                             <v-row class="fill-height">
-                                <v-col cols="12" md="4" class="darken-2 vcenter" :class="`${bgColor}`">
+                                <v-col cols="12" md="4" class="darken-2 vcenter fg">
                                     <div>
-                                        <v-card-text :class="`${fgColor}--text`">
+                                        <v-card-text class="bg-text">
                                             <h1 class="text-center headline mb-3">Already a user?</h1>
                                             <h5 class="text-center overline mb-3">Please Sign In</h5>
                                         </v-card-text>
@@ -75,7 +75,7 @@
                                 </v-col>
                                 <v-col cols="12" md="8" class=" pt-6 pb-6">
                                     <v-card-text>
-                                        <h1 class="text-center display-1 mb-10" :class="`${bgColor}--text`">Sign Up</h1>
+                                        <h1 class="text-center display-1 mb-10 fg-text">Sign Up</h1>
                                         <ValidationObserver ref="observer" v-slot="{ validate }">
                                             <v-form class="signup-form-form" @submit.prevent="registerRequest">
                                                 <ValidationProvider v-slot="{ errors }" name="username"
@@ -164,7 +164,7 @@
         props: {
             bgColor: {
                 type: String,
-                default: 'blue'
+                default: '#4768A1'
             },
             fgColor: {
                 type: String,
@@ -239,5 +239,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    .fg {
+        background-color: #4768A1;
+    }
+
+    .fg-text {
+        color: #4768A1;
+    }
+
+    .bg-text {
+        color: white;
     }
 </style>

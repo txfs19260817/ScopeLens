@@ -5,12 +5,12 @@
                 <v-col>
                     <v-card class="elevation-2 card">
                         <v-card-text>
-                            <h1 class="text-start display-1 mb-10 blue--text"> Search </h1>
+                            <h1 class="text-start display-1 mb-10 fg-text"> Search </h1>
                             <v-form class="searchbar-form" @submit.prevent="goSearch">
                                 <FormatSelector :value.sync="criteria.format"></FormatSelector>
                                 <PokemonSelector :value.sync="criteria.pokemon"></PokemonSelector>
                                 <div class="text-center mt-6">
-                                    <v-btn class="blue" type="submit" large dark :loading="loading">
+                                    <v-btn color="primary" type="submit" large dark :loading="loading">
                                         <v-icon left dark>search</v-icon>
                                         Search
                                     </v-btn>
@@ -124,5 +124,9 @@
 
     .card {
         overflow: hidden;
+    }
+
+    .fg-text {
+        color: #4768A1;
     }
 </style>

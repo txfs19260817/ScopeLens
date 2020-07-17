@@ -46,10 +46,9 @@ func GetTeamsOrderbyLikes(c *gin.Context) {
 	if err != nil {
 		page = 0
 	}
-	// Get the total number of teams
-	data := make(map[string]interface{})
 
 	// retrieve data
+	data := make(map[string]interface{})
 	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, "likes", "", []string{}); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
@@ -86,10 +85,8 @@ func GetTeamsBySearchCriteria(c *gin.Context) {
 		return
 	}
 
-	// Get the total number of teams
-	data := make(map[string]interface{})
-
 	// retrieve data
+	data := make(map[string]interface{})
 	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, "time", s.Format, s.Pokemon); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
@@ -104,5 +101,35 @@ func GetPokemonUsageByFormat(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithData(usages, c)
+	}
+}
+
+func GetLikedTeamsByUsername(c *gin.Context) {
+	page, err := com.StrTo(c.Query("page")).Int()
+	if err != nil {
+		page = 0
+	}
+
+	username := c.Param("username")
+	data := make(map[string]interface{})
+	if data["teams"], data["total"], err = models.Db.GetLikedTeamsByUsername(page, config.App.PageSize, username); err != nil {
+		response.FailWithMessage(err.Error(), c)
+	} else {
+		response.OkWithData(data, c)
+	}
+}
+
+func GetUploadedTeamsByUsername(c *gin.Context)  {
+	page, err := com.StrTo(c.Query("page")).Int()
+	if err != nil {
+		page = 0
+	}
+
+	username := c.Param("username")
+	data := make(map[string]interface{})
+	if data["teams"], data["total"], err = models.Db.GetUploadedTeamsByUsername(page, config.App.PageSize, username); err != nil {
+		response.FailWithMessage(err.Error(), c)
+	} else {
+		response.OkWithData(data, c)
 	}
 }

@@ -12,12 +12,12 @@
 </template>
 
 <script>
-    import {getTeams, getTeamsByLikes} from "../api/team";
+    import {getUploadedTeamsByUsername, getLikedTeamsByUsername} from "../api/team";
     import {SUCCESS, logErrors} from "../api";
     import ResultsLayout from "../components/layouts/ResultsLayout";
 
     export default {
-        name: 'Home',
+        name: 'MyTeams',
         components: {
             ResultsLayout
         },
@@ -28,16 +28,16 @@
             pageSize: 12, // data size per page
             curPage: 1,
             tabs: [
-                'Latest',
-                'Trending'
+                'Liked',
+                'Uploaded'
             ],
             curTab: 0,
         }),
         methods: {
-            async getTeamsByTime(page) {
+            async getLikedTeams(page) {
                 // loading
                 this.$store.commit('LOADING_ON')
-                await getTeams(page).then(res => {
+                await getLikedTeamsByUsername(page, this.$store.state.user.username).then(res => {
                     if (res.data.code === SUCCESS) {
                         this.total = res.data.data.total
                         this.teams = res.data.data.teams
@@ -57,10 +57,10 @@
                     this.$store.commit('LOADING_OFF')
                 })
             },
-            async getMostLikedTeams(page) {
+            async getUploadedTeams(page) {
                 // loading
                 this.$store.commit('LOADING_ON')
-                await getTeamsByLikes(page).then(res => {
+                await getUploadedTeamsByUsername(page, this.$store.state.user.username).then(res => {
                     if (res.data.code === SUCCESS) {
                         this.total = res.data.data.total
                         this.teams = res.data.data.teams
@@ -84,21 +84,21 @@
                 this.curPage = 1
                 this.curTab = n
                 if (n === 0) {
-                    this.getTeamsByTime(1);
+                    this.getLikedTeams(1);
                 } else {
-                    this.getMostLikedTeams(1);
+                    this.getUploadedTeams(1);
                 }
             },
             pageChange(p) {
                 if (this.curTab === 0) {
-                    return this.getTeamsByTime(p);
+                    return this.getLikedTeams(p);
                 } else {
-                    return this.getMostLikedTeams(p);
+                    return this.getUploadedTeams(p);
                 }
             }
         },
         created() {
-            this.getTeamsByTime(1);
+            this.getLikedTeams(1);
         },
         computed: {
             pageLen() {

@@ -183,3 +183,94 @@ func (d *DBDriver) GetPokemonUsageByFormat(format string) ([]Usage, error) {
 	}
 	return usages, nil
 }
+
+func (d *DBDriver) GetLikedTeamsByUsername(pageNum, pageSize int, username string) ([]Team, int, error) {
+	// get skip number
+	var skip int64
+	if pageNum > 0 {
+		skip = int64((pageNum - 1) * pageSize)
+	}
+
+	// options
+	opts := options.Find()
+	opts.SetLimit(int64(pageSize))
+	opts.SetSkip(skip)
+
+	// get liked teams by user
+	user, err := d.GetUserByUsername(username)
+	if err != nil {
+		return nil, -1, err
+	}
+	var like []primitive.ObjectID
+	for _, l := range user.Like {
+		hex, err := primitive.ObjectIDFromHex(l)
+		if err != nil {
+			continue
+		}
+		like = append(like, hex)
+	}
+
+	// filter
+	filter := bson.D{
+		{"state", 1},
+		{"_id", bson.D{{"$in", like}}},
+	}
+
+	// get the number of teams
+	count, err := d.GetTeamsCount(filter)
+	if err != nil {
+		return nil, -1, err
+	}
+
+	// query
+	paginatedCursor, err := d.DB.Collection("teams").Find(context.Background(), filter, opts)
+	if err != nil {
+		return nil, -1, err
+	}
+
+	// unmarshal retrieved data to struct and append to list
+	var res []Team
+	if err = paginatedCursor.All(context.Background(), &res); err != nil {
+		return nil, -1, err
+	}
+	return res, count, nil
+}
+
+// Get uploaded teams
+func (d *DBDriver) GetUploadedTeamsByUsername(pageNum, pageSize int, username string,) ([]Team, int, error) {
+	// get skip number
+	var skip int64
+	if pageNum > 0 {
+		skip = int64((pageNum - 1) * pageSize)
+	}
+
+	// options
+	opts := options.Find()
+	opts.SetLimit(int64(pageSize))
+	opts.SetSkip(skip)
+
+	// filter
+	filter := bson.D{
+		{"state", 1},
+		{"uploader", username},
+	}
+
+	// get the number of teams
+	count, err := d.GetTeamsCount(filter)
+	if err != nil {
+		return nil, -1, err
+	}
+
+	// query
+	paginatedCursor, err := d.DB.Collection("teams").Find(context.Background(), filter, opts)
+	if err != nil {
+		return nil, -1, err
+	}
+
+	// unmarshal retrieved data to struct and append to list
+	var res []Team
+	if err = paginatedCursor.All(context.Background(), &res); err != nil {
+		return nil, -1, err
+	}
+	return res, count, nil
+}
