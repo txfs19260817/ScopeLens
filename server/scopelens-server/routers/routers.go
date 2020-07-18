@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"scopelens-server/config"
 	"scopelens-server/middleware"
 )
 
@@ -13,12 +14,9 @@ func InitRouters() *gin.Engine {
 
 	// middleware
 	r.Use(middleware.Cors())
-
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	if config.Mode == "release" {
+		r.Use(middleware.TlsHandler())
+	}
 
 	apiGroups := r.Group("api")
 	InitUserRouter(apiGroups)

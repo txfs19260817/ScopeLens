@@ -12,6 +12,7 @@ require (
 	github.com/sugoiuguu/showgone v0.0.0-20181101115829-944ac602d5d2
 	github.com/thedevsaddam/govalidator v1.9.10
 	github.com/unknwon/com v1.0.1
+	github.com/unrolled/secure v1.0.8
 	go.mongodb.org/mongo-driver v1.3.4
 	golang.org/x/crypto v0.0.0-20190530122614-20be4c3c3ed5
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
