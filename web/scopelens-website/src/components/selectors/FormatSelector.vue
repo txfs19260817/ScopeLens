@@ -3,7 +3,7 @@
         <v-autocomplete
                 id="format"
                 v-model="valueModel"
-                label="Format"
+                :label="required? `*Format`:`Format`"
                 :items="formats"
                 persistent-hint
                 :hint="hint"

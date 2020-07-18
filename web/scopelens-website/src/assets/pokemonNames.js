@@ -5,6 +5,7 @@ import ja from "./pokemonNames/ja.json"
 import ko from "./pokemonNames/ko.json"
 import zhHans from "./pokemonNames/zh-hans.json"
 import zhHant from "./pokemonNames/zh-hant.json"
+import forme from "./pokemonNames/forme.json"
 import {ProcessStr} from "./utils";
 
 const group = {
@@ -44,4 +45,4 @@ for (let i = 0; i < pmNames.length; i++) {
     })
 }
 
-export {pmNames4Select}
+export {pmNames4Select, forme}

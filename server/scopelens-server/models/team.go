@@ -60,7 +60,7 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 			return false, fmt.Errorf("Image and Showdown cannot be empty at the same time. ")
 		}
 		// generate image from showdown text.
-		filename, err = showdown.RentalTeamMaker(team.Showdown)
+		filename, err = showdown.RentalTeamMaker(team.Showdown, team.Title, team.Author)
 		if err != nil {
 			return false, err
 		}

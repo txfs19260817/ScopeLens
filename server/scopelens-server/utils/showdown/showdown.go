@@ -37,7 +37,7 @@ func ShowdownParser(text string) []utils.Pokemon {
 }
 
 // from Pokemon struct to rental team preview image
-func RentalTeamMaker(text string) (string, error) {
+func RentalTeamMaker(text, title, author string) (string, error) {
 	// parse showdown text
 	pms := ShowdownParser(text)
 
@@ -75,6 +75,11 @@ func RentalTeamMaker(text string) (string, error) {
 	}
 
 	bg, err = utils.AppendMoves(bg, &pms)
+	if err != nil {
+		return "", err
+	}
+
+	bg, err = utils.AppendTitleAndAuthor(bg, title, author)
 	if err != nil {
 		return "", err
 	}

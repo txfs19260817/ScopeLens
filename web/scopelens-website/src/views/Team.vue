@@ -8,13 +8,13 @@
                         <v-subheader>Likes: {{team.likes}}</v-subheader>
                     </v-row>
                     <v-row justify="space-around">
-                        <v-btn class="mx-2" fab dark small color="blue">
+                        <v-btn class="mx-2" fab dark small color="blue" disabled>
                             <v-icon dark>mdi-twitter</v-icon>
                         </v-btn>
                         <v-btn class="mx-2" fab dark small color="pink" @click="like" :loading="loading">
                             <v-icon dark>mdi-heart</v-icon>
                         </v-btn>
-                        <v-btn class="mx-2" fab dark small color="red">
+                        <v-btn class="mx-2" fab dark small color="red" disabled>
                             <v-icon dark>mdi-sina-weibo</v-icon>
                         </v-btn>
                     </v-row>
@@ -51,7 +51,7 @@
                         </v-tab-item>
                         <v-tab>Description</v-tab>
                         <v-tab-item>
-                            <p class="pt-10 body-1 textarea"> {{ team.description }} </p>
+                            <pre class="pt-10 body-1 textarea"> {{ team.description }} </pre>
                         </v-tab-item>
                     </v-tabs>
                 </div>

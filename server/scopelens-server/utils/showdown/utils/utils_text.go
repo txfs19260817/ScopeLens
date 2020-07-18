@@ -31,6 +31,12 @@ var (
 		{PointsMoveTextX, PointsMoveTextY + OffsetY*2},
 		{PointsMoveTextX + OffsetX, PointsMoveTextY + OffsetY*2},
 	}
+	// 4. Title
+	PointsTitleX = 650
+	PointsTitleY = 610
+	// 5. Author
+	PointsAuthorX = 410
+	PointsAuthorY = 610
 )
 
 // Append each pokemon name, ability and item text on the left part of each slot.
@@ -134,6 +140,46 @@ func AppendMoveText(canvas image.Image, moveText *[]string, slot int) (image.Ima
 			return nil, err
 		}
 		pt.Y += lineSpace
+	}
+
+	return out, nil
+}
+
+// Append author and title
+func AppendTitleAndAuthor(canvas image.Image, title, author string) (image.Image, error) {
+	// Path
+	FontPath := SpritePath + "Lato-Bold.ttf"
+
+	// Load font file
+	fontBytes, err := ioutil.ReadFile(FontPath)
+	if err != nil {
+		return nil, err
+	}
+	font, err := freetype.ParseFont(fontBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate output image
+	b := canvas.Bounds()
+	out := image.NewRGBA(b)
+	draw.Draw(out, out.Bounds(), canvas, b.Min, draw.Src)
+
+	// Set FreeType context
+	c := freetype.NewContext()
+	c.SetDPI(72)
+	c.SetFont(font)
+	c.SetFontSize(FontSize)
+	c.SetClip(canvas.Bounds())
+	c.SetDst(out)
+	c.SetSrc(image.White)
+
+	if _, err = c.DrawString(title, freetype.Pt(PointsTitleX - len(title) * 2, PointsTitleY)); err != nil {
+		return nil, err
+	}
+
+	if _, err = c.DrawString(author, freetype.Pt(PointsAuthorX - len(author) * 2, PointsAuthorY)); err != nil {
+		return nil, err
 	}
 
 	return out, nil

@@ -5,7 +5,7 @@
                 :items="pokemon"
                 outlined
                 chips
-                label="Pokemon"
+                :label="required? `*Pokemon`:`Pokemon`"
                 persistent-hint
                 :hint="hint"
                 item-text="name"

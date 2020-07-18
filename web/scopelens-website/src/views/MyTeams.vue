@@ -42,10 +42,13 @@
                         this.total = res.data.data.total
                         this.teams = res.data.data.teams
                     } else {
-                        this.$store.dispatch('snackbar/openSnackbar', {
-                            "msg": "Failed to retrieve teams from server! " + res.data.msg,
-                            "color": "error"
-                        });
+                        // In this case, if user never liked any team, no error msg will be shown.
+                        if (res.data.msg.toString().includes("$in")) {
+                            this.$store.dispatch('snackbar/openSnackbar', {
+                                "msg": "Failed to retrieve teams from server! " + res.data.msg,
+                                "color": "error"
+                            });
+                        }
                     }
                 }).catch(error => {
                     logErrors(error)
@@ -83,6 +86,7 @@
             tabChange(n) {
                 this.curPage = 1
                 this.curTab = n
+                this.teams = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},]
                 if (n === 0) {
                     this.getLikedTeams(1);
                 } else {

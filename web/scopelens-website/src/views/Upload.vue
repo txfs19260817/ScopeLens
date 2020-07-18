@@ -11,7 +11,7 @@
                                     <v-text-field
                                             id="title"
                                             v-model="form.title"
-                                            label="Title"
+                                            label="*Title"
                                             name="Title"
                                             append-icon="mdi-pencil"
                                             type="text"
@@ -23,17 +23,20 @@
                                             :error-messages="errors"
                                     />
                                 </ValidationProvider>
-                                <ValidationProvider v-slot="{ errors }" name="Author" rules="max:50">
-                                    <v-switch
-                                            v-model="notAuthor"
-                                            class="shrink mr-2 mt-0"
-                                            label="I am not the team author. "
-                                    ></v-switch>
+                                <v-switch
+                                        v-model="notAuthor"
+                                        class="shrink mr-2 mt-0"
+                                        label="I am not the team author. "
+                                        :hint="hint.authorSwitch"
+                                        persistent-hint
+                                ></v-switch>
+                                <ValidationProvider v-slot="{ errors }" name="Author" :rules="`${notAuthor ? 'required|max:20' : ''}`">
                                     <v-text-field
                                             v-if="notAuthor"
                                             id="author"
                                             v-model="form.author"
-                                            label="Author"
+                                            label="*Author"
+                                            persistent-hint
                                             :hint="hint.author"
                                             name="Author"
                                             append-icon="person"
@@ -41,25 +44,33 @@
                                             outlined
                                             :clearable="true"
                                             :color="bgColor"
-                                            :counter="50"
+                                            :counter="20"
                                             :error-messages="errors"
                                     />
                                 </ValidationProvider>
                                 <FormatSelector :value.sync="form.format" :hint="hint.format" :required="true">
                                 </FormatSelector>
-                                <PokemonSelector :value.sync="form.pokemon" :hint="hint.pokemon" :required="true">
-                                </PokemonSelector>
-                                <ValidationProvider v-slot="{ errors }" name="Showdown" rules="max:1600">
+                                <v-switch
+                                        v-model="haveShowdown"
+                                        class="shrink mr-2 mt-0"
+                                        label="I have the Showdown paste. "
+                                        :hint="hint.showdownSwitch"
+                                        persistent-hint
+                                ></v-switch>
+                                <ValidationProvider v-if="haveShowdown" v-slot="{ errors }" name="Showdown" :rules="`${haveShowdown ? 'required|max:1600' : ''}`">
                                     <v-textarea
                                             id="showdown"
                                             v-model="form.showdown"
-                                            label="Showdown"
+                                            label="*Showdown"
                                             outlined
                                             :hint="hint.showdown"
                                             :clearable="true"
                                             :counter="1600"
+                                            :error-messages="errors"
                                     ></v-textarea>
                                 </ValidationProvider>
+                                <PokemonSelector v-else :value.sync="form.pokemon" :hint="hint.pokemon" :required="!haveShowdown">
+                                </PokemonSelector>
                                 <v-file-input
                                         ref="image"
                                         v-model="imageFile"
@@ -69,7 +80,7 @@
                                         :hint="hint.image"
                                         :rules="fileRules"
                                         accept="image/png, image/jpeg, image/jpg"
-                                        placeholder="Pick a rental team preview photo. "
+                                        placeholder="Pick a rental team preview photo. Only accept .png/.jpg/.jpeg format."
                                         prepend-icon=""
                                         append-icon="mdi-camera"
                                         label="Image"
@@ -103,11 +114,13 @@
 <script>
     import FormatSelector from "../components/selectors/FormatSelector";
     import PokemonSelector from "../components/selectors/PokemonSelector";
+    import {Koffing} from "koffing"
     import {toBase64} from "../assets/utils"
     import {required, max} from 'vee-validate/dist/rules'
     import {extend, ValidationObserver, ValidationProvider, setInteractionMode} from 'vee-validate'
     import {insertTeam} from "../api/team";
     import {ERROR} from "../api";
+    import {forme} from "../assets/pokemonNames"
 
     setInteractionMode('eager')
     extend('required', {
@@ -142,6 +155,7 @@
             return {
                 // author field will be autofilled as username when switch on.
                 notAuthor: true,
+                haveShowdown: true,
                 // image upload rules
                 fileRules: [
                     value => !value || value.size < 2000000 || 'Photo size should be less than 2 MB!',
@@ -162,11 +176,13 @@
                 },
                 // hints
                 hint: {
-                    author: 'Please fill the name of the team author here. ',
+                    author: 'Please fill the name of team author here. ',
+                    authorSwitch: 'Please turn on the switch if you are not the team author. ',
                     format: 'You can type words here to search for desired format. ',
+                    showdownSwitch:'Please select all team members if no Showdown paste provided. ',
+                    showdown: 'Please paste the Showdown team here. ',
                     pokemon: 'Please select up to 6 Pokemon. You can type words here to filter Pokemon.',
-                    showdown: 'Please paste the Showdown team here (if applicable). ',
-                    image: 'Only accept .png, .jpg or .jpeg image file. ',
+                    image: 'Optional. **Note that we only accept image with available rental ID.**',
                 },
             }
         },
@@ -185,11 +201,26 @@
                     // form preparation
                     // convert image to base64 string
                     if(this.imageFile !== undefined) this.form.image = await toBase64(this.imageFile)
-                    // process Pokemon names ('A/B/C' --> 'A')
-                    this.form.pokemon.forEach((item, idx) => this.form.pokemon[idx] = item.toString().split('/', 1)[0])
                     // assign uploader
                     this.form.uploader = this.$store.state.user.username
                     if (!this.notAuthor) this.form.author = this.form.uploader
+                    // Auto push Pokemon names to form if Showdown text is provided
+                    if (this.haveShowdown) {
+                        this.form.pokemon = []
+                        for (const p of Koffing.parse(this.form.showdown).teams[0].pokemon) {
+                            if (forme[p.name] === undefined){
+                                // no alter forme, push to form directly
+                                this.form.pokemon.push(p.name)
+                            } else {
+                                // push the origin species name
+                                this.form.pokemon.push(forme[p.name])
+                            }
+                        }
+                    } else {
+                        this.form.showdown = ""
+                        // process Pokemon names ('A/B/C' --> 'A')
+                        this.form.pokemon.forEach((item, idx) => this.form.pokemon[idx] = item.toString().split('/', 1)[0])
+                    }
 
                     const res = await insertTeam(this.form, this.$store.state.user.token);
                     if (res.data.code === ERROR || res.status === 401) {

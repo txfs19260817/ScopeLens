@@ -178,12 +178,13 @@ func AppendTypes(canvas image.Image, pokemonList *[]Pokemon) (image.Image, error
 		}
 
 		// Append a type bar
+		pt := PointsTypes[i]
 		for _, t := range types {
-			canvas, err = appendAType(canvas, t, PointsTypes[i])
+			canvas, err = appendAType(canvas, t, pt)
 			if err != nil {
 				return nil, err
 			}
-			PointsTypes[i].Y += lineSpace
+			pt.Y += lineSpace
 		}
 
 	}
