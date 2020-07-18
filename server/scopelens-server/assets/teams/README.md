@@ -1,0 +1,1 @@
+## Folder to store uploaded team images temporarily
