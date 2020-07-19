@@ -27,10 +27,6 @@
             total: 1, // total data size
             pageSize: 12, // data size per page
             curPage: 1,
-            tabs: [
-                'Latest',
-                'Trending'
-            ],
             curTab: 0,
         }),
         methods: {
@@ -43,14 +39,14 @@
                         this.teams = res.data.data.teams
                     } else {
                         this.$store.dispatch('snackbar/openSnackbar', {
-                            "msg": "Failed to retrieve teams from server! " + res.data.msg,
+                            "msg": this.$t('api.thenError') + res.data.msg,
                             "color": "error"
                         });
                     }
                 }).catch(error => {
                     logErrors(error)
                     this.$store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Failed to connect to server! ",
+                        "msg": this.$t('api.catchError'),
                         "color": "error"
                     });
                 }).finally(() => {
@@ -66,14 +62,14 @@
                         this.teams = res.data.data.teams
                     } else {
                         this.$store.dispatch('snackbar/openSnackbar', {
-                            "msg": "Failed to retrieve teams from server! " + res.data.msg,
+                            "msg": this.$t('api.thenError') + res.data.msg,
                             "color": "error"
                         });
                     }
                 }).catch(error => {
                     logErrors(error)
                     this.$store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Failed to connect to server! ",
+                        "msg": this.$t('api.catchError'),
                         "color": "error"
                     });
                 }).finally(() => {
@@ -103,6 +99,12 @@
         computed: {
             pageLen() {
                 return Math.ceil(this.total / this.pageSize)
+            },
+            tabs() {
+                return [
+                    this.$i18n.t('home.tabs.latest'),
+                    this.$i18n.t('home.tabs.trending'),
+                ]
             }
         }
     }

@@ -1,0 +1,23 @@
+{
+  "lang": {
+    "btn": "Language",
+    "sheetHeader": "Select Language"
+  },
+
+  "api": {
+    "thenError": "Failed to retrieve teams from server: ",
+    "catchError": "Failed to connect to server! "
+  },
+
+  "forum": {
+    "title": "ScopeLens Forum",
+    "subtitle": "A real-time discuss fourm powered by Disquz"
+  },
+
+  "home": {
+    "tabs": {
+      "latest": "Latest",
+      "trending": "Trending"
+    }
+  }
+}

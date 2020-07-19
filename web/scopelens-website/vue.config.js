@@ -2,6 +2,7 @@ module.exports = {
   "transpileDependencies": [
     "vuetify"
   ],
+
   "chainWebpack": config => {
     config.when(process.env.NODE_ENV === 'production', config => {
       config
@@ -26,5 +27,15 @@ module.exports = {
       });
     });
   },
+
   "publicPath": './',
+
+  pluginOptions: {
+    i18n: {
+      locale: 'zh',
+      fallbackLocale: 'en',
+      localeDir: 'locales',
+      enableInSFC: false
+    }
+  }
 }

@@ -1,7 +1,11 @@
 <template>
     <nav>
-        <v-app-bar v-if="appbar.tabs" app fixed flat color="bg_primary">
-            <v-app-bar-nav-icon @click="drawer.display = !drawer.display" class="d-lg-none"></v-app-bar-nav-icon>
+        <v-app-bar app fixed flat color="bg_primary">
+            <v-row justify="space-between">
+                <v-app-bar-nav-icon @click="drawer.display = !drawer.display" class="d-lg-none"></v-app-bar-nav-icon>
+                <v-spacer></v-spacer>
+                <LanguageSelector></LanguageSelector>
+            </v-row>
         </v-app-bar>
 
         <v-navigation-drawer v-model="drawer.display" color="bg_secondary" app fixed left flat>
@@ -78,14 +82,12 @@
 </template>
 
 <script>
+    import LanguageSelector from "./selectors/LanguageSelector";
     export default {
+        components:{
+            LanguageSelector
+        },
         data: () => ({
-            appbar: {
-                tabs: [
-                    'Posts',
-                    'Trending'
-                ]
-            },
             drawer: {
                 display: null,
                 list: [
@@ -130,12 +132,6 @@
                         link: 'https://github.com/txfs19260817/ScopeLens',
                         target: true
                     },
-                    // {
-                    //     icon: 'mdi-twitter',
-                    //     text: 'Twitter',
-                    //     link: 'https://twitter.com/stackFlam1ngo',
-                    //     target: true
-                    // }
                 ]
             },
             user: {

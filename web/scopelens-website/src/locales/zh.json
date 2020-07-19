@@ -1,0 +1,23 @@
+{
+  "lang": {
+    "btn": "选择语言",
+    "sheetHeader": "选择语言"
+  },
+
+  "api": {
+    "thenError": "从服务器获取队伍失败: ",
+    "catchError": "连接服务器失败! "
+  },
+
+  "forum": {
+    "title": "ScopeLens 讨论版",
+    "subtitle": "Disquz提供的实时聊天工具"
+  },
+
+  "home": {
+    "tabs": {
+      "latest": "最新上传",
+      "trending": "人气队伍"
+    }
+  }
+}

@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
 import http from "./api";
+import i18n from './plugins/i18n'
 
 
 // use this.$http alias
@@ -15,5 +16,6 @@ new Vue({
     router,
     vuetify,
     store,
+    i18n,
     render: h => h(App)
 }).$mount('#app');

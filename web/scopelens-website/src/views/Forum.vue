@@ -1,7 +1,7 @@
 <template>
     <div class='forum'>
-        <h1>Scope Lens Forum</h1>
-        <v-subheader>A real-time discuss fourm powered by Disquz</v-subheader>
+        <h1>{{ $t('forum.title') }}</h1>
+        <v-subheader>{{ $t('forum.subtitle') }}</v-subheader>
         <Disqus shortname='forum' />
     </div>
 </template>
