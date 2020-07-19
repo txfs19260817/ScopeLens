@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -58,7 +59,7 @@ func IsNotExistMkDir(src string) error {
 }
 
 func Rename(name string) string {
-	ext := path.Ext(name)
+	ext := filepath.Ext(name)
 	fileName := strings.TrimSuffix(name, ext)
 	fileName = time.Now().Format("20060102150405000") + "T" + EncodeMD5(fileName)
 

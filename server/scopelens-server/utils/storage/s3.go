@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"io"
+	"path/filepath"
 )
 
 // AmazonS3 is an Amazon S3 file storage.
@@ -35,12 +36,21 @@ func NewAmazonS3(accessKey, secretKey, region, bucket string) (*AmazonS3, error)
 
 // Save saves data from r to file with the given path.
 func (s *AmazonS3) Save(path string, r io.Reader) (string, error) {
+	contentType := aws.String("binary/octet-stream")
+	ext := filepath.Ext(path)
+	if ext == ".jpg" || ext == ".jpg" {
+		contentType = aws.String("image/jpeg")
+	} else if ext == ".png" {
+		contentType = aws.String("image/png")
+	}
+
 	res, err := s3manager.NewUploaderWithClient(s.svc).Upload(
 		&s3manager.UploadInput{
-			Bucket: aws.String(s.bucket),
-			Key:    aws.String(path),
-			ACL:    aws.String(s3.ObjectCannedACLPublicRead),
-			Body:   r,
+			Bucket:      aws.String(s.bucket),
+			Key:         aws.String(path),
+			ACL:         aws.String(s3.ObjectCannedACLPublicRead),
+			Body:        r,
+			ContentType: contentType,
 		},
 	)
 	if err != nil {

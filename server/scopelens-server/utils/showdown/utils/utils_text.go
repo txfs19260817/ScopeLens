@@ -33,10 +33,10 @@ var (
 	}
 	// 4. Title
 	PointsTitleX = 650
-	PointsTitleY = 610
+	PointsTitleY = 611
 	// 5. Author
 	PointsAuthorX = 410
-	PointsAuthorY = 610
+	PointsAuthorY = 611
 )
 
 // Append each pokemon name, ability and item text on the left part of each slot.

@@ -20,7 +20,7 @@ module.exports = {
         vue: 'Vue',
         vuetify:"Vuetify",
         "vue-i18n":"VueI18n",
-        //"vue-router": "VueRouter",
+        "vue-router": "VueRouter",
         vuex: "Vuex",
         "vue-disqus":"VueDisqus",
         axios: 'axios',
