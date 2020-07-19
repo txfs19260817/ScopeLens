@@ -64,4 +64,11 @@
         }
     }
 
+    .v-card {
+        transition: opacity .3s ease-in-out;
+    }
+
+    .v-card:not(.on-hover) {
+        opacity: 0.86;
+    }
 </style>

@@ -4,14 +4,14 @@
             <v-col>
                 <v-card class="elevation-2 card">
                     <v-card-text>
-                        <h1 class="text-start display-1 mb-10 fg-text"> Upload your team </h1>
+                        <h1 class="text-start display-1 mb-10 fg-text"> {{$t('upload.title')}} </h1>
                         <ValidationObserver ref="observer" v-slot="{ validate }">
                             <v-form class="upload-form-form" @submit.prevent="submit">
                                 <ValidationProvider v-slot="{ errors }" name="Title" rules="required|max:50">
                                     <v-text-field
                                             id="title"
                                             v-model="form.title"
-                                            label="*Title"
+                                            :label="$t('upload.form.title')"
                                             name="Title"
                                             append-icon="mdi-pencil"
                                             type="text"
@@ -26,8 +26,8 @@
                                 <v-switch
                                         v-model="notAuthor"
                                         class="shrink mr-2 mt-0"
-                                        label="I am not the team author. "
-                                        :hint="hint.authorSwitch"
+                                        :label="$t('upload.form.authorSwitch')"
+                                        :hint="$t('upload.hint.authorSwitch')"
                                         persistent-hint
                                 ></v-switch>
                                 <ValidationProvider v-slot="{ errors }" name="Author" :rules="`${notAuthor ? 'required|max:20' : ''}`">
@@ -35,9 +35,9 @@
                                             v-if="notAuthor"
                                             id="author"
                                             v-model="form.author"
-                                            label="*Author"
+                                            :label="$t('upload.form.author')"
                                             persistent-hint
-                                            :hint="hint.author"
+                                            :hint="$t('upload.hint.author')"
                                             name="Author"
                                             append-icon="person"
                                             type="text"
@@ -48,13 +48,13 @@
                                             :error-messages="errors"
                                     />
                                 </ValidationProvider>
-                                <FormatSelector :value.sync="form.format" :hint="hint.format" :required="true">
+                                <FormatSelector :value.sync="form.format" :hint="$t('upload.hint.format')" :required="true">
                                 </FormatSelector>
                                 <v-switch
                                         v-model="haveShowdown"
                                         class="shrink mr-2 mt-0"
-                                        label="I have the Showdown paste. "
-                                        :hint="hint.showdownSwitch"
+                                        :label="$t('upload.form.showdownSwitch')"
+                                        :hint="$t('upload.hint.showdownSwitch')"
                                         persistent-hint
                                 ></v-switch>
                                 <ValidationProvider v-if="haveShowdown" v-slot="{ errors }" name="Showdown" :rules="`${haveShowdown ? 'required|max:1600' : ''}`">
@@ -63,13 +63,13 @@
                                             v-model="form.showdown"
                                             label="*Showdown"
                                             outlined
-                                            :hint="hint.showdown"
+                                            :hint="$t('upload.hint.showdown')"
                                             :clearable="true"
                                             :counter="1600"
                                             :error-messages="errors"
                                     ></v-textarea>
                                 </ValidationProvider>
-                                <PokemonSelector v-else :value.sync="form.pokemon" :hint="hint.pokemon" :required="!haveShowdown">
+                                <PokemonSelector v-else :value.sync="form.pokemon" :hint="$t('upload.hint.pokemon')" :required="!haveShowdown">
                                 </PokemonSelector>
                                 <v-file-input
                                         ref="image"
@@ -77,10 +77,10 @@
                                         show-size
                                         outlined
                                         persistent-hint
-                                        :hint="hint.image"
+                                        :hint="$t('upload.hint.image')"
                                         :rules="fileRules"
                                         accept="image/png, image/jpeg, image/jpg"
-                                        placeholder="Pick a rental team preview photo. Only accept .png/.jpg/.jpeg format."
+                                        :placeholder="$t('upload.form.image')"
                                         prepend-icon=""
                                         append-icon="mdi-camera"
                                         label="Image"
@@ -89,7 +89,7 @@
                                     <v-textarea
                                             id="description"
                                             v-model="form.description"
-                                            label="Description"
+                                            :label="$t('upload.form.description')"
                                             outlined
                                             :auto-grow="true"
                                             :clearable="true"
@@ -99,7 +99,7 @@
                                 <div class="text-center mt-6">
                                     <v-btn type="submit" color="primary" large dark :loading="loading">
                                         <v-icon left dark>mdi-upload</v-icon>
-                                        Submit
+                                        {{ $t('upload.submit') }}
                                     </v-btn>
                                 </div>
                             </v-form>
@@ -174,16 +174,6 @@
                     uploader: '',
                     state: 1
                 },
-                // hints
-                hint: {
-                    author: 'Please fill the name of team author here. ',
-                    authorSwitch: 'Please turn on the switch if you are not the team author. ',
-                    format: 'You can type words here to search for desired format. ',
-                    showdownSwitch:'Please select all team members if no Showdown paste provided. ',
-                    showdown: 'Please paste the Showdown team here. ',
-                    pokemon: 'Please select up to 6 Pokemon. You can type words here to filter Pokemon.',
-                    image: 'Optional. **Note that we only accept image with available rental ID.**',
-                },
             }
         },
         computed: {
@@ -225,12 +215,12 @@
                     const res = await insertTeam(this.form, this.$store.state.user.token);
                     if (res.data.code === ERROR || res.status === 401) {
                         this.$store.dispatch('snackbar/openSnackbar', {
-                            "msg": "Upload team error: " + res.data.msg,
+                            "msg": this.$t('upload.msg.failed') + res.data.msg,
                             "color": "error"
                         });
                     } else {
                         this.$store.dispatch('snackbar/openSnackbar', {
-                            "msg": "Upload team success!",
+                            "msg": this.$t('upload.msg.success'),
                             "color": "success"
                         });
                         await this.$router.push("/")

@@ -27,10 +27,6 @@
             total: 1, // total data size
             pageSize: 12, // data size per page
             curPage: 1,
-            tabs: [
-                'Liked',
-                'Uploaded'
-            ],
             curTab: 0,
         }),
         methods: {
@@ -42,18 +38,20 @@
                         this.total = res.data.data.total
                         this.teams = res.data.data.teams
                     } else {
-                        // In this case, if user never liked any team, no error msg will be shown.
-                        if (res.data.msg.toString().includes("$in")) {
+                        // In this case, if the user never liked any team, no error msg will be shown.
+                        if (!res.data.msg.toString().includes("$in")) {
                             this.$store.dispatch('snackbar/openSnackbar', {
-                                "msg": "Failed to retrieve teams from server! " + res.data.msg,
+                                "msg": this.$t('api.thenError') + res.data.msg,
                                 "color": "error"
                             });
+                        } else {
+                            this.teams = []
                         }
                     }
                 }).catch(error => {
                     logErrors(error)
                     this.$store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Failed to connect to server! ",
+                        "msg": this.$t('api.catchError'),
                         "color": "error"
                     });
                 }).finally(() => {
@@ -69,14 +67,14 @@
                         this.teams = res.data.data.teams
                     } else {
                         this.$store.dispatch('snackbar/openSnackbar', {
-                            "msg": "Failed to retrieve teams from server! " + res.data.msg,
+                            "msg": this.$t('api.thenError') + res.data.msg,
                             "color": "error"
                         });
                     }
                 }).catch(error => {
                     logErrors(error)
                     this.$store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Failed to connect to server! ",
+                        "msg": this.$t('api.catchError'),
                         "color": "error"
                     });
                 }).finally(() => {
@@ -107,17 +105,17 @@
         computed: {
             pageLen() {
                 return Math.ceil(this.total / this.pageSize)
+            },
+            tabs() {
+                return [
+                    this.$i18n.t('my.tabs.liked'),
+                    this.$i18n.t('my.tabs.uploaded'),
+                ]
             }
         }
     }
 </script>
 
 <style scoped>
-    .v-card {
-        transition: opacity .3s ease-in-out;
-    }
 
-    .v-card:not(.on-hover) {
-        opacity: 0.88;
-    }
 </style>

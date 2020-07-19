@@ -11,13 +11,11 @@
                                 <v-col cols="12" md="8" class="pt-6 pb-6">
                                     <v-card-text>
                                         <v-form class="signup-form-form" @submit.prevent="loginRequest">
-                                            <h1 class="text-center display-1 mb-10 fg-text">
-                                                Sign in
-                                            </h1>
+                                            <h1 class="text-center display-1 mb-10 fg-text">{{ $t('login.signin') }}</h1>
                                             <v-text-field
                                                     id="username"
                                                     v-model="login.username"
-                                                    label="Username"
+                                                    :label="$t('login.username')"
                                                     name="Username"
                                                     append-icon="person"
                                                     type="text"
@@ -27,7 +25,7 @@
                                             <v-text-field
                                                     id="password"
                                                     v-model="login.password"
-                                                    label="Password"
+                                                    :label="$t('login.password')"
                                                     name="Password"
                                                     append-icon="lock"
                                                     type="password"
@@ -35,11 +33,11 @@
                                                     required
                                             />
                                             <div class="text-center grey--text">
-                                                Please contact administrator if you forgot password.
+                                                {{ $t('login.forget') }}
                                             </div>
                                             <div class="text-center mt-6">
                                                 <v-btn type="submit" large dark :color="bgColor" :loading="loading">
-                                                    Sign In
+                                                    {{ $t('login.signin') }}
                                                 </v-btn>
                                             </div>
                                         </v-form>
@@ -48,11 +46,11 @@
                                 <v-col cols="12" md="4" class="darken-2 vcenter fg">
                                     <div>
                                         <v-card-text class="bg-text">
-                                            <h1 class="text-center headline mb-3">No User?</h1>
-                                            <h5 class="text-center overline mb-3">Please Sign Up to continue</h5>
+                                            <h1 class="text-center headline mb-3">{{ $t('login.noUser') }}</h1>
+                                            <h5 class="text-center overline mb-3">{{ $t('login.goSignup') }}</h5>
                                         </v-card-text>
                                         <div class="text-center mb-6">
-                                            <v-btn dark outlined @click="step = 2">Sign Up</v-btn>
+                                            <v-btn dark outlined @click="step = 2">{{ $t('login.signup') }}</v-btn>
                                         </div>
                                     </div>
                                 </v-col>
@@ -65,17 +63,17 @@
                                 <v-col cols="12" md="4" class="darken-2 vcenter fg">
                                     <div>
                                         <v-card-text class="bg-text">
-                                            <h1 class="text-center headline mb-3">Already a user?</h1>
-                                            <h5 class="text-center overline mb-3">Please Sign In</h5>
+                                            <h1 class="text-center headline mb-3">{{ $t('login.already') }}</h1>
+                                            <h5 class="text-center overline mb-3">{{ $t('login.goSignin') }}</h5>
                                         </v-card-text>
                                         <div class="text-center mb-6">
-                                            <v-btn dark outlined @click="step = 1">Sign In</v-btn>
+                                            <v-btn dark outlined @click="step = 1">{{ $t('login.signin') }}</v-btn>
                                         </div>
                                     </div>
                                 </v-col>
                                 <v-col cols="12" md="8" class=" pt-6 pb-6">
                                     <v-card-text>
-                                        <h1 class="text-center display-1 mb-10 fg-text">Sign Up</h1>
+                                        <h1 class="text-center display-1 mb-10 fg-text">{{ $t('login.signup') }}</h1>
                                         <ValidationObserver ref="observer" v-slot="{ validate }">
                                             <v-form class="signup-form-form" @submit.prevent="registerRequest">
                                                 <ValidationProvider v-slot="{ errors }" name="username"
@@ -83,7 +81,7 @@
                                                     <v-text-field
                                                             id="username"
                                                             v-model="register.username"
-                                                            label="Username"
+                                                            :label="$t('login.username')"
                                                             name="username"
                                                             append-icon="person"
                                                             type="text"
@@ -97,7 +95,7 @@
                                                     <v-text-field
                                                             id="email"
                                                             v-model="register.email"
-                                                            label="E-mail"
+                                                            :label="$t('login.email')"
                                                             name="email"
                                                             append-icon="email"
                                                             type="email"
@@ -110,7 +108,7 @@
                                                     <v-text-field
                                                             id="password"
                                                             v-model="register.password"
-                                                            label="Password"
+                                                            :label="$t('login.password')"
                                                             name="password"
                                                             append-icon="lock"
                                                             type="password"
@@ -121,7 +119,7 @@
                                                 </ValidationProvider>
                                                 <div class="text-center mt-6">
                                                     <v-btn type="submit" large dark :color="bgColor" :loading="loading">
-                                                        Sign Up
+                                                        {{ $t('login.signup') }}
                                                     </v-btn>
                                                 </div>
                                             </v-form>

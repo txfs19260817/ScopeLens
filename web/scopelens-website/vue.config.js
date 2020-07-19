@@ -19,6 +19,7 @@ module.exports = {
       config.set('externals', {
         vue: 'Vue',
         vuetify:"Vuetify",
+        "vue-i18n":"VueI18n",
         //"vue-router": "VueRouter",
         vuex: "Vuex",
         "vue-disqus":"VueDisqus",

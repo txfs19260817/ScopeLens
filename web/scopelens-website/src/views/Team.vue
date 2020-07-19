@@ -21,7 +21,6 @@
                 </div>
                 <div class="col-md-7 col-sm-7 col-xs-12 pl-6">
                     <p class="display-1 mb-0">{{ "[" + team.format + "] " }}{{team.title}}</p>
-
                     <v-card-actions class="pa-0">
                         <p class="headline font-weight-light pt-3">Author by: {{team.author}}
                             <span class="subtitle-2 font-weight-light">Uploaded by: {{team.uploader}}</span>
@@ -38,7 +37,6 @@
                             </v-breadcrumbs-item>
                         </template>
                     </v-breadcrumbs>
-
                 </div>
             </div>
             <div class="row">

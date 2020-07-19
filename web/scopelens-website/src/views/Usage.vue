@@ -5,13 +5,13 @@
                 <v-col>
                     <v-card class="elevation-2 card">
                         <v-card-text>
-                            <h1 class="text-start display-1 mb-10 fg-text"> Pokemon Usage </h1>
+                            <h1 class="text-start display-1 mb-10 fg-text"> {{$t('usage.title')}} </h1>
                             <v-form class="searchbar-form" @submit.prevent="getUsage">
-                                <FormatSelector :value.sync="format"></FormatSelector>
+                                <FormatSelector :value.sync="format" :hint="$t('upload.hint.format')"></FormatSelector>
                                 <div class="text-center mt-6">
                                     <v-btn color="primary" type="submit" large dark :loading="loading">
                                         <v-icon left dark>search</v-icon>
-                                        Search
+                                        {{$t('usage.btn')}}
                                     </v-btn>
                                 </div>
                             </v-form>
@@ -67,21 +67,21 @@
                             // no usage retrieved
                             this.usage = [];
                             this.$store.dispatch('snackbar/openSnackbar', {
-                                "msg": "No usage retrieved because no Pokemon used more than once among all teams under this format. ",
-                                "color": "warning"
+                                "msg": this.$t('usage.noUsage'),
+                                "color": "error"
                             });
                         }
                         console.log(this.usage)
                     } else {
                         this.$store.dispatch('snackbar/openSnackbar', {
-                            "msg": "Failed to retrieve usages from server! " + res.data.msg,
+                            "msg": this.$t('api.thenError') + res.data.msg,
                             "color": "error"
                         });
                     }
                 }).catch(error => {
                     logErrors(error)
                     this.$store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Failed to connect to server! ",
+                        "msg": this.$t('api.catchError'),
                         "color": "error"
                     });
                 }).finally(() => {
@@ -156,11 +156,11 @@
 
     @media screen and (max-width: 800px) {
         #pie {
-            width: 600px;
-            height: 600px;
+            width: 400px;
+            height: 400px;
         }
     }
-    @media screen and (max-width: 400px) {
+    @media screen and (max-width: 420px) {
         #pie {
             width: 280px;
             height: 280px;

@@ -5,7 +5,7 @@
                 :items="pokemon"
                 outlined
                 chips
-                :label="required? `*Pokemon`:`Pokemon`"
+                :label="required? `*`+$t('pokemonSelector.pokemon'):$t('pokemonSelector.pokemon')"
                 persistent-hint
                 :hint="hint"
                 item-text="name"

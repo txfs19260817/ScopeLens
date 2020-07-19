@@ -1,12 +1,56 @@
 {
   "lang": {
-    "btn": "选择语言",
+    "btn": "Language/语言",
     "sheetHeader": "选择语言"
   },
 
+  "nav": {
+    "login": "登录/注册",
+    "user": {
+      "myteams": "我的队伍",
+      "logout": "登出"
+    },
+    "menu": {
+      "menu": "菜单",
+      "teams": "所有队伍",
+      "upload": "上传队伍",
+      "search": "检索队伍",
+      "usage": "使用率"
+    },
+    "extra": {
+      "extra": "额外功能",
+      "forum": "讨论版",
+      "about": "关于本站"
+    },
+    "external": {
+      "external": "外部链接"
+    }
+  },
+
+  "login": {
+    "signin": "登录",
+    "signup": "注册",
+    "username": "用户名",
+    "password": "密码",
+    "email": "邮箱",
+    "forget": "如果您忘记密码请联系站长",
+    "noUser": "没有帐号？",
+    "goSignup": "请点击注册以继续",
+    "already": "已有帐号？",
+    "goSignin": "请点击登录"
+  },
+
   "api": {
-    "thenError": "从服务器获取队伍失败: ",
+    "thenError": "从服务器获取队伍失败：",
     "catchError": "连接服务器失败! "
+  },
+
+  "formatSelector": {
+    "format": "对战模式"
+  },
+
+  "pokemonSelector": {
+    "pokemon": "宝可梦"
   },
 
   "forum": {
@@ -19,5 +63,59 @@
       "latest": "最新上传",
       "trending": "人气队伍"
     }
+  },
+
+  "my": {
+    "tabs": {
+      "liked": "已喜欢",
+      "uploaded": "已上传"
+    }
+  },
+
+  "upload": {
+    "title": "上传队伍",
+    "form": {
+      "title": "标题",
+      "author": "作者",
+      "authorSwitch": "我不是队伍作者",
+      "showdownSwitch": "我有队伍的Showdown文本",
+      "image": "请选择队伍预览图. 格式仅限.png/.jpg/.jpeg（可选）",
+      "description": "描述（可选）"
+    },
+    "hint": {
+      "author": "请填写队伍原作者名",
+      "authorSwitch": "如果您不是队伍原作者请保持开关打开",
+      "format": "可在此键入以查找需要的对战模式",
+      "showdownSwitch":"如果此队伍没有Showdown版本，请关闭开关并选择所有队伍成员",
+      "showdown": "请在此粘贴Showdown队伍文本",
+      "pokemon": "请选择至多6只宝可梦，可在此键入以查找宝可梦",
+      "image": "可选。**注意：上传的队伍预览图片必须包含租借ID。**"
+    },
+    "submit": "提交",
+    "msg": {
+      "success": "上传队伍成功！",
+      "failed": "上传队伍失败："
+    }
+  },
+
+  "search": {
+    "title": "队伍检索",
+    "btn": "搜索"
+  },
+
+  "usage": {
+    "title": "宝可梦使用率",
+    "btn": "搜索",
+    "noUsage": "无法获取使用率，因为该模式下没有任何使用频次超过1只的宝可梦"
+  },
+
+  "team": {
+    "author": "作者：",
+    "uploader": "上传者：",
+    "format": "对战模式",
+    "pokemon": "宝可梦",
+    "likes": "喜欢数：",
+    "description": "描述",
+    "noShowdown": "没有提供Showdown队伍文本。 "
   }
 }

@@ -2,13 +2,13 @@
     <nav>
         <v-app-bar app fixed flat color="bg_primary">
             <v-row justify="space-between">
-                <v-app-bar-nav-icon @click="drawer.display = !drawer.display" class="d-lg-none"></v-app-bar-nav-icon>
+                <v-app-bar-nav-icon @click="display = !display" class="d-lg-none"></v-app-bar-nav-icon>
                 <v-spacer></v-spacer>
                 <LanguageSelector></LanguageSelector>
             </v-row>
         </v-app-bar>
 
-        <v-navigation-drawer v-model="drawer.display" color="bg_secondary" app fixed left flat>
+        <v-navigation-drawer v-model="display" color="bg_secondary" app fixed left flat>
             <v-sheet color="bg_secondary">
                 <v-list>
                     <v-list-item two-line>
@@ -37,7 +37,7 @@
 
                     <v-list-item v-else link to="/login">
                         <v-list-item-content>
-                            <v-list-item-title class="title">{{ 'Login/Register' }}</v-list-item-title>
+                            <v-list-item-title class="title">{{ $t("nav.login") }}</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
                             <v-icon>mdi-arrow-right</v-icon>
@@ -83,71 +83,13 @@
 
 <script>
     import LanguageSelector from "./selectors/LanguageSelector";
+
     export default {
-        components:{
+        components: {
             LanguageSelector
         },
-        data: () => ({
-            drawer: {
-                display: null,
-                list: [
-                    {heading: 'Menu'},
-                    {
-                        icon: 'home',
-                        text: 'Teams',
-                        link: '/'
-                    },
-                    {
-                        icon: 'mdi-cloud-upload',
-                        text: 'Upload',
-                        link: '/upload'
-                    },
-                    {
-                        icon: 'mdi-card-search',
-                        text: 'Search',
-                        link: '/search'
-                    },
-                    {
-                        icon: 'mdi-chart-pie',
-                        text: 'Usage',
-                        link: '/usage'
-                    },
-                    {divider: true},
-                    {heading: 'Extra'},
-                    {
-                        icon: 'forum',
-                        text: 'Forum',
-                        link: '/Forum'
-                    },
-                    {
-                        icon: 'mdi-information',
-                        text: 'About',
-                        link: '/About'
-                    },
-                    {divider: true},
-                    {heading: 'Navigation'},
-                    {
-                        icon: 'mdi-github',
-                        text: 'GitHub',
-                        link: 'https://github.com/txfs19260817/ScopeLens',
-                        target: true
-                    },
-                ]
-            },
-            user: {
-                list: [
-                    {
-                        icon: 'mdi-text-box',
-                        text: 'My Teams',
-                        link: '/myteams',
-                    },
-                    {
-                        icon: 'logout',
-                        text: 'Logout',
-                        link: '/logout',
-                    },
-                ],
-            },
+        data:()=>({
+            display: null,
         }),
         computed: {
             isLogin() {
@@ -155,6 +97,70 @@
             },
             username() {
                 return this.$store.state.user.username
+            },
+            // menu
+            drawer() {
+                return {
+                    list: [
+                        {heading: this.$i18n.t('nav.menu.menu')},
+                        {
+                            icon: 'home',
+                            text: this.$i18n.t('nav.menu.teams'),
+                            link: '/'
+                        },
+                        {
+                            icon: 'mdi-cloud-upload',
+                            text: this.$i18n.t('nav.menu.upload'),
+                            link: '/upload'
+                        },
+                        {
+                            icon: 'mdi-card-search',
+                            text: this.$i18n.t('nav.menu.search'),
+                            link: '/search'
+                        },
+                        {
+                            icon: 'mdi-chart-pie',
+                            text: this.$i18n.t('nav.menu.usage'),
+                            link: '/usage'
+                        },
+                        {divider: true},
+                        {heading: this.$i18n.t('nav.extra.extra')},
+                        {
+                            icon: 'forum',
+                            text: this.$i18n.t('nav.extra.forum'),
+                            link: '/forum'
+                        },
+                        {
+                            icon: 'mdi-information',
+                            text: this.$i18n.t('nav.extra.about'),
+                            link: '/about'
+                        },
+                        {divider: true},
+                        {heading: this.$i18n.t('nav.external.external')},
+                        {
+                            icon: 'mdi-github',
+                            text: 'GitHub',
+                            link: 'https://github.com/txfs19260817/ScopeLens',
+                            target: true
+                        },
+                    ]
+                }
+            },
+            user() {
+                return {
+                    list: [
+                        {
+                            icon: 'mdi-text-box',
+                            text: this.$i18n.t('nav.user.myteams'),
+                            link: '/myteams',
+                        },
+                        {
+                            icon: 'logout',
+                            text: this.$i18n.t('nav.user.logout'),
+                            link: '/logout',
+                        },
+                    ],
+                }
             }
         }
     }

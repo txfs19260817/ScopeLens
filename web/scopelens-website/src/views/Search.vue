@@ -5,14 +5,14 @@
                 <v-col>
                     <v-card class="elevation-2 card">
                         <v-card-text>
-                            <h1 class="text-start display-1 mb-10 fg-text"> Search </h1>
+                            <h1 class="text-start display-1 mb-10 fg-text"> {{$t('search.title')}} </h1>
                             <v-form class="searchbar-form" @submit.prevent="goSearch">
-                                <FormatSelector :value.sync="criteria.format"></FormatSelector>
-                                <PokemonSelector :value.sync="criteria.pokemon"></PokemonSelector>
+                                <FormatSelector :value.sync="criteria.format" :hint="$t('upload.hint.format')"></FormatSelector>
+                                <PokemonSelector :value.sync="criteria.pokemon" :hint="$t('upload.hint.pokemon')"></PokemonSelector>
                                 <div class="text-center mt-6">
                                     <v-btn color="primary" type="submit" large dark :loading="loading">
                                         <v-icon left dark>search</v-icon>
-                                        Search
+                                        {{$t('search.btn')}}
                                     </v-btn>
                                 </div>
                             </v-form>
@@ -75,7 +75,7 @@
                 const res = await getTeamsBySearchCriteria(page, this.criteria)
                 if (res.data.code === ERROR) {
                     this.$store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Search for teams error: " + res.data.msg,
+                        "msg": this.$t('api.thenError') + res.data.msg,
                         "color": "error"
                     });
                 } else {

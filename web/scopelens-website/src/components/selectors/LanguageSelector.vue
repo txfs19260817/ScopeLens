@@ -1,7 +1,10 @@
 <template>
     <v-bottom-sheet v-model="sheet">
         <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark v-bind="attrs" v-on="on"> {{$t('lang.btn')}} </v-btn>
+            <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                <v-icon left dark>mdi-translate</v-icon>
+                {{$t('lang.btn')}}
+            </v-btn>
         </template>
         <v-list>
             <v-subheader> {{$t('lang.sheetHeader')}} </v-subheader>
