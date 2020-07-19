@@ -5,15 +5,36 @@
                 <div class="col-md-5 col-sm-5 col-xs-12">
                     <v-img class="align-end" :src="team.image"></v-img>
                     <v-row justify="space-around">
-                        <v-subheader>Likes: {{team.likes}}</v-subheader>
+                        <v-subheader>{{ $t("team.likes") }} {{ team.likes }}</v-subheader>
                     </v-row>
                     <v-row justify="space-around">
                         <v-btn class="mx-2" fab dark small color="blue" disabled>
                             <v-icon dark>mdi-twitter</v-icon>
                         </v-btn>
-                        <v-btn class="mx-2" fab dark small color="pink" @click="like" :loading="loading">
-                            <v-icon dark>mdi-heart</v-icon>
-                        </v-btn>
+
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn class="mx-2" fab dark small color="pink" @click="like" :loading="loading"
+                                       v-bind="attrs" v-on="on">
+                                    <v-icon dark>mdi-heart</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>{{ $t("team.addLike.tooltip") }}</span>
+                        </v-tooltip>
+
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn class="mx-2" fab dark small color="blue" v-bind="attrs" v-on="on"
+                                       v-if="team.showdown.length>0"
+                                       v-clipboard:copy="team.showdown"
+                                       v-clipboard:success="onCopy"
+                                       v-clipboard:error="onError">
+                                    <v-icon dark>mdi-content-copy</v-icon>
+                                </v-btn>
+                            </template>
+                            <span>{{ $t("team.copy.tooltip") }}</span>
+                        </v-tooltip>
+
                         <v-btn class="mx-2" fab dark small color="red" disabled>
                             <v-icon dark>mdi-sina-weibo</v-icon>
                         </v-btn>
@@ -22,13 +43,13 @@
                 <div class="col-md-7 col-sm-7 col-xs-12 pl-6">
                     <p class="display-1 mb-0">{{ "[" + team.format + "] " }}{{team.title}}</p>
                     <v-card-actions class="pa-0">
-                        <p class="headline font-weight-light pt-3">Author by: {{team.author}}
-                            <span class="subtitle-2 font-weight-light">Uploaded by: {{team.uploader}}</span>
+                        <p class="headline font-weight-light pt-3">{{ $t("team.author") }} {{team.author}}
+                            <span class="subtitle-2 font-weight-light">{{ $t("team.uploader") }} {{team.uploader}}</span>
                         </p>
                     </v-card-actions>
-                    <p class="title">Format</p>
+                    <p class="title">{{ $t("team.format") }}</p>
                     <v-chip class="ma-2" color="primary"> {{ team.format }}</v-chip>
-                    <p class="title">Pokemon</p>
+                    <p class="title">{{ $t("team.pokemon") }}</p>
                     <v-breadcrumbs :items="team.pokemon">
                         <template v-slot:item="{ item }">
                             <v-breadcrumbs-item>
@@ -44,10 +65,12 @@
                     <v-tabs>
                         <v-tab>Showdown</v-tab>
                         <v-tab-item>
-                            <pre v-if="team.showdown.length>0" class="pt-10 body-2 textarea"> {{ team.showdown }} </pre>
-                            <p v-else class="pt-10 body-1 textarea"> No Showdown team provided. </p>
+                            <pre v-if="team.showdown.length>0">
+                                <p class="body-2 textarea"> {{ team.showdown }} </p>
+                            </pre>
+                            <p v-else class="pt-10 body-1 textarea"> {{ $t("team.noShowdown") }} </p>
                         </v-tab-item>
-                        <v-tab>Description</v-tab>
+                        <v-tab>{{ $t("team.description") }}</v-tab>
                         <v-tab-item>
                             <pre class="pt-10 body-1 textarea"> {{ team.description }} </pre>
                         </v-tab-item>
@@ -81,17 +104,16 @@
                 getTeamByID(id).then(res => {
                     if (res.data.code === SUCCESS) {
                         this.team = res.data.data
-                        console.log(this.team.showdown)
                     } else {
                         this.$store.dispatch('snackbar/openSnackbar', {
-                            "msg": "Failed to retrieve the team from server! " + res.data.msg,
+                            "msg": this.$t('api.thenError') + res.data.msg,
                             "color": "error"
                         });
                     }
                 }).catch(error => {
                     logErrors(error)
                     this.$store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Failed to connect to server! ",
+                        "msg": this.$t('api.catchError'),
                         "color": "error"
                     });
                 }).finally(() => {
@@ -104,16 +126,28 @@
                 const res = await insertLikeByUsername(this.$store.state.user.username, this.$route.params.id, this.$store.state.user.token)
                 if (res.data.code === ERROR || res.status === 401) {
                     this.$store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Like this team error: " + res.data.msg,
+                        "msg": this.$t("team.addLike.failed") + res.data.msg,
                         "color": "error"
                     });
                 } else {
                     this.$store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Added to your liked teams! ",
+                        "msg": this.$t("team.addLike.success"),
                         "color": "success"
                     });
                 }
                 this.$store.commit('LOADING_OFF')
+            },
+            onCopy(e) {
+                this.$store.dispatch('snackbar/openSnackbar', {
+                    "msg": this.$t("team.copy.success"),
+                    "color": "success"
+                });
+            },
+            onError(e) {
+                this.$store.dispatch('snackbar/openSnackbar', {
+                    "msg": this.$t("team.copy.failed"),
+                    "color": "error"
+                });
             },
             ProcessStr: ProcessStr,
         },

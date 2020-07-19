@@ -1,6 +1,6 @@
 <template>
     <nav>
-        <v-app-bar app fixed flat color="bg_primary">
+        <v-app-bar app fixed flat color="blue-grey lighten-4">
             <v-row justify="space-between">
                 <v-app-bar-nav-icon @click="display = !display" class="d-lg-none"></v-app-bar-nav-icon>
                 <v-spacer></v-spacer>
@@ -8,8 +8,8 @@
             </v-row>
         </v-app-bar>
 
-        <v-navigation-drawer v-model="display" color="bg_secondary" app fixed left flat>
-            <v-sheet color="bg_secondary">
+        <v-navigation-drawer v-model="display" color="blue-grey lighten-5" app fixed left flat>
+            <v-sheet color="blue-grey lighten-5">
                 <v-list>
                     <v-list-item two-line>
                         <v-list-item-avatar>

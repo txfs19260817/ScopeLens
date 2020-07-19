@@ -116,6 +116,16 @@
     "pokemon": "Pokémon",
     "likes": "Likes: ",
     "description": "Description",
-    "noShowdown": "No Showdown team provided. "
+    "noShowdown": "No Showdown team provided :( ",
+    "addLike": {
+      "tooltip": "Add this team to your likes",
+      "success": "Added to your liked teams! ",
+      "failed": "Like this team error: "
+    },
+    "copy": {
+      "tooltip": "Copy Showdown text to clipboard",
+      "success": "Copied! ",
+      "failed": "Failed to copy Showdown text! "
+    }
   }
 }

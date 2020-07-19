@@ -116,6 +116,16 @@
     "pokemon": "宝可梦",
     "likes": "喜欢数：",
     "description": "描述",
-    "noShowdown": "没有提供Showdown队伍文本。 "
+    "noShowdown": "没有提供Showdown队伍文本:( ",
+    "addLike": {
+      "tooltip": "将该队伍添加到已喜欢",
+      "success": "添加成功！",
+      "failed": "添加出错："
+    },
+    "copy": {
+      "tooltip": "将Showdown文本复制到剪贴板",
+      "success": "复制成功！",
+      "failed": "复制失败！"
+    }
   }
 }
