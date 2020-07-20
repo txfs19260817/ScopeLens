@@ -30,3 +30,7 @@ export const toBase64 = file => new Promise((resolve, reject) => {
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
 });
+
+export function ShiftToCloudfront(src) {
+    return src.toString().replace(`https://scopelens.s3.ap-northeast-1.amazonaws.com`, `https://d238vot0rttk9d.cloudfront.net`)
+}

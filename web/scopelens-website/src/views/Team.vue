@@ -3,14 +3,13 @@
         <v-container v-if="team">
             <div class="row">
                 <div class="col-md-5 col-sm-5 col-xs-12">
-                    <v-img class="align-end" :src="team.image"></v-img>
+                    <v-row align="center">
+                        <img style="width: 100%" :src="team.image" alt="preview"/>
+                    </v-row>
                     <v-row justify="space-around">
                         <v-subheader>{{ $t("team.likes") }} {{ team.likes }}</v-subheader>
                     </v-row>
                     <v-row justify="space-around">
-                        <v-btn class="mx-2" fab dark small color="blue" disabled>
-                            <v-icon dark>mdi-twitter</v-icon>
-                        </v-btn>
 
                         <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
@@ -35,13 +34,20 @@
                             <span>{{ $t("team.copy.tooltip") }}</span>
                         </v-tooltip>
 
-                        <v-btn class="mx-2" fab dark small color="red" disabled>
+                        <v-btn class="mx-2" fab dark small color="blue"
+                               :href="`http://twitter.com/share?text=Team%20Sharing:%20` + team.title +  `&url=` + url +`&hashtags=ScopeLens,PokemonSwordShield,NintendoSwitch`">
+                            <v-icon dark>mdi-twitter</v-icon>
+                        </v-btn>
+
+                        <v-btn class="mx-2" fab dark small color="red"
+                               :href="`http://service.weibo.com/share/share.php?title=队伍分享：` + team.title + `&url=`+ url + `&pic=` + team.image">
                             <v-icon dark>mdi-sina-weibo</v-icon>
                         </v-btn>
                     </v-row>
                 </div>
                 <div class="col-md-7 col-sm-7 col-xs-12 pl-6">
-                    <p class="display-1 mb-0">{{ "[" + team.format + "] " }}{{team.title}}</p>
+                    <p class="display-1 mb-0">{{ "[" + team.format + "] " }}{{ team.title }}</p>
+                    <p class="subtitle-2 font-weight-light">{{ DateConversion(team.created_at) }}</p>
                     <v-card-actions class="pa-0">
                         <p class="headline font-weight-light pt-3">{{ $t("team.author") }} {{team.author}}
                             <span class="subtitle-2 font-weight-light">{{ $t("team.uploader") }} {{team.uploader}}</span>
@@ -66,13 +72,13 @@
                         <v-tab>Showdown</v-tab>
                         <v-tab-item>
                             <pre v-if="team.showdown.length>0">
-                                <p class="body-2 textarea"> {{ team.showdown }} </p>
+                                <p class="body-2"> {{ team.showdown }} </p>
                             </pre>
-                            <p v-else class="pt-10 body-1 textarea"> {{ $t("team.noShowdown") }} </p>
+                            <p v-else class="pt-10 body-1"> {{ $t("team.noShowdown") }} </p>
                         </v-tab-item>
                         <v-tab>{{ $t("team.description") }}</v-tab>
                         <v-tab-item>
-                            <pre class="pt-10 body-1 textarea"> {{ team.description }} </pre>
+                            <pre class="pt-10 body-1"> {{ team.description }} </pre>
                         </v-tab-item>
                     </v-tabs>
                 </div>
@@ -86,7 +92,7 @@
     </v-container>
 </template>
 <script>
-    import {ProcessStr} from "../assets/utils"
+    import {ProcessStr, DateConversion} from "../assets/utils"
     import {ERROR, logErrors, SUCCESS} from "../api";
     import {getTeamByID, insertLikeByUsername} from "../api/team";
 
@@ -150,11 +156,15 @@
                 });
             },
             ProcessStr: ProcessStr,
+            DateConversion: DateConversion
         },
         computed: {
             loading() {
                 return this.$store.state.loading.loading
             },
+            url() {
+                return encodeURIComponent(`https://scopelens.team/#` + this.$route.path)
+            }
         },
         created() {
             this.getTeamDetail(this.$route.params.id)
@@ -165,6 +175,11 @@
     .textarea {
         text-align: justify;
         text-justify: newspaper;
-        word-break: break-all;
+        word-break: break-word;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
     }
 </style>
