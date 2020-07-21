@@ -6,7 +6,7 @@
                     <v-skeleton-loader
                             v-if="loading"
                             class="mx-auto"
-                            height="340"
+                            height="360"
                             max-width="640"
                             type="card, list-item-two-line"
                             elevation="2"
@@ -21,6 +21,10 @@
                         <v-card-text class="text--primary">
                             <div>by {{ t.author }}</div>
                             <div>{{ DateConversion(t.created_at) }}</div>
+                            <v-row align="center" justify="end">
+                                <v-icon class="mr-1 red--text">mdi-heart</v-icon>
+                                <span class="subheading mr-2">{{ t.likes }}</span>
+                            </v-row>
                         </v-card-text>
                     </v-card>
                 </v-hover>

@@ -51,13 +51,21 @@ http.interceptors.response.use(
                     store.commit('LOADING_OFF');
                     store.dispatch("user/logout")
                     store.dispatch('snackbar/openSnackbar', {
-                        "msg": "Token is invalid: " + error.response.data.msg + " Please login.",
+                        "msg": "Token is invalid: " + error.response.data.msg + " Please login. (401)",
                         "color": "error"
                     });
                     router.replace({
                         path: '/login',
                         query: {redirect: "/"} // 将跳转的路由path作为参数，登录成功后跳转到该路由
                     }).then(r => null)
+                    break;
+                case 429:
+                    store.commit('LOADING_OFF');
+                    store.dispatch('snackbar/openSnackbar', {
+                        "msg": "Sorry, you are visiting our service too frequent. Please try again after a minute. (429)",
+                        "color": "error"
+                    });
+                    break;
             }
         }
         return Promise.reject(error.response)

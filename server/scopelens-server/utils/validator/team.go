@@ -12,8 +12,8 @@ func TeamValidator(team *models.Team, r *http.Request) (error, bool) {
 
 	rules := govalidator.MapData{
 		"id":          []string{},
-		"title":       []string{"required", "between:1,60"},
-		"author":      []string{"between:1,60"},
+		"title":       []string{"required", "between:1,100"},
+		"author":      []string{"between:1,80"},
 		"format":      []string{"required", "in_formats"},
 		"pokemon":     []string{"required", "between:1,6"},
 		"showdown":    []string{"between:200,1800", "max_word:350"}, // 7 * 50 words

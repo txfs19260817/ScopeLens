@@ -3,6 +3,9 @@
         <v-app-bar app fixed flat color="blue-grey lighten-4">
             <v-row justify="space-between">
                 <v-app-bar-nav-icon @click="display = !display" class="d-lg-none"></v-app-bar-nav-icon>
+                <v-btn v-if="$route.path.includes(`team`)" icon @click="$router.go(-1)">
+                    <v-icon>mdi-arrow-left</v-icon>
+                </v-btn>
                 <v-spacer></v-spacer>
                 <LanguageSelector></LanguageSelector>
             </v-row>

@@ -87,7 +87,7 @@
       "authorSwitch": "Please turn on the switch if you are not the team author. ",
       "format": "You can type words here to search for desired format. ",
       "showdownSwitch":"Please turn off the switch and select all team members if no Showdown paste provided. ",
-      "showdown": "Please paste the Showdown team here. ",
+      "showdown": "Please paste the Showdown team here. **Please do not include nicknames!**",
       "pokemon": "Please select up to 6 Pokémon. You can type words here to filter Pokémon.",
       "image": "Optional. **Note that we only accept image with available rental ID.**"
     },

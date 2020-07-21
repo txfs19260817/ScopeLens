@@ -87,7 +87,7 @@
       "authorSwitch": "如果您不是队伍原作者请保持开关打开",
       "format": "可在此键入以查找需要的对战模式",
       "showdownSwitch":"如果此队伍没有Showdown版本，请关闭开关并选择所有队伍成员",
-      "showdown": "请在此粘贴Showdown队伍文本",
+      "showdown": "请在此粘贴Showdown队伍文本（宝可梦名字不要携带昵称）",
       "pokemon": "请选择至多6只宝可梦，可在此键入以查找宝可梦",
       "image": "可选。**注意：上传的队伍预览图片必须包含租借ID。**"
     },

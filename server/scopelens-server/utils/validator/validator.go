@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	formats      []string
+	formats []string
 )
 
 // custom rules
