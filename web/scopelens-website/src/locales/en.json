@@ -120,7 +120,8 @@
     "addLike": {
       "tooltip": "Add this team to your likes",
       "success": "Added to your liked teams! ",
-      "failed": "Like this team error: "
+      "failed": "Like this team error: ",
+      "visitor": "Please login to continue"
     },
     "copy": {
       "tooltip": "Copy Showdown text to clipboard",

@@ -120,7 +120,8 @@
     "addLike": {
       "tooltip": "将该队伍添加到已喜欢",
       "success": "添加成功！",
-      "failed": "添加出错："
+      "failed": "添加出错：",
+      "visitor": "请先登录"
     },
     "copy": {
       "tooltip": "将Showdown文本复制到剪贴板",

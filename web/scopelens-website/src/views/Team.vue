@@ -95,6 +95,7 @@
     import {ProcessStr, DateConversion} from "../assets/utils"
     import {ERROR, logErrors, SUCCESS} from "../api";
     import {getTeamByID, insertLikeByUsername} from "../api/team";
+    import store from "../store";
 
     export default {
         name: "Team",
@@ -128,6 +129,13 @@
             },
             async like() {
                 // loading
+                if (!this.$store.state.user.isLogin) {
+                    this.$store.dispatch('snackbar/openSnackbar', {
+                        "msg": this.$t("team.addLike.visitor"),
+                        "color": "error"
+                    });
+                    return
+                }
                 this.$store.commit('LOADING_ON')
                 const res = await insertLikeByUsername(this.$store.state.user.username, this.$route.params.id, this.$store.state.user.token)
                 if (res.data.code === ERROR || res.status === 401) {
