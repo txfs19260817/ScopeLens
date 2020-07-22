@@ -1,12 +1,14 @@
 <template>
     <v-container>
         <v-tabs color="black" slider-color="primary" background-color="bg_primary">
-            <v-tab v-for="(item, i) in tabs" :key="i" @change="tabChange(i)" class="font-weight-bold title">{{ item }}
-            </v-tab>
+            <v-tab v-for="(item, i) in tabs" :key="i" @change="tabChange(i)" class="font-weight-bold title"
+            >{{ item }}</v-tab>
         </v-tabs>
         <ResultsLayout :teams="teams"></ResultsLayout>
         <v-col>
-            <v-pagination v-model="curPage" :length="pageLen" total-visible="8" @input="pageChange"></v-pagination>
+            <v-pagination v-if="total!==0" v-model="curPage" :length="pageLen" total-visible="8" @input="pageChange"
+            ></v-pagination>
+            <v-subheader v-else class="justify-center">{{ $t('results.noResult') }}</v-subheader>
         </v-col>
     </v-container>
 </template>
@@ -38,7 +40,8 @@
                         this.total = res.data.data.total
                         this.teams = res.data.data.teams
                     } else {
-                        // In this case, if the user never liked any team, no error msg will be shown.
+                        this.total = 0
+                        // In this case, if the user has never liked any team, no error msg will be shown.
                         if (!res.data.msg.toString().includes("$in")) {
                             this.$store.dispatch('snackbar/openSnackbar', {
                                 "msg": this.$t('api.thenError') + res.data.msg,

@@ -27,6 +27,12 @@
     }
   },
 
+  "results": {
+    "noResult": "无结果 :(",
+    "hasShowdown": "这支队伍有Showdown文本",
+    "hasRental": "这支队伍有租借ID"
+  },
+
   "login": {
     "signin": "登录",
     "signup": "注册",
@@ -100,7 +106,14 @@
 
   "search": {
     "title": "队伍检索",
-    "btn": "搜索"
+    "btn": "搜索",
+    "hasShowdown": "结果必须包含Showdown文本",
+    "hasRental": "结果必须包含租借ID",
+    "orderBy": {
+      "title": "结果排序方式：",
+      "time": "时间",
+      "likes": "喜欢数"
+    }
   },
 
   "usage": {

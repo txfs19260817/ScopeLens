@@ -172,7 +172,9 @@
                     image: '',
                     description: '',
                     uploader: '',
-                    state: 1
+                    state: 1,
+                    has_showdown: false,
+                    has_rental: false
                 },
             }
         },
@@ -189,25 +191,32 @@
                 const v = await this.$refs.observer.validate()
                 if (v) {
                     // form preparation
-                    // convert image to base64 string
-                    if(this.imageFile !== undefined) this.form.image = await toBase64(this.imageFile)
-                    // assign uploader
+                    // 1. Convert image to base64 string
+                    if(this.imageFile !== undefined) {
+                        this.form.image = await toBase64(this.imageFile)
+                        this.form.has_rental = true
+                    } else {
+                        this.form.has_rental = false
+                    }
+                    // 2. Assign uploader
                     this.form.uploader = this.$store.state.user.username
                     if (!this.notAuthor) this.form.author = this.form.uploader
-                    // Auto push Pokemon names to form if Showdown text is provided
+                    // 3. Auto push Pokemon names to form if Showdown text is provided
                     if (this.haveShowdown) {
-                        this.form.pokemon = []
+                        this.form.pokemon = [];
+                        this.form.has_showdown = true;
                         for (const p of Koffing.parse(this.form.showdown).teams[0].pokemon) {
                             if (forme[p.name] === undefined){
-                                // no alter forme, push to form directly
+                                // no alter forme, push it to form directly
                                 this.form.pokemon.push(p.name)
                             } else {
-                                // push the origin species name
+                                // push the origin species name to form
                                 this.form.pokemon.push(forme[p.name])
                             }
                         }
                     } else {
-                        this.form.showdown = ""
+                        this.form.showdown = "";
+                        this.form.has_showdown = false;
                         // process Pokemon names ('A/B/C' --> 'A')
                         this.form.pokemon.forEach((item, idx) => this.form.pokemon[idx] = item.toString().split('/', 1)[0])
                     }

@@ -31,10 +31,11 @@ func GetTeams(c *gin.Context) {
 	if err != nil {
 		page = 0
 	}
-	data := make(map[string]interface{})
+	s := models.Search{OrderBy: "time"}
 
 	// retrieve data
-	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, "time", "", []string{}); err != nil {
+	data := make(map[string]interface{})
+	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, s); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithData(data, c)
@@ -46,10 +47,11 @@ func GetTeamsOrderbyLikes(c *gin.Context) {
 	if err != nil {
 		page = 0
 	}
+	s := models.Search{OrderBy: "likes"}
 
 	// retrieve data
 	data := make(map[string]interface{})
-	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, "likes", "", []string{}); err != nil {
+	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, s); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithData(data, c)
@@ -72,14 +74,8 @@ func GetTeamsBySearchCriteria(c *gin.Context) {
 		page = 0
 	}
 
-	// define search criteria struct
-	type Search struct {
-		Format  string   `bson:"format" json:"format"`
-		Pokemon []string `bson:"pokemon" json:"pokemon"`
-	}
-
 	// Validate JSON form
-	var s Search
+	var s models.Search
 	if err := c.ShouldBindJSON(&s); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -87,7 +83,7 @@ func GetTeamsBySearchCriteria(c *gin.Context) {
 
 	// retrieve data
 	data := make(map[string]interface{})
-	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, "time", s.Format, s.Pokemon); err != nil {
+	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, s); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithData(data, c)

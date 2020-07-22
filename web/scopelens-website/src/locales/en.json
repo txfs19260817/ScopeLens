@@ -27,6 +27,12 @@
     }
   },
 
+  "results": {
+    "noResult": "No results :(",
+    "hasShowdown": "This team includes a Showdown paste",
+    "hasRental": "This team includes a Rental ID"
+  },
+
   "login": {
     "signin": "Sign in",
     "signup": "Sign up",
@@ -100,7 +106,14 @@
 
   "search": {
     "title": "Search",
-    "btn": "Search"
+    "btn": "Search",
+    "hasShowdown": "Results must include Showdown pastes",
+    "hasRental": "Results must include Rental IDs",
+    "orderBy": {
+      "title": "Results are ordered by:",
+      "time": "Time",
+      "likes": "Likes"
+    }
   },
 
   "usage": {

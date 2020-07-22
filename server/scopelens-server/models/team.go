@@ -28,16 +28,27 @@ type Team struct {
 	Image       string   `bson:"image" json:"image"` // upload from client: base64; store in DB: URL
 	Description string   `bson:"description" json:"description"`
 	// Auto-generated
-	Uploader  string    `bson:"uploader" json:"uploader"` // User.username
-	CreatedAt time.Time `bson:"created_at" json:"created_at"`
-	Likes     int       `bson:"likes" json:"likes"` // 0
-	State     int       `bson:"state" json:"state"` // 0
+	Uploader    string    `bson:"uploader" json:"uploader"` // User.username
+	CreatedAt   time.Time `bson:"created_at" json:"created_at"`
+	Likes       int       `bson:"likes" json:"likes"` // 0
+	State       int       `bson:"state" json:"state"` // 0
+	HasShowdown bool      `bson:"has_showdown" json:"has_showdown"`
+	HasRental   bool      `bson:"has_rental" json:"has_rental"`
 }
 
 // Usage struct
 type Usage struct {
 	Pokemon string `bson:"_id"   json:"name"`
 	Count   int    `bson:"count" json:"value"`
+}
+
+// Search criteria struct
+type Search struct {
+	Format      string   `bson:"format" json:"format"`
+	Pokemon     []string `bson:"pokemon" json:"pokemon"`
+	HasShowdown bool     `bson:"has_showdown" json:"has_showdown"`
+	HasRental   bool     `bson:"has_rental" json:"has_rental"`
+	OrderBy     string   `json:"order_by"`
 }
 
 // Insert a team
@@ -101,7 +112,7 @@ func (d *DBDriver) GetTeamsCount(filter bson.D) (int, error) {
 }
 
 // Get teams
-func (d *DBDriver) GetTeams(pageNum, pageSize int, orderBy, format string, pokemon []string) ([]Team, int, error) {
+func (d *DBDriver) GetTeams(pageNum, pageSize int, s Search) ([]Team, int, error) {
 	// get skip number
 	var skip int64
 	if pageNum > 0 {
@@ -112,7 +123,7 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, orderBy, format string, pokem
 	opts := options.Find()
 	opts.SetLimit(int64(pageSize))
 	opts.SetSkip(skip)
-	if orderBy == "likes" {
+	if s.OrderBy == "likes" {
 		opts.SetSort(bson.D{{"likes", -1}}) // order by likes dec
 	} else {
 		opts.SetSort(bson.D{{"created_at", -1}}) // order by time dec
@@ -122,11 +133,17 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, orderBy, format string, pokem
 	filter := bson.D{
 		{"state", 1},
 	}
-	if len(format) != 0 {
-		filter = append(filter, bson.E{Key: "format", Value: format})
+	if len(s.Format) != 0 {
+		filter = append(filter, bson.E{Key: "format", Value: s.Format})
 	}
-	if len(pokemon) != 0 {
-		filter = append(filter, bson.E{Key: "pokemon", Value: bson.D{{"$all", pokemon}}})
+	if len(s.Pokemon) != 0 {
+		filter = append(filter, bson.E{Key: "pokemon", Value: bson.D{{"$all", s.Pokemon}}})
+	}
+	if s.HasShowdown {
+		filter = append(filter, bson.E{Key: "has_showdown", Value: true})
+	}
+	if s.HasRental {
+		filter = append(filter, bson.E{Key: "has_rental", Value: true})
 	}
 
 	// get the number of teams
@@ -237,7 +254,7 @@ func (d *DBDriver) GetLikedTeamsByUsername(pageNum, pageSize int, username strin
 }
 
 // Get uploaded teams
-func (d *DBDriver) GetUploadedTeamsByUsername(pageNum, pageSize int, username string,) ([]Team, int, error) {
+func (d *DBDriver) GetUploadedTeamsByUsername(pageNum, pageSize int, username string, ) ([]Team, int, error) {
 	// get skip number
 	var skip int64
 	if pageNum > 0 {

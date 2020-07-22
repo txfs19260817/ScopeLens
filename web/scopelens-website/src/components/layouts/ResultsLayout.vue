@@ -22,6 +22,30 @@
                             <div>by {{ t.author }}</div>
                             <div>{{ DateConversion(t.created_at) }}</div>
                             <v-row align="center" justify="end">
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon v-if="t.has_showdown"
+                                                class="mr-1 light-blue--text accent-2"
+                                                v-bind="attrs"
+                                                v-on="on">
+                                            mdi-alpha-s-circle
+                                        </v-icon>
+                                    </template>
+                                    <span>{{ $t('results.hasShowdown') }}</span>
+                                </v-tooltip>
+
+                                <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon v-if="t.has_rental"
+                                                class="mr-1 teal--text accent-2"
+                                                v-bind="attrs"
+                                                v-on="on">
+                                            mdi-alpha-r-circle
+                                        </v-icon>
+                                    </template>
+                                    <span>{{ $t('results.hasRental') }}</span>
+                                </v-tooltip>
+
                                 <v-icon class="mr-1 red--text">mdi-heart</v-icon>
                                 <span class="subheading mr-2">{{ t.likes }}</span>
                             </v-row>
@@ -59,12 +83,14 @@
     .team-title {
         white-space: nowrap;
         overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    @media screen and (max-width: 1300px) {
+    @media screen and (max-width: 1000px) {
         .team-title {
             white-space: nowrap;
             overflow: auto;
+            text-overflow: unset;
         }
     }
 

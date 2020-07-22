@@ -7,12 +7,23 @@
                         <v-card-text>
                             <h1 class="text-start display-1 mb-10 fg-text"> {{$t('search.title')}} </h1>
                             <v-form class="searchbar-form" @submit.prevent="goSearch">
-                                <FormatSelector :value.sync="criteria.format" :hint="$t('upload.hint.format')"></FormatSelector>
-                                <PokemonSelector :value.sync="criteria.pokemon" :hint="$t('upload.hint.pokemon')"></PokemonSelector>
+                                <FormatSelector :value.sync="criteria.format"
+                                                :hint="$t('upload.hint.format')"></FormatSelector>
+                                <PokemonSelector :value.sync="criteria.pokemon"
+                                                 :hint="$t('upload.hint.pokemon')"></PokemonSelector>
+                                <v-checkbox v-model="criteria.has_showdown" :label="$t('search.hasShowdown')"></v-checkbox>
+                                <v-checkbox v-model="criteria.has_rental" :label="$t('search.hasRental')"></v-checkbox>
+                                <v-radio-group v-model="criteria.order_by" row>
+                                    <template v-slot:label>
+                                        <div>{{ $t('search.orderBy.title') }}</div>
+                                    </template>
+                                    <v-radio :label="$t('search.orderBy.time')" value="time"></v-radio>
+                                    <v-radio :label="$t('search.orderBy.likes')" value="likes"></v-radio>
+                                </v-radio-group>
                                 <div class="text-center mt-6">
                                     <v-btn color="primary" type="submit" large dark :loading="loading">
                                         <v-icon left dark>search</v-icon>
-                                        {{$t('search.btn')}}
+                                        {{ $t('search.btn') }}
                                     </v-btn>
                                 </div>
                             </v-form>
@@ -27,7 +38,9 @@
             </v-btn>
             <ResultsLayout :teams="teams"></ResultsLayout>
             <v-col>
-                <v-pagination v-model="curPage" :length="pageLen" total-visible="8" @input="getTeamsSearch"></v-pagination>
+                <v-pagination v-if="total!==0" v-model="curPage" :length="pageLen" total-visible="8"
+                              @input="getTeamsSearch"></v-pagination>
+                <v-subheader class="justify-center" v-else>{{ $t('results.noResult') }}</v-subheader>
             </v-col>
         </v-container>
     </v-container>
@@ -39,21 +52,25 @@
     import {ERROR} from "../api";
     import FormatSelector from "../components/selectors/FormatSelector";
     import PokemonSelector from "../components/selectors/PokemonSelector";
+
     export default {
         name: "Search",
-        components:{
+        components: {
             FormatSelector,
             PokemonSelector,
             ResultsLayout
         },
-        data(){
-            return{
-                teams: [{},{},{},{},{},{},{},{},{},{},{},{},],
+        data() {
+            return {
+                teams: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},],
                 gotResult: false,
                 // search criteria form to be uploaded
                 criteria: {
                     format: '',
-                    pokemon: []
+                    pokemon: [],
+                    has_showdown: false,
+                    has_rental: false,
+                    order_by: "time",
                 },
                 // page
                 total: 1, // total data size
@@ -61,7 +78,7 @@
                 curPage: 1,
             }
         },
-        methods:{
+        methods: {
             async getTeamsSearch(page) {
                 // format and pokemon should not be empty at the same time
                 if (this.criteria.format.length === 0 && this.criteria.pokemon.length === 0) return
@@ -87,13 +104,13 @@
                 this.gotResult = true
                 this.$store.commit('LOADING_OFF')
             },
-            goSearch(){
+            goSearch() {
                 this.getTeamsSearch(1)
             },
             reset() {
-                this.gotResult=false
-                this.criteria.pokemon = []
-                this.criteria.format = ''
+                this.gotResult = false;
+                this.criteria.pokemon = [];
+                this.criteria.format = '';
                 this.curPage = this.total = 1;
             }
         },
