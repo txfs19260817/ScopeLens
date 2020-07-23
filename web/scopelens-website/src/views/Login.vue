@@ -11,7 +11,7 @@
                                 <v-col cols="12" md="8" class="pt-6 pb-6">
                                     <v-card-text>
                                         <v-form class="signup-form-form" @submit.prevent="loginRequest">
-                                            <h1 class="text-center display-1 mb-10 fg-text">{{ $t('login.signin') }}</h1>
+                                            <h1 class="text-center display-1 mb-10 primary--text">{{ $t('login.signin') }}</h1>
                                             <v-text-field
                                                     id="username"
                                                     v-model="login.username"
@@ -19,7 +19,6 @@
                                                     name="Username"
                                                     append-icon="person"
                                                     type="text"
-                                                    :color="bgColor"
                                                     required
                                             />
                                             <v-text-field
@@ -29,28 +28,29 @@
                                                     name="Password"
                                                     append-icon="lock"
                                                     type="password"
-                                                    :color="bgColor"
                                                     required
                                             />
                                             <div class="text-center grey--text">
                                                 {{ $t('login.forget') }}
                                             </div>
                                             <div class="text-center mt-6">
-                                                <v-btn type="submit" large dark :color="bgColor" :loading="loading">
+                                                <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" type="submit" large dark color="primary" :loading="loading">
                                                     {{ $t('login.signin') }}
                                                 </v-btn>
                                             </div>
                                         </v-form>
                                     </v-card-text>
                                 </v-col>
-                                <v-col cols="12" md="4" class="darken-2 vcenter fg">
+                                <v-col cols="12" md="4" class="darken-1 vcenter primary">
                                     <div>
-                                        <v-card-text class="bg-text">
+                                        <v-card-text :class="{'black--text': $vuetify.theme.dark, 'white--text': !$vuetify.theme.dark}">
                                             <h1 class="text-center headline mb-3">{{ $t('login.noUser') }}</h1>
                                             <h5 class="text-center overline mb-3">{{ $t('login.goSignup') }}</h5>
                                         </v-card-text>
                                         <div class="text-center mb-6">
-                                            <v-btn dark outlined @click="step = 2">{{ $t('login.signup') }}</v-btn>
+                                            <v-btn :class="{'black--text': $vuetify.theme.dark, 'white--text': !$vuetify.theme.dark}" dark outlined @click="step = 2">
+                                                {{ $t('login.signup') }}
+                                            </v-btn>
                                         </div>
                                     </div>
                                 </v-col>
@@ -60,20 +60,22 @@
                         <!--SignUp-->
                         <v-window-item :value="2">
                             <v-row class="fill-height">
-                                <v-col cols="12" md="4" class="darken-2 vcenter fg">
+                                <v-col cols="12" md="4" class="darken-1 vcenter primary">
                                     <div>
-                                        <v-card-text class="bg-text">
+                                        <v-card-text :class="{'black--text': $vuetify.theme.dark, 'white--text': !$vuetify.theme.dark}">
                                             <h1 class="text-center headline mb-3">{{ $t('login.already') }}</h1>
                                             <h5 class="text-center overline mb-3">{{ $t('login.goSignin') }}</h5>
                                         </v-card-text>
                                         <div class="text-center mb-6">
-                                            <v-btn dark outlined @click="step = 1">{{ $t('login.signin') }}</v-btn>
+                                            <v-btn :class="{'black--text': $vuetify.theme.dark, 'white--text': !$vuetify.theme.dark}" dark outlined @click="step = 1">
+                                                {{ $t('login.signin') }}
+                                            </v-btn>
                                         </div>
                                     </div>
                                 </v-col>
                                 <v-col cols="12" md="8" class=" pt-6 pb-6">
                                     <v-card-text>
-                                        <h1 class="text-center display-1 mb-10 fg-text">{{ $t('login.signup') }}</h1>
+                                        <h1 class="text-center display-1 mb-10 primary--text">{{ $t('login.signup') }}</h1>
                                         <ValidationObserver ref="observer" v-slot="{ validate }">
                                             <v-form class="signup-form-form" @submit.prevent="registerRequest">
                                                 <ValidationProvider v-slot="{ errors }" name="username"
@@ -118,7 +120,7 @@
                                                     />
                                                 </ValidationProvider>
                                                 <div class="text-center mt-6">
-                                                    <v-btn type="submit" large dark :color="bgColor" :loading="loading">
+                                                    <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" type="submit" large dark color="primary" :loading="loading">
                                                         {{ $t('login.signup') }}
                                                     </v-btn>
                                                 </div>
@@ -158,16 +160,6 @@
         components: {
             ValidationProvider,
             ValidationObserver,
-        },
-        props: {
-            bgColor: {
-                type: String,
-                default: '#4768A1'
-            },
-            fgColor: {
-                type: String,
-                default: 'white'
-            }
         },
         data: () => ({
             // Active window
@@ -239,15 +231,7 @@
         justify-content: center;
     }
 
-    .fg {
-        background-color: #4768A1;
-    }
-
-    .fg-text {
-        color: #4768A1;
-    }
-
     .bg-text {
-        color: white;
+        color: black;
     }
 </style>

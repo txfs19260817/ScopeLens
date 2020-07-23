@@ -4,7 +4,7 @@
             <v-col>
                 <v-card class="elevation-2 card">
                     <v-card-text>
-                        <h1 class="text-start display-1 mb-10 fg-text"> {{$t('upload.title')}} </h1>
+                        <h1 class="text-start display-1 mb-10 primary--text"> {{$t('upload.title')}} </h1>
                         <ValidationObserver ref="observer" v-slot="{ validate }">
                             <v-form class="upload-form-form" @submit.prevent="submit">
                                 <ValidationProvider v-slot="{ errors }" name="Title" rules="required|max:50">
@@ -97,7 +97,7 @@
                                     ></v-textarea>
                                 </ValidationProvider>
                                 <div class="text-center mt-6">
-                                    <v-btn type="submit" color="primary" large dark :loading="loading">
+                                    <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" type="submit" color="primary" large dark :loading="loading">
                                         <v-icon left dark>mdi-upload</v-icon>
                                         {{ $t('upload.submit') }}
                                     </v-btn>
@@ -258,9 +258,4 @@
     .card {
         overflow: hidden;
     }
-
-    .fg-text {
-        color: #4768A1;
-    }
-
 </style>

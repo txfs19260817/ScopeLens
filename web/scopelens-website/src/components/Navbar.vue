@@ -1,18 +1,19 @@
 <template>
     <nav>
-        <v-app-bar app fixed flat color="blue-grey lighten-4">
+        <v-app-bar app fixed flat color="secondary" :class="{'lighten-4':!$vuetify.theme.dark, 'darken-4':$vuetify.theme.dark}">
             <v-row justify="space-between">
                 <v-app-bar-nav-icon @click="display = !display" class="d-lg-none"></v-app-bar-nav-icon>
-                <v-btn v-if="$route.path.includes(`team`)" icon @click="$router.go(-1)">
+                <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" v-if="$route.path.includes(`team`)" icon @click="$router.go(-1)">
                     <v-icon>mdi-arrow-left</v-icon>
                 </v-btn>
                 <v-spacer></v-spacer>
+                <DarkModeSwitch></DarkModeSwitch>
                 <LanguageSelector></LanguageSelector>
             </v-row>
         </v-app-bar>
 
-        <v-navigation-drawer v-model="display" color="blue-grey lighten-5" app fixed left flat>
-            <v-sheet color="blue-grey lighten-5">
+        <v-navigation-drawer v-model="display" color="secondary" :class="{'lighten-5':!$vuetify.theme.dark, 'darken-3':$vuetify.theme.dark}" app fixed left flat>
+            <v-sheet color="secondary" :class="{'lighten-5':!$vuetify.theme.dark, 'darken-3':$vuetify.theme.dark}">
                 <v-list>
                     <v-list-item two-line>
                         <v-list-item-avatar>
@@ -68,7 +69,7 @@
                                 :target="item.target ? '_black' : ''"
                                 :disabled="!item.link"
                                 link
-                                active-class="amber--text"
+                                active-class="primary--text"
                         >
                             <v-list-item-action>
                                 <v-icon v-text="item.icon"></v-icon>
@@ -86,10 +87,12 @@
 
 <script>
     import LanguageSelector from "./selectors/LanguageSelector";
+    import DarkModeSwitch from "./_partial/DarkModeSwitch";
 
     export default {
         components: {
-            LanguageSelector
+            LanguageSelector,
+            DarkModeSwitch
         },
         data:()=>({
             display: null,

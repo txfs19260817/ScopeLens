@@ -5,11 +5,11 @@
                 <v-col>
                     <v-card class="elevation-2 card">
                         <v-card-text>
-                            <h1 class="text-start display-1 mb-10 fg-text"> {{$t('usage.title')}} </h1>
+                            <h1 class="text-start display-1 mb-10 primary--text"> {{$t('usage.title')}} </h1>
                             <v-form class="searchbar-form" @submit.prevent="getUsage">
                                 <FormatSelector :value.sync="format" :hint="$t('upload.hint.format')"></FormatSelector>
                                 <div class="text-center mt-6">
-                                    <v-btn color="primary" type="submit" large dark :loading="loading">
+                                    <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" color="primary" type="submit" large dark :loading="loading">
                                         <v-icon left dark>search</v-icon>
                                         {{$t('usage.btn')}}
                                     </v-btn>
@@ -143,10 +143,6 @@
 
     .card {
         overflow: hidden;
-    }
-
-    .fg-text {
-        color: #4768A1;
     }
 
     #pie {

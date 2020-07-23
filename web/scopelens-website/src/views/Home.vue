@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-tabs color="black" slider-color="primary" background-color="bg_primary">
+        <v-tabs slider-color="primary" background-color="bg_primary">
             <v-tab v-for="(item, i) in tabs" :key="i" @change="tabChange(i)" class="font-weight-bold title">{{ item }}
             </v-tab>
         </v-tabs>

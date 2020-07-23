@@ -2,7 +2,7 @@
     <div>
         <v-snackbar v-model="visible" :color="color.color" top>
             {{ msg }}
-            <v-btn v-if="showClose" text @click="close">Close</v-btn>
+            <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" v-if="showClose" text @click="close">Close</v-btn>
         </v-snackbar>
     </div>
 </template>

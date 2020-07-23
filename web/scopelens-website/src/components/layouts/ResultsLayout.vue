@@ -15,11 +15,11 @@
                     <v-card v-else class="mx-auto" max-width="640" :elevation="hover ? 10 : 2"
                             :class="{ 'on-hover': hover }" link :to="'/team/' + t.id">
                         <v-img class="align-end" :src="t.image"></v-img>
-                        <v-card-subtitle class="pb-0 font-weight-bold team-title">
+                        <v-card-subtitle class="pb-0 font-weight-bold card-text">
                             {{ "[" + t.format + "] " }}{{ t.title }}
                         </v-card-subtitle>
                         <v-card-text class="text--primary">
-                            <div>by {{ t.author }}</div>
+                            <div class="card-text">by {{ t.author }}</div>
                             <div>{{ DateConversion(t.created_at) }}</div>
                             <v-row align="center" justify="end">
                                 <v-tooltip bottom>
@@ -80,14 +80,14 @@
 </script>
 
 <style scoped>
-    .team-title {
+    .card-text {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     @media screen and (max-width: 1000px) {
-        .team-title {
+        .card-text {
             white-space: nowrap;
             overflow: auto;
             text-overflow: unset;

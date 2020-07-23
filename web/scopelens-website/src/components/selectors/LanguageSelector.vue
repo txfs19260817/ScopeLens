@@ -1,9 +1,8 @@
 <template>
     <v-bottom-sheet v-model="sheet">
         <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark v-bind="attrs" v-on="on">
-                <v-icon left dark>mdi-translate</v-icon>
-                {{$t('lang.btn')}}
+            <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" color="primary" fab dark small v-bind="attrs" v-on="on">
+                <v-icon dark>mdi-translate</v-icon>
             </v-btn>
         </template>
         <v-list>
@@ -48,5 +47,7 @@
 </script>
 
 <style scoped>
-
+    .v-btn{
+        margin: 0 5px;
+    }
 </style>

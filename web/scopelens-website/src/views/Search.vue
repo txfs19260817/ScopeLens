@@ -5,7 +5,7 @@
                 <v-col>
                     <v-card class="elevation-2 card">
                         <v-card-text>
-                            <h1 class="text-start display-1 mb-10 fg-text"> {{$t('search.title')}} </h1>
+                            <h1 class="text-start display-1 mb-10 primary--text"> {{$t('search.title')}} </h1>
                             <v-form class="searchbar-form" @submit.prevent="goSearch">
                                 <FormatSelector :value.sync="criteria.format"
                                                 :hint="$t('upload.hint.format')"></FormatSelector>
@@ -21,7 +21,7 @@
                                     <v-radio :label="$t('search.orderBy.likes')" value="likes"></v-radio>
                                 </v-radio-group>
                                 <div class="text-center mt-6">
-                                    <v-btn color="primary" type="submit" large dark :loading="loading">
+                                    <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" color="primary" type="submit" large dark :loading="loading">
                                         <v-icon left dark>search</v-icon>
                                         {{ $t('search.btn') }}
                                     </v-btn>
@@ -33,7 +33,7 @@
             </v-row>
         </v-container>
         <v-container v-else>
-            <v-btn color="primary" fab large dark @click="reset">
+            <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" color="primary" fab large dark @click="reset">
                 <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
             <ResultsLayout :teams="teams"></ResultsLayout>
@@ -141,9 +141,5 @@
 
     .card {
         overflow: hidden;
-    }
-
-    .fg-text {
-        color: #4768A1;
     }
 </style>

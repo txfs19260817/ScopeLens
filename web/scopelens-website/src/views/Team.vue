@@ -179,6 +179,7 @@
         }
     }
 </script>
+
 <style scoped>
     .textarea {
         text-align: justify;
