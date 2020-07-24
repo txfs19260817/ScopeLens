@@ -17,7 +17,7 @@ require (
 	github.com/yangxikun/gin-limit-by-key v0.0.0-20190512072151-520697354d5f
 	go.mongodb.org/mongo-driver v1.3.4
 	golang.org/x/crypto v0.0.0-20190530122614-20be4c3c3ed5
-	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
+	golang.org/x/image v0.0.0-20200618115811-c13761719519
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e
 	gopkg.in/ini.v1 v1.57.0 // indirect
 )

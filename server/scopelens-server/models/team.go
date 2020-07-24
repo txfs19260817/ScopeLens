@@ -54,7 +54,7 @@ type Search struct {
 // Insert a team
 func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 	var err error
-	var filename string // image save path
+	var fileFullPath string // image save path
 
 	// Replenish fields
 	team.ID = primitive.NewObjectID()
@@ -62,7 +62,7 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 	// Use uploaded image first
 	if len(team.Image) != 0 {
 		// decode uploaded base64 string to file
-		filename, err = file.DecodeBase64AndSave(team.Image)
+		fileFullPath, err = file.DecodeBase64AndSave(team.Image)
 		if err != nil {
 			return false, err
 		}
@@ -71,21 +71,26 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 			return false, fmt.Errorf("Image and Showdown cannot be empty at the same time. ")
 		}
 		// generate image from showdown text.
-		filename, err = showdown.RentalTeamMaker(team.Showdown, team.Title, team.Author)
+		fileFullPath, err = showdown.RentalTeamMaker(team.Showdown, team.Title, team.Author)
 		if err != nil {
 			return false, err
 		}
 	}
+	// resize
+	if err := file.Rescale(fileFullPath); err != nil {
+		return false, err
+	}
+
 	// then upload to S3.
 	s3, err := storage.NewAmazonS3(config.Aws.AccessKey, config.Aws.SecretKey, config.Aws.Region, config.Aws.Bucket)
 	if err != nil {
 		return false, err
 	}
-	f, err := os.Open(filename)
+	f, err := os.Open(fileFullPath)
 	if err != nil {
-		return false, fmt.Errorf("failed to open file %q, %v", filename, err)
+		return false, fmt.Errorf("failed to open file %q, %v", fileFullPath, err)
 	}
-	tempPath := strings.Split(filename, "/")
+	tempPath := strings.Split(fileFullPath, "/")
 	uploadPath := config.Aws.TeamPath + "/" + tempPath[len(tempPath)-1]
 	url, err := s3.Save(uploadPath, f)
 	if err != nil {

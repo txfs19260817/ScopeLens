@@ -58,8 +58,8 @@ func SaveImage(loadedImage image.Image, dst string) error {
 	}
 	defer f.Close()
 
-	// Encode to `PNG` with `BestSpeed` level, then save to file
-	enc := png.Encoder{CompressionLevel: png.BestSpeed}
+	// Encode to `PNG` with `BestCompression` level, then save to file
+	enc := png.Encoder{CompressionLevel: png.BestCompression}
 	err = enc.Encode(f, loadedImage)
 	if err != nil {
 		return err
