@@ -119,7 +119,12 @@
   "usage": {
     "title": "Pokémon Usage",
     "btn": "Search",
-    "noUsage": "No usage retrieved because no Pokemon used more than once among all teams under this format. "
+    "noUsage": "No usage retrieved because no Pokemon used more than once among all teams under this format. ",
+    "tabs": {
+      "official": "Official Usage",
+      "website": "Usage on this site"
+    },
+    "newWindow": "Official Usage Site"
   },
 
   "team": {
