@@ -1,10 +1,12 @@
 <template>
     <v-app>
-        <Navbar />
+        <Navbar/>
         <v-main>
-            <Snackbar style="height: 0" />
+            <Snackbar style="height: 0"/>
             <v-slide-x-reverse-transition mode="out-in">
-                <router-view />
+                <keep-alive :include="r">
+                    <router-view/>
+                </keep-alive>
             </v-slide-x-reverse-transition>
         </v-main>
     </v-app>
@@ -16,12 +18,12 @@
 
     export default {
         name: 'App',
-        components:{
+        components: {
             Navbar,
             Snackbar,
         },
         data: () => ({
-            //
+            r: ["Home", "Search", "MyTeams"]
         }),
     };
 </script>

@@ -1,6 +1,6 @@
 <template>
-    <v-container>
-        <v-container v-if="!gotResult" id="searchbar" class="fill-height">
+    <transition name="out-in">
+        <v-container v-if="!gotResult" id="searchbar" key="form">
             <v-row align="center" justify="center" no-gutters>
                 <v-col>
                     <v-card class="elevation-2 card">
@@ -11,8 +11,10 @@
                                                 :hint="$t('upload.hint.format')"></FormatSelector>
                                 <PokemonSelector :value.sync="criteria.pokemon"
                                                  :hint="$t('upload.hint.pokemon')"></PokemonSelector>
-                                <v-checkbox v-model="criteria.has_showdown" :label="$t('search.hasShowdown')"></v-checkbox>
-                                <v-checkbox v-model="criteria.has_rental" :label="$t('search.hasRental')"></v-checkbox>
+                                <v-checkbox v-model="criteria.has_showdown"
+                                            :label="$t('search.hasShowdown')"></v-checkbox>
+                                <v-checkbox v-model="criteria.has_rental"
+                                            :label="$t('search.hasRental')"></v-checkbox>
                                 <v-radio-group v-model="criteria.order_by" row>
                                     <template v-slot:label>
                                         <div>{{ $t('search.orderBy.title') }}</div>
@@ -21,7 +23,8 @@
                                     <v-radio :label="$t('search.orderBy.likes')" value="likes"></v-radio>
                                 </v-radio-group>
                                 <div class="text-center mt-6">
-                                    <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" color="primary" type="submit" large dark :loading="loading">
+                                    <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}"
+                                           color="primary" type="submit" large dark :loading="loading">
                                         <v-icon left dark>search</v-icon>
                                         {{ $t('search.btn') }}
                                     </v-btn>
@@ -32,8 +35,9 @@
                 </v-col>
             </v-row>
         </v-container>
-        <v-container v-else>
-            <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" color="primary" fab large dark @click="reset">
+        <v-container v-else key="result">
+            <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" color="primary" fab large dark
+                   @click="reset">
                 <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
             <ResultsLayout :teams="teams"></ResultsLayout>
@@ -43,7 +47,7 @@
                 <v-subheader class="justify-center" v-else>{{ $t('results.noResult') }}</v-subheader>
             </v-col>
         </v-container>
-    </v-container>
+    </transition>
 </template>
 
 <script>

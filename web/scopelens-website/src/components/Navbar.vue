@@ -3,7 +3,7 @@
         <v-app-bar app fixed flat color="secondary" :class="{'lighten-4':!$vuetify.theme.dark, 'darken-4':$vuetify.theme.dark}">
             <v-row justify="space-between">
                 <v-app-bar-nav-icon @click="display = !display" class="d-lg-none"></v-app-bar-nav-icon>
-                <v-btn v-if="$route.path.includes(`team`)" icon @click="$router.go(-1)">
+                <v-btn v-if="$route.path.includes(`team`)" icon @click="$router.back()">
                     <v-icon>mdi-arrow-left</v-icon>
                 </v-btn>
                 <v-spacer></v-spacer>
