@@ -7,6 +7,7 @@
                     <v-icon>mdi-arrow-left</v-icon>
                 </v-btn>
                 <v-spacer></v-spacer>
+                <Refresh></Refresh>
                 <DarkModeSwitch></DarkModeSwitch>
                 <LanguageSelector></LanguageSelector>
             </v-row>
@@ -88,11 +89,13 @@
 <script>
     import LanguageSelector from "./selectors/LanguageSelector";
     import DarkModeSwitch from "./_partial/DarkModeSwitch";
+    import Refresh from "./_partial/Refresh";
 
     export default {
         components: {
             LanguageSelector,
-            DarkModeSwitch
+            DarkModeSwitch,
+            Refresh
         },
         data:()=>({
             display: null,
