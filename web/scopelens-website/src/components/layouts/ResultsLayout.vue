@@ -15,9 +15,15 @@
                     <v-card v-else class="mx-auto" max-width="640" :elevation="hover ? 10 : 2"
                             :class="{ 'on-hover': hover }" link :to="'/team/' + t.id">
                         <v-img class="align-end" :src="t.image"></v-img>
-                        <v-card-subtitle class="pb-0 font-weight-bold card-text">
-                            {{ "[" + t.format + "] " }}{{ t.title }}
-                        </v-card-subtitle>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-card-subtitle class="pb-0 font-weight-bold card-text" v-bind="attrs" v-on="on">
+                                    {{ "[" + t.format + "] " }}{{ t.title }}
+                                </v-card-subtitle>
+                            </template>
+                            <span>{{ "[" + t.format + "] " }}{{ t.title }}</span>
+                        </v-tooltip>
+
                         <v-card-text class="text--primary">
                             <div class="card-text">by {{ t.author }}</div>
                             <div>{{ DateConversion(t.created_at) }}</div>
