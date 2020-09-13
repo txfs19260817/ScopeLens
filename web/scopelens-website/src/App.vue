@@ -2,6 +2,7 @@
     <v-app>
         <Navbar/>
         <v-main>
+            <Alert></Alert>
             <Snackbar style="height: 0"/>
             <v-slide-x-reverse-transition mode="out-in">
                 <keep-alive v-if="isRouterAlive" :include="r">
@@ -15,6 +16,7 @@
 <script>
     import Navbar from "./components/Navbar";
     import Snackbar from "./components/_partial/Snackbar";
+    import Alert from "./components/_partial/Alert";
 
     export default {
         name: 'App',
@@ -26,6 +28,7 @@
         components: {
             Navbar,
             Snackbar,
+            Alert
         },
         data: () => ({
             r: ["Home", "Search", "MyTeams"],
