@@ -1,12 +1,14 @@
 package routers
 
 import (
+	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	limit "github.com/yangxikun/gin-limit-by-key"
 	"golang.org/x/time/rate"
 	"net/http"
 	"scopelens-server/config"
 	"scopelens-server/middleware"
+	"scopelens-server/utils/logger"
 	"time"
 )
 
@@ -17,6 +19,17 @@ func InitRouters() *gin.Engine {
 	r.Static("/assets", "./assets")
 
 	// middleware
+	// Add a ginzap middleware, which:
+	//   - Logs all requests, like a combined access and error log.
+	//   - Logs to stdout.
+	//   - RFC3339 with UTC time format.
+	r.Use(ginzap.Ginzap(logger.Logger, time.RFC3339, false))
+
+	// Logs all panic to error log
+	//   - stack means whether output the stack info.
+	r.Use(ginzap.RecoveryWithZap(logger.Logger, true))
+
+	// CORS
 	r.Use(middleware.Cors())
 	if config.Mode == "release" {
 		r.Use(middleware.TlsHandler())

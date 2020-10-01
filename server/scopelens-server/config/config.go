@@ -1,9 +1,10 @@
 package config
 
 import (
-	"github.com/go-ini/ini"
-	"log"
+	"fmt"
 	"time"
+
+	"github.com/go-ini/ini"
 )
 
 var (
@@ -42,15 +43,16 @@ type jwt struct {
 
 type path struct {
 	ImageSavePath string
-	SpritePath string
+	SpritePath    string
+	LogPath       string
 }
 
 type aws struct {
 	AccessKey string
 	SecretKey string
-	Region string
-	Bucket string
-	TeamPath string
+	Region    string
+	Bucket    string
+	TeamPath  string
 }
 
 func init() {
@@ -58,7 +60,7 @@ func init() {
 	cfgPath := "config/config.ini"
 	cfg, err := ini.Load(cfgPath)
 	if err != nil {
-		log.Fatalf("Fail to parse '%v': %v", cfgPath, err)
+		panic(fmt.Sprintf("Fail to parse '%v': %v", cfgPath, err))
 	}
 
 	// Map from `cfg` to struct and save as global variable
@@ -68,36 +70,36 @@ func init() {
 	// [app]
 	App = new(app)
 	if err := cfg.Section("app").MapTo(App); err != nil {
-		log.Fatalf("Fail to map [app] to App: %v", err)
+		panic(fmt.Sprintf("Fail to map [app] to App: %v", err))
 	}
 
 	// [server]
 	Server = new(server)
 	if err := cfg.Section("server").MapTo(Server); err != nil {
-		log.Fatalf("Fail to map [server] to Server: %v", err)
+		panic(fmt.Sprintf("Fail to map [server] to Server: %v", err))
 	}
 
 	// [database]
 	Database = new(database)
 	if err := cfg.Section("database").MapTo(Database); err != nil {
-		log.Fatalf("Fail to map [database] to Database: %v", err)
+		panic(fmt.Sprintf("Fail to map [database] to Database: %v", err))
 	}
 
 	// [jwt]
 	Jwt = new(jwt)
 	if err := cfg.Section("jwt").MapTo(Jwt); err != nil {
-		log.Fatalf("Fail to map [jwt] to Jwt: %v", err)
+		panic(fmt.Sprintf("Fail to map [jwt] to Jwt: %v", err))
 	}
 
 	// [jwt]
 	Path = new(path)
 	if err := cfg.Section("path").MapTo(Path); err != nil {
-		log.Fatalf("Fail to map [path] to Path: %v", err)
+		panic(fmt.Sprintf("Fail to map [path] to Path: %v", err))
 	}
 
 	// [aws]
 	Aws = new(aws)
 	if err := cfg.Section("aws").MapTo(Aws); err != nil {
-		log.Fatalf("Fail to map [aws] to Aws: %v", err)
+		panic(fmt.Sprintf("Fail to map [aws] to Aws: %v", err))
 	}
 }
