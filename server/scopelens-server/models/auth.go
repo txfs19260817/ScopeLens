@@ -14,7 +14,7 @@ type Login struct {
 }
 
 // Insert new user
-func (d *DBDriver) Register(user User) (bool, error){
+func (d *DBDriver) Register(user User) (bool, error) {
 	var err error
 	user.ID = primitive.NewObjectID()
 	user.Password, err = encrypt.PasswordEncrypt(user.Password)
@@ -30,7 +30,7 @@ func (d *DBDriver) Register(user User) (bool, error){
 }
 
 // Check username and password
-func (d *DBDriver) LoginValidate(loginReq Login) (bool, error){
+func (d *DBDriver) LoginValidate(loginReq Login) (bool, error) {
 	// Find password
 	var res bson.M
 	opt := options.FindOne().SetProjection(bson.M{"_id": 0, "password": 1})

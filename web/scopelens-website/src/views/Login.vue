@@ -119,6 +119,7 @@
                                                             :error-messages="errors"
                                                     />
                                                 </ValidationProvider>
+                                                <vue-recaptcha :sitekey="siteKey" @verify="onVerify"></vue-recaptcha>
                                                 <div class="text-center mt-6">
                                                     <v-btn :class="{'grey--text text--darken-4': $vuetify.theme.dark}" type="submit" large dark color="primary" :loading="loading">
                                                         {{ $t('login.signup') }}
@@ -140,6 +141,7 @@
 <script>
     import {required, email, max} from 'vee-validate/dist/rules'
     import {extend, ValidationObserver, ValidationProvider, setInteractionMode} from 'vee-validate'
+    import VueRecaptcha from 'vue-recaptcha'
 
     setInteractionMode('eager')
     extend('required', {
@@ -160,6 +162,7 @@
         components: {
             ValidationProvider,
             ValidationObserver,
+            VueRecaptcha
         },
         data: () => ({
             // Active window
@@ -174,12 +177,18 @@
                 email: "",
                 password: ""
             },
+            // reCaptcha
+            siteKey: process.env.VUE_APP_RECAPTCHA,
+            reCaptchaResponse: ""
         }),
         methods: {
+            onVerify: function (response) {
+                this.reCaptchaResponse = response
+            },
             async registerRequest() {
                 const v = await this.$refs.observer.validate()
                 if (!v) return
-                const success = await this.$store.dispatch('user/register', {data: this.register});
+                const success = await this.$store.dispatch('user/register', {data: this.register, recaptcha: this.reCaptchaResponse});
                 if (success) {
                     // back to login window
                     this.step = 1;

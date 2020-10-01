@@ -4,10 +4,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"scopelens-server/middleware"
 	"scopelens-server/models"
+	util "scopelens-server/utils/recaptcha"
 	"scopelens-server/utils/response"
 )
 
 func Register(c *gin.Context) {
+	if err := util.ReCaptcha(c.Query("recaptcha")); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	var user models.User
 	// Validate JSON form
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -50,7 +55,7 @@ func Login(c *gin.Context) {
 	}
 }
 
-func CheckToken(c *gin.Context)  {
+func CheckToken(c *gin.Context) {
 	// api combined with JWTAuth middleware to check if token is still valid
 	response.Ok(c)
 }

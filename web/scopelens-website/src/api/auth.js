@@ -1,7 +1,7 @@
 import http from "./index";
 
-export const registerRequest = (data) => {
-    return http.post("auth/register", data);
+export const registerRequest = (data, recaptcha) => {
+    return http.post("auth/register?recaptcha="+recaptcha, data);
 }
 
 export const loginRequest = (data) => {

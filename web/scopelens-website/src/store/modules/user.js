@@ -28,7 +28,7 @@ const user = {
             let success = false;
             commit('LOADING_ON', null, {root: true})
 
-            const res = await registerRequest(options.data);
+            const res = await registerRequest(options.data, options.recaptcha);
             if (res.data.code === ERROR) {
                 dispatch('snackbar/openSnackbar', {
                     "msg": res.data.msg,

@@ -36,7 +36,8 @@ type database struct {
 }
 
 type jwt struct {
-	SigningKey string
+	SigningKey      string
+	ReCaptchaSecret string
 }
 
 type path struct {
