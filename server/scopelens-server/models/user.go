@@ -9,11 +9,11 @@ import (
 
 // The User holds
 type User struct {
-	ID       primitive.ObjectID   `bson:"_id"      json:"id"`
-	UserName string               `bson:"username" json:"username" binding:"required"`
-	Email    string               `bson:"email"    json:"email"    binding:"required,email"`
-	Password string               `bson:"password" json:"password" binding:"required"`
-	Like     []string             `bson:"like"     json:"like"`
+	ID       primitive.ObjectID `bson:"_id"      json:"id"`
+	UserName string             `bson:"username" json:"username" binding:"required"`
+	Email    string             `bson:"email"    json:"email"    binding:"required,email"`
+	Password string             `bson:"password" json:"password" binding:"required"`
+	Like     []string           `bson:"like"     json:"like"`
 }
 
 // GetUserByName returns the User struct pointer by the given name.
@@ -28,7 +28,7 @@ func (d *DBDriver) GetUserByUsername(username string) (*User, error) {
 	return user, nil
 }
 
-func (d *DBDriver) InsertLikeByUsername(username, id string) error  {
+func (d *DBDriver) InsertLikeByUsername(username, id string) error {
 	// filter
 	filter := bson.D{
 		{"username", username},
@@ -64,7 +64,7 @@ func (d *DBDriver) InsertLikeByUsername(username, id string) error  {
 	}
 	_, err = d.DB.Collection("teams").
 		UpdateOne(context.Background(),
-			bson.D{{"_id",_id}},
+			bson.D{{"_id", _id}},
 			bson.D{{"$inc", bson.D{{"likes", 1}}}})
 	if err != nil {
 		return err

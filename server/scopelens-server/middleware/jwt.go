@@ -186,9 +186,9 @@ func GenerateToken(c *gin.Context, username string) {
 	claims := CustomClaims{
 		UserName: username,
 		StandardClaims: jwt.StandardClaims{
-			NotBefore: int64(time.Now().Unix() - 1000),          // 签名生效时间
+			NotBefore: int64(time.Now().Unix() - 1000),        // 签名生效时间
 			ExpiresAt: int64(time.Now().Unix() + 60*60*24*30), // 签名过期时间30days
-			Issuer:    "ZeminJiang",                             // 签名颁发者
+			Issuer:    "ZeminJiang",                           // 签名颁发者
 		},
 	}
 

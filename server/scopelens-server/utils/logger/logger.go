@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	Logger *zap.Logger
+	Logger        *zap.Logger
 	SugaredLogger *zap.SugaredLogger
 )
 

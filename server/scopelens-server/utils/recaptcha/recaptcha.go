@@ -9,10 +9,10 @@ import (
 )
 
 type reCAPTCHAResponse struct {
-	Success        bool      `json:"success"`
-	ChallengeTS    time.Time `json:"challenge_ts"`
-	Hostname       string    `json:"hostname,omitempty"`
-	ErrorCodes     []string  `json:"error-codes,omitempty"`
+	Success     bool      `json:"success"`
+	ChallengeTS time.Time `json:"challenge_ts"`
+	Hostname    string    `json:"hostname,omitempty"`
+	ErrorCodes  []string  `json:"error-codes,omitempty"`
 }
 
 func ReCaptcha(token string) error {

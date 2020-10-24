@@ -15,7 +15,7 @@ var (
 	// 1. Info
 	PointsInfoX = 88
 	PointsInfoY = 114
-	PointsInfo = []image.Point{
+	PointsInfo  = []image.Point{
 		{PointsInfoX, PointsInfoY}, {PointsInfoX + OffsetX, PointsInfoY},
 		{PointsInfoX, PointsInfoY + OffsetY}, {PointsInfoX + OffsetX, PointsInfoY + OffsetY},
 		{PointsInfoX, PointsInfoY + OffsetY*2}, {PointsInfoX + OffsetX, PointsInfoY + OffsetY*2},
@@ -23,7 +23,7 @@ var (
 	// 3. Move text
 	PointsMoveTextX = 400
 	PointsMoveTextY = 50
-	PointsMoveText = []image.Point{
+	PointsMoveText  = []image.Point{
 		{PointsMoveTextX, PointsMoveTextY},
 		{PointsMoveTextX + OffsetX, PointsMoveTextY},
 		{PointsMoveTextX, PointsMoveTextY + OffsetY},
@@ -51,7 +51,7 @@ func AppendInfo(canvas image.Image, pokemonList *[]Pokemon) (image.Image, error)
 
 	// Info line space
 	var lineSpace = 34
-	
+
 	// Load font file
 	fontBytes, err := ioutil.ReadFile(FontPath)
 	if err != nil {
@@ -81,11 +81,11 @@ func AppendInfo(canvas image.Image, pokemonList *[]Pokemon) (image.Image, error)
 		if _, err = c.DrawString((*pokemonList)[i].Name, pt); err != nil {
 			return nil, err
 		}
-		pt = freetype.Pt(PointsInfo[i].X, PointsInfo[i].Y + lineSpace)
+		pt = freetype.Pt(PointsInfo[i].X, PointsInfo[i].Y+lineSpace)
 		if _, err = c.DrawString((*pokemonList)[i].Ability, pt); err != nil {
 			return nil, err
 		}
-		pt = freetype.Pt(PointsInfo[i].X, PointsInfo[i].Y + lineSpace * 2)
+		pt = freetype.Pt(PointsInfo[i].X, PointsInfo[i].Y+lineSpace*2)
 		if _, err = c.DrawString((*pokemonList)[i].Item, pt); err != nil {
 			return nil, err
 		}
@@ -174,11 +174,11 @@ func AppendTitleAndAuthor(canvas image.Image, title, author string) (image.Image
 	c.SetDst(out)
 	c.SetSrc(image.White)
 
-	if _, err = c.DrawString(title, freetype.Pt(PointsTitleX - len(title) * 2, PointsTitleY)); err != nil {
+	if _, err = c.DrawString(title, freetype.Pt(PointsTitleX-len(title)*2, PointsTitleY)); err != nil {
 		return nil, err
 	}
 
-	if _, err = c.DrawString(author, freetype.Pt(PointsAuthorX - len(author) * 2, PointsAuthorY)); err != nil {
+	if _, err = c.DrawString(author, freetype.Pt(PointsAuthorX-len(author)*2, PointsAuthorY)); err != nil {
 		return nil, err
 	}
 

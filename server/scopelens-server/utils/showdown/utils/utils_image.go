@@ -20,7 +20,7 @@ var (
 	// 2. Items
 	PointsItemX = 150
 	PointsItemY = 50
-	PointsItem = []image.Point{
+	PointsItem  = []image.Point{
 		{PointsItemX, PointsItemY}, {PointsItemX + OffsetX, PointsItemY},
 		{PointsItemX, PointsItemY + OffsetY}, {PointsItemX + OffsetX, PointsItemY + OffsetY},
 		{PointsItemX, PointsItemY + OffsetY*2}, {PointsItemX + OffsetX, PointsItemY + OffsetY*2},
@@ -28,7 +28,7 @@ var (
 	// 3. Move Icons
 	PointsMoveIconsX = 358
 	PointsMoveIconsY = 23
-	PointsMoveIcons = []image.Point{
+	PointsMoveIcons  = []image.Point{
 		{PointsMoveIconsX, PointsMoveIconsY},
 		{PointsMoveIconsX + OffsetX, PointsMoveIconsY},
 		{PointsMoveIconsX, PointsMoveIconsY + OffsetY},
@@ -39,7 +39,7 @@ var (
 	// 4. Types
 	PointsTypesX = 200
 	PointsTypesY = 24
-	PointsTypes = []image.Point{
+	PointsTypes  = []image.Point{
 		{PointsTypesX, PointsTypesY},
 		{PointsTypesX + OffsetX, PointsTypesY},
 		{PointsTypesX, PointsTypesY + OffsetY},
@@ -234,7 +234,7 @@ func AppendMoves(canvas image.Image, pokemonList *[]Pokemon) (image.Image, error
 	}
 
 	// Append loop
-	for i := range *pokemonList{
+	for i := range *pokemonList {
 		var err error
 		// Move names a.k.a. move text
 		moves := (*pokemonList)[i].Moves
