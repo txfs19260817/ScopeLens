@@ -877,6 +877,14 @@ var (
 		"zenheadbutt":               "Psychic",
 		"zingzap":                   "Electric",
 		"zippyzap":                  "Electric",
+		"astralbarrage":             "Ghost",
+		"dragonenergy":              "Dragon",
+		"eeriespell":                "Psychic",
+		"fierywrath":                "Dark",
+		"freezingglare":             "Psychic",
+		"glaciallance":              "Ice",
+		"thundercage":               "Electric",
+		"thunderouskick":            "Fighting",
 	}
 
 	// Pokemon
