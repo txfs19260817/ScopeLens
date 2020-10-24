@@ -23,6 +23,7 @@ ReCaptchaSecret = <ReCaptchaV2Secret>
 [path]
 ImageSavePath = assets/teams/
 SpritePath = assets/sprites/
+LogPath = log/log.log
 
 [aws]
 AccessKey = <AccessKey>

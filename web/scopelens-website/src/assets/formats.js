@@ -1,4 +1,5 @@
 export const formats = [
+    "VGC 2021",
     "VGC 2020",
     "[Gen 8] Battle Stadium Singles",
     "[Gen 8] Battle Stadium Doubles",
