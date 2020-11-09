@@ -6,6 +6,7 @@ import vuetify from './plugins/vuetify';
 import http from "./api";
 import i18n from './plugins/i18n';
 import VueClipboard from 'vue-clipboard2';
+import './registerServiceWorker'
 
 // use this.$http alias
 Vue.prototype.$http = http;

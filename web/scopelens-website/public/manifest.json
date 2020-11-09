@@ -1,0 +1,28 @@
+{
+    "name": "ScopeLens宝可梦队伍分享平台",
+    "short_name": "ScopeLens",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#4768a1",
+    "theme_color": "#4768a1",
+    "description": "与全世界的玩家们分享心水的宝可梦队伍",
+    "lang":"zh",
+    "orientation":"any",
+    "icons": [{
+      "src": "./img/icons/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }, {
+      "src": "./img/icons/favicon-76x76.png",
+      "sizes": "76x76",
+      "type": "image/png"
+    },{
+      "src": "./img/icons/favicon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }, {
+      "src": "./img/icons/favicon-256x256.ico",
+      "sizes": "256x256",
+      "type": "image/png"
+    }]
+  }
