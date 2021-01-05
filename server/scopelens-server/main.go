@@ -30,7 +30,7 @@ func main() {
 	var err error
 	models.Db, err = models.InitDB()
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 	logger.SugaredLogger.Info("Database Connected. ")
 	defer models.Db.Close()
@@ -38,17 +38,21 @@ func main() {
 	// S3 session establishing
 	storage.S3Client, err = storage.NewAmazonS3(config.Aws.AccessKey, config.Aws.SecretKey, config.Aws.Region, config.Aws.Bucket)
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 
 	// Start server depending on running mode
 	switch config.Mode {
 	case "debug":
 		gin.SetMode(config.Mode)
-		_ = s.ListenAndServe()
+		if err := s.ListenAndServe(); err != nil {
+			panic(err.Error())
+		}
 	case "release":
 		gin.SetMode(config.Mode)
-		_ = s.ListenAndServeTLS(config.Server.HttpsCrt, config.Server.HttpsKey)
+		if err := s.ListenAndServeTLS(config.Server.HttpsCrt, config.Server.HttpsKey); err != nil {
+			panic(err.Error())
+		}
 	default:
 		panic("Running mode %v is not available: " + config.Mode)
 	}
