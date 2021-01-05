@@ -9,8 +9,8 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-ini/ini v1.57.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
+	github.com/mtslzr/pokeapi-go v1.4.0 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible
-	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/sugoiuguu/showgone v0.0.0-20181101115829-944ac602d5d2
 	github.com/thedevsaddam/govalidator v1.9.10

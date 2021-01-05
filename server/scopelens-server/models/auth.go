@@ -2,10 +2,12 @@ package models
 
 import (
 	"context"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"scopelens-server/utils/encrypt"
+	"scopelens-server/utils/logger"
 )
 
 type Login struct {
@@ -38,13 +40,15 @@ func (d *DBDriver) LoginValidate(loginReq Login) (bool, error) {
 		FindOne(context.Background(), bson.M{"username": loginReq.UserName}, opt).
 		Decode(&res)
 	if err != nil {
-		return false, err
+		logger.SugaredLogger.Error(err)
+		return false, fmt.Errorf("user is not found")
 	}
 
 	// Verify password
 	hashedPassword := res["password"].(string)
 	if err := encrypt.PasswordVerification(hashedPassword, loginReq.Password); err != nil {
-		return false, err
+		logger.SugaredLogger.Error(err)
+		return false, fmt.Errorf("password is not correct")
 	}
 	return true, nil
 }

@@ -56,9 +56,8 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 	var err error
 	var fileFullPath string // image save path
 
-	// Replenish fields
-	team.ID = primitive.NewObjectID()
-	team.CreatedAt = time.Now()
+	// Fill fields
+	team.ID, team.CreatedAt = primitive.NewObjectID(), time.Now()
 	// Use uploaded image first
 	if len(team.Image) != 0 {
 		// decode uploaded base64 string to file
@@ -82,17 +81,13 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 	}
 
 	// then upload to S3.
-	s3, err := storage.NewAmazonS3(config.Aws.AccessKey, config.Aws.SecretKey, config.Aws.Region, config.Aws.Bucket)
-	if err != nil {
-		return false, err
-	}
-	f, err := os.Open(fileFullPath)
+	imageFile, err := os.Open(fileFullPath)
 	if err != nil {
 		return false, fmt.Errorf("failed to open file %q, %v", fileFullPath, err)
 	}
 	tempPath := strings.Split(fileFullPath, "/")
 	uploadPath := config.Aws.TeamPath + "/" + tempPath[len(tempPath)-1]
-	url, err := s3.Save(uploadPath, f)
+	url, err := storage.S3Client.Save(uploadPath, imageFile)
 	if err != nil {
 		return false, err
 	}

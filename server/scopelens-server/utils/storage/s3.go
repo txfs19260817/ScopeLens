@@ -2,14 +2,17 @@ package storage
 
 import (
 	"fmt"
+	"io"
+	"path/filepath"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"io"
-	"path/filepath"
 )
+
+var S3Client *AmazonS3
 
 // AmazonS3 is an Amazon S3 file storage.
 type AmazonS3 struct {
@@ -27,21 +30,23 @@ func NewAmazonS3(accessKey, secretKey, region, bucket string) (*AmazonS3, error)
 		return nil, err
 	}
 
-	s := &AmazonS3{
+	return &AmazonS3{
 		bucket: bucket,
 		svc:    s3.New(sess),
-	}
-	return s, nil
+	}, nil
 }
 
 // Save saves data from r to file with the given path.
 func (s *AmazonS3) Save(path string, r io.Reader) (string, error) {
 	contentType := aws.String("binary/octet-stream")
-	ext := filepath.Ext(path)
-	if ext == ".jpg" || ext == ".jpg" {
+
+	switch ext := filepath.Ext(path); ext {
+	case ".jpg", ".jpeg":
 		contentType = aws.String("image/jpeg")
-	} else if ext == ".png" {
+	case ".png":
 		contentType = aws.String("image/png")
+	default:
+		contentType = aws.String("binary/octet-stream")
 	}
 
 	res, err := s3manager.NewUploaderWithClient(s.svc).Upload(
@@ -54,7 +59,7 @@ func (s *AmazonS3) Save(path string, r io.Reader) (string, error) {
 		},
 	)
 	if err != nil {
-		return "", fmt.Errorf("failed to upload object to S3: %s", err)
+		return "", fmt.Errorf("failed to upload object to S3: %w", err)
 	}
 	return res.Location, nil
 }
@@ -68,7 +73,7 @@ func (s *AmazonS3) Remove(path string) error {
 		},
 	)
 	if err != nil {
-		return fmt.Errorf("failed to delete object from S3: %s", err)
+		return fmt.Errorf("failed to delete object from S3: %w", err)
 	}
 	return nil
 }

@@ -7,6 +7,7 @@ import (
 	"scopelens-server/models"
 	"scopelens-server/routers"
 	"scopelens-server/utils/logger"
+	"scopelens-server/utils/storage"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -34,14 +35,20 @@ func main() {
 	logger.SugaredLogger.Info("Database Connected. ")
 	defer models.Db.Close()
 
+	// S3 session establishing
+	storage.S3Client, err = storage.NewAmazonS3(config.Aws.AccessKey, config.Aws.SecretKey, config.Aws.Region, config.Aws.Bucket)
+	if err != nil {
+		panic(err)
+	}
+
 	// Start server depending on running mode
 	switch config.Mode {
 	case "debug":
 		gin.SetMode(config.Mode)
-		s.ListenAndServe()
+		_ = s.ListenAndServe()
 	case "release":
 		gin.SetMode(config.Mode)
-		s.ListenAndServeTLS(config.Server.HttpsCrt, config.Server.HttpsKey)
+		_ = s.ListenAndServeTLS(config.Server.HttpsCrt, config.Server.HttpsKey)
 	default:
 		panic("Running mode %v is not available: " + config.Mode)
 	}
