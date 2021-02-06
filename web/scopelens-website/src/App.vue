@@ -2,7 +2,7 @@
     <v-app>
         <Navbar/>
         <v-main>
-            <Alert v-if="false"></Alert>
+            <Alert v-if="true"></Alert>
             <Snackbar style="height: 0"/>
             <v-slide-x-reverse-transition mode="out-in">
                 <keep-alive v-if="isRouterAlive" :include="r">

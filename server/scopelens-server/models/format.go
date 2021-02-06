@@ -3,6 +3,8 @@ package models
 // Supported formats
 
 var formats = []string{
+	"VGC 2021 S8",
+	"[Gen 8] Battle Stadium Singles S8",
 	"VGC 2021",
 	"VGC 2020",
 	"VGC 2019 Ultra Series",

@@ -1,5 +1,5 @@
 {
-  "alert": "Please choose [Gen 8] Battle Stadium Singles or [Gen 8] Battle Stadium Doubles respectively and mark out with [Series 6] when uploading a Series 6 team.",
+  "alert": "Please choose [VGC 2021 S8] for Doubles or [[Gen 8] Battle Stadium Singles S8] for singles respectively when uploading a Series 8 team, where at most one restricted Legendary Pokémon is allowed.",
   "lang": {
     "btn": "语言/Language",
     "sheetHeader": "Select Language"

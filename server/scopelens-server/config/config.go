@@ -91,7 +91,7 @@ func init() {
 		panic(fmt.Sprintf("Fail to map [jwt] to Jwt: %v", err))
 	}
 
-	// [jwt]
+	// [path]
 	Path = new(path)
 	if err := cfg.Section("path").MapTo(Path); err != nil {
 		panic(fmt.Sprintf("Fail to map [path] to Path: %v", err))
