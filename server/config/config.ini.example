@@ -8,8 +8,8 @@ Url = http://127.0.0.1
 Port = <Port>
 ReadTimeout = 60
 WriteTimeout = 60
-HttpsCrt = "/path/to/fullchain.pem"
-HttpsKey = "/path/to/privkey.pem"
+HttpsCrt = <"/path/to/fullchain.pem">
+HttpsKey = <"/path/to/privkey.pem">
 
 [database]
 Type = MongoDB
@@ -30,4 +30,4 @@ AccessKey = <AccessKey>
 SecretKey = <SecretKey>
 Region = <Region>
 Bucket = <Bucket>
-TeamPath = path/to/teamsFolder
+TeamPath = <path/to/teamsFolder>
