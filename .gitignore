@@ -16,6 +16,7 @@
 
 # config / env
 config.ini
+config.ini.prod
 .DS_Store
 node_modules
 /dist
