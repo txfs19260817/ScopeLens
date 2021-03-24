@@ -1,5 +1,5 @@
 {
-  "alert": "Please choose [VGC 2021 S8] for Doubles or [[Gen 8] Battle Stadium Singles S8] for singles respectively when uploading a Series 8 team, where at most one restricted Legendary Pokémon is allowed.",
+  "alert": "New feature: Pokémon species recognizer! It can help export all species from the screenshot you uploaded automatically. Feel free to report any problems!",
   "lang": {
     "btn": "语言/Language",
     "sheetHeader": "Select Language"
@@ -98,10 +98,20 @@
       "pokemon": "Please select up to 6 Pokémon. You can type words here to filter Pokémon.",
       "image": "Optional. **Note that we only accept image with available rental ID.**"
     },
-    "submit": "Submit",
+    "btn": {
+      "recognition": "[Detect Pokémon from uploaded screenshot] NOTE: To obtain accurate results, the uploaded image should be a SCREENSHOT rather than a photograph. Please correct falsely detected results if any.",
+      "submit": "Submit"
+    },
     "msg": {
       "success": "Upload team success!",
-      "failed": "Upload team failed: "
+      "failed": "Upload team failed",
+      "recognize": {
+        "empty": "No screenshot uploaded",
+        "wrongType": "The uploaded file is not a screenshot",
+        "wrongSize": "File size is too large",
+        "success": "Recognized successfully! Please correct falsely detected results if any.",
+        "failed": "Recognition failed: "
+      }
     }
   },
 

@@ -8,6 +8,7 @@ import zhHant from "./pokemonNames/zh-hant.json"
 import forme from "./pokemonNames/forme.json"
 import {ProcessStr} from "./utils";
 
+// Pokemon are grouped by gen
 const group = {
     0: 1,
     151: 2,
@@ -20,6 +21,7 @@ const group = {
 }
 let currentGroup = 0
 
+// "en/zh-hans/ja"
 const pmNames = [
     en,
     zhHans,
@@ -28,9 +30,11 @@ const pmNames = [
     a.map((v, i) => (r[i] || []).concat(v)), []
 ).map(e => e.join('/'));
 
-let pmNames4Select = []
 
+let pmNames4Select = [] // for v-autocomplete.items
+let en2pmNames = {} // processed English names to pmNames
 for (let i = 0; i < pmNames.length; i++) {
+    // add dividers
     if (group[i] !== undefined) {
         if (i !== 0) {
             pmNames4Select.push({divider: true})
@@ -38,11 +42,14 @@ for (let i = 0; i < pmNames.length; i++) {
         currentGroup = group[i]
         pmNames4Select.push({header: 'Generation ' + currentGroup})
     }
+    // add pmNames
+    let processedName = ProcessStr(en[i])
     pmNames4Select.push({
         name: pmNames[i],
         group: 'Generation ' + currentGroup,
-        avatar: ProcessStr(en[i]) + '.png'
+        avatar: processedName + '.png'
     })
+    en2pmNames[processedName] = pmNames[i]
 }
 
-export {pmNames4Select, forme}
+export {pmNames4Select, en2pmNames, forme}

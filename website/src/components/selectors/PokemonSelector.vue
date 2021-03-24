@@ -1,50 +1,55 @@
 <template>
-    <ValidationProvider v-slot="{ errors }" name="Pokemon" :rules="`${required ? 'required|minmax:1,6' : ''}`">
-        <v-autocomplete
-                v-model="valueModel"
-                :items="pokemon"
-                outlined
-                chips
-                :label="required? `*`+$t('pokemonSelector.pokemon'):$t('pokemonSelector.pokemon')"
-                persistent-hint
-                :hint="hint"
-                item-text="name"
-                item-value="name"
-                multiple
-                :counter="6"
-                :error-messages="errors"
-        >
-            <template v-slot:selection="data">
-                <v-chip
-                        v-bind="data.attrs"
-                        :input-value="data.selected"
-                        close
-                        @click="data.select"
-                        @click:close="removePokemon(data.item)"
+    <v-row>
+        <v-col cols="10">
+            <ValidationProvider v-slot="{ errors }" name="Pokemon" :rules="`${required ? 'required|minmax:1,6' : ''}`">
+                <v-autocomplete
+                        v-model="valueModel"
+                        :items="pokemon"
+                        height="260"
+                        outlined
+                        chips
+                        :label="required? `*`+$t('pokemonSelector.pokemon'):$t('pokemonSelector.pokemon')"
+                        persistent-hint
+                        :hint="hint"
+                        item-text="name"
+                        item-value="name"
+                        multiple
+                        :counter="6"
+                        :error-messages="errors"
                 >
-                    <v-avatar left>
-                        <v-img :src="iconUrl + data.item.avatar"></v-img>
-                    </v-avatar>
-                    {{ data.item.name }}
-                </v-chip>
-            </template>
-            <template v-slot:item="data">
-                <template v-if="typeof data.item !== 'object'">
-                    <v-list-item-content v-text="data.item"></v-list-item-content>
-                </template>
-                <template v-else>
-                    <v-list-item-avatar>
-                        <img :src="iconUrl + data.item.avatar">
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                        <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                        <v-list-item-subtitle
-                                v-html="data.item.group"></v-list-item-subtitle>
-                    </v-list-item-content>
-                </template>
-            </template>
-        </v-autocomplete>
-    </ValidationProvider>
+                    <template v-slot:selection="data">
+                        <v-chip
+                                v-bind="data.attrs"
+                                :input-value="data.selected"
+                                close
+                                @click="data.select"
+                                @click:close="removePokemon(data.item)"
+                        >
+                            <v-avatar left>
+                                <v-img :src="iconUrl + data.item.avatar"></v-img>
+                            </v-avatar>
+                            {{ data.item.name }}
+                        </v-chip>
+                    </template>
+                    <template v-slot:item="data">
+                        <template v-if="typeof data.item !== 'object'">
+                            <v-list-item-content v-text="data.item"></v-list-item-content>
+                        </template>
+                        <template v-else>
+                            <v-list-item-avatar>
+                                <img :src="iconUrl + data.item.avatar" :alt="data.item.name[0]">
+                            </v-list-item-avatar>
+                            <v-list-item-content>
+                                <v-list-item-title v-html="data.item.name"></v-list-item-title>
+                                <v-list-item-subtitle
+                                        v-html="data.item.group"></v-list-item-subtitle>
+                            </v-list-item-content>
+                        </template>
+                    </template>
+                </v-autocomplete>
+            </ValidationProvider>
+        </v-col>
+    </v-row>
 </template>
 
 <script>
@@ -109,6 +114,9 @@
             },
             pokemon() {
                 return pmNames4Select
+            },
+            loading() {
+                return this.$store.state.loading.loading
             },
         }
     }
