@@ -103,7 +103,6 @@
                                                        color="primary"
                                                        v-bind="attrs"
                                                        v-on="on"
-                                                       large
                                                        fab
                                                        dark
                                                        :loading="loading">
