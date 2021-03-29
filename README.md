@@ -9,4 +9,8 @@ ScopeLens is a web platform that allows trainers to share awesome teams with oth
 - [MongoDB](https://github.com/mongodb/mongo) & [MongoDB Go Driver](https://github.com/mongodb/mongo-go-driver) - MongoDB is a document-based database. MongoDB is one of the leading NoSQL databases.
 
 ## Docker
-The project now provides Dockerfile which lets you build Scopelens Server under `./server` with a single command: `docker build -t <TAG> --build-arg PORT=<PORT> . `
+The project now provides Dockerfile which lets you build Scopelens Server under `./server` with commands: 
+```shell
+docker build -t $TAG --build-arg PORT=$PORT --build-arg CERT_PATH=$CERT_PATH .
+docker run -it -p $PORT:$PORT -v $CERT_PATH:$CERT_PATH $TAG
+```
