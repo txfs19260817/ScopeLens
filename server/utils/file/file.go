@@ -3,7 +3,6 @@ package file
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
 	"io/ioutil"
 	"mime/multipart"
 	"os"
@@ -68,33 +67,10 @@ func Rename(name string) string {
 
 // MkDir create a directory. Do nothing if the path already exists.
 func MkDir(src string) error {
-	err := os.MkdirAll(src, os.ModePerm)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return os.MkdirAll(src, os.ModePerm)
 }
 
 // Open a file according to a specific mode
 func Open(name string, flag int, perm os.FileMode) (*os.File, error) {
-	f, err := os.OpenFile(name, flag, perm)
-	if err != nil {
-		return nil, err
-	}
-
-	return f, nil
-}
-
-// parse JSON file
-func UnmarshalJSONArray(path string) (arr []string, err error) {
-	fileJSON, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(fileJSON, &arr)
-	if err != nil {
-		return nil, err
-	}
-	return arr, nil
+	return os.OpenFile(name, flag, perm)
 }

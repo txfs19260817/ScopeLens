@@ -1,11 +1,11 @@
 package util
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/txfs19260817/scopelens/server/config"
 )
 
@@ -27,6 +27,7 @@ func ReCaptcha(token string) error {
 	// get response
 	defer response.Body.Close()
 	var data reCAPTCHAResponse
+	json := jsoniter.ConfigCompatibleWithStandardLibrary
 	if err = json.NewDecoder(response.Body).Decode(&data); err != nil {
 		return err
 	}
