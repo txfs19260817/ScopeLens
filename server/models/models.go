@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -67,10 +68,24 @@ func InitDB() (*DBDriver, error) {
 }
 
 // InitRedis initializes a Redis instance
-func InitRedis() *redis.Client {
-	return redis.NewClient(&redis.Options{
+func InitRedis() (*redis.Client, error) {
+	c := redis.NewClient(&redis.Options{
 		Addr:     config.Redis.Host + ":" + config.Redis.Port,
 		Password: config.Redis.Password,
 		DB:       0,  // use default DB
 	})
+	return c, ping(c)
+}
+
+func ping(client *redis.Client) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	pong, err := client.Ping(ctx).Result()
+	if err != nil {
+		return err
+	}
+	if pong != "PONG" {
+		return fmt.Errorf("the response of PING is not PONG !!! ")
+	}
+	return nil
 }

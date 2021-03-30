@@ -32,11 +32,15 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	logger.SugaredLogger.Info("Database Connected. ")
+	logger.SugaredLogger.Infof("Database %s Connected. ", config.Database.Type)
 	defer models.Db.Close()
 
 	// Redis Connection
-	models.Rdb = models.InitRedis()
+	models.Rdb, err = models.InitRedis()
+	if err != nil {
+		panic(err.Error())
+	}
+	logger.SugaredLogger.Info("Redis Connected. ")
 	defer models.Rdb.Close()
 
 	// S3 session establishing
@@ -44,6 +48,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+	logger.SugaredLogger.Info("AWS S3 session established. ")
 
 	// Start server depending on running mode
 	switch config.Mode {
