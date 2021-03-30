@@ -31,3 +31,9 @@ SecretKey = <SecretKey>
 Region = <Region>
 Bucket = <Bucket>
 TeamPath = <path/to/teamsFolder>
+
+[redis]
+Host = 127.0.0.1
+Port = 6379
+Password = <Password>
+Expiry = 86400

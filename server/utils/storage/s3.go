@@ -22,8 +22,8 @@ type AmazonS3 struct {
 
 // NewAmazonS3 returns a new Amazon S3 file storage.
 func NewAmazonS3(accessKey, secretKey, region, bucket string) (*AmazonS3, error) {
-	creds := credentials.NewStaticCredentials(accessKey, secretKey, "")
-	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(region)
+	staticCredentials := credentials.NewStaticCredentials(accessKey, secretKey, "")
+	cfg := aws.NewConfig().WithCredentials(staticCredentials).WithRegion(region)
 
 	sess, err := session.NewSession(cfg)
 	if err != nil {
@@ -38,7 +38,7 @@ func NewAmazonS3(accessKey, secretKey, region, bucket string) (*AmazonS3, error)
 
 // Save saves data from r to file with the given path.
 func (s *AmazonS3) Save(path string, r io.Reader) (string, error) {
-	contentType := aws.String("binary/octet-stream")
+	var contentType *string
 
 	switch ext := filepath.Ext(path); ext {
 	case ".jpg", ".jpeg":

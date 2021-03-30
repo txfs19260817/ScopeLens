@@ -2,7 +2,6 @@ package file
 
 import (
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"image"
 	"image/gif"
@@ -18,7 +17,7 @@ import (
 func DecodeBase64AndSave(b string) (path string, err error) {
 	// check
 	if len(b) < 10 {
-		return "", errors.New("Empty base64 string. ")
+		return "", fmt.Errorf("Empty base64 string. ")
 	}
 	var ext string
 	if b[11] == 'j' {
@@ -31,7 +30,7 @@ func DecodeBase64AndSave(b string) (path string, err error) {
 		b = b[22:]
 		ext = ".gif"
 	} else {
-		return "", errors.New("Not supported base64 image format. ")
+		return "", fmt.Errorf("Not supported base64 image format. ")
 	}
 
 	// decode
@@ -57,7 +56,7 @@ func DecodeBase64AndSave(b string) (path string, err error) {
 	if err != nil {
 		return "", err
 	} else if n == 0 {
-		return "", errors.New("Wrote an empty file. ")
+		return "", fmt.Errorf("Wrote an empty file. ")
 	}
 
 	return filePathStr, nil
@@ -109,7 +108,7 @@ func Rescale(filePath string) (err error) {
 			return
 		}
 	default:
-		err = errors.New("format error")
+		err = fmt.Errorf("format error")
 	}
 	return nil
 }

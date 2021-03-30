@@ -2,7 +2,8 @@ package models
 
 import (
 	"context"
-	"errors"
+	"fmt"
+	"github.com/txfs19260817/scopelens/server/utils/logger"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -30,6 +31,8 @@ func (d *DBDriver) GetUserByUsername(username string) (*User, error) {
 }
 
 func (d *DBDriver) InsertLikeByUsername(username, id string) error {
+	ctx := context.Background()
+
 	// filter
 	filter := bson.D{
 		{"username", username},
@@ -40,17 +43,24 @@ func (d *DBDriver) InsertLikeByUsername(username, id string) error {
 		return err
 	}
 	if count != 0 {
-		return errors.New("You have already liked this team. ")
+		return fmt.Errorf("You have already liked this team. ")
 	}
 
-	// update
+	// clear redis cache
+	redisKeys := []string{LikesOrderAll}
+	if err := Rdb.Del(ctx, redisKeys...).Err(); err != nil {
+		return err
+	}
+	logger.SugaredLogger.Infof("keys %v was removed due to a team liked", redisKeys)
+
+	// update user's likes list
 	_, err = d.DB.Collection("users").
-		UpdateOne(context.Background(),
+		UpdateOne(ctx,
 			bson.D{{"username", username}},
 			bson.D{{"$push", bson.D{{"like", id}}}})
 	if err != nil {
 		_, err = d.DB.Collection("users").
-			UpdateOne(context.Background(),
+			UpdateOne(ctx,
 				bson.D{{"username", username}},
 				bson.D{{"$set", bson.D{{"like", bson.A{id}}}}})
 		if err != nil {
@@ -64,7 +74,7 @@ func (d *DBDriver) InsertLikeByUsername(username, id string) error {
 		return err
 	}
 	_, err = d.DB.Collection("teams").
-		UpdateOne(context.Background(),
+		UpdateOne(ctx,
 			bson.D{{"_id", _id}},
 			bson.D{{"$inc", bson.D{{"likes", 1}}}})
 	if err != nil {

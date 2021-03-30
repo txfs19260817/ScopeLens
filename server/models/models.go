@@ -4,14 +4,27 @@ import (
 	"context"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/txfs19260817/scopelens/server/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-// Database instance
-var Db *DBDriver
+// Redis keys
+const (
+	// Keys
+	Total = "total" // Total refers to a key which binds to the total number of teams a.k.a. count
+
+	// Hash keys
+	TimeOrderAll = "time:all" // TimeOrderAll refers to a hash key that stores pages of data ordered by time
+	LikesOrderAll = "likes:all" // LikesOrderAll refers to a hash key that stores pages of data ordered by likes
+)
+
+var (
+	Db  *DBDriver     // Db is a database instance
+	Rdb *redis.Client // Rdb is a redis client instance
+)
 
 // DBDriver is a wrapper for the mongo-go-driver.
 type DBDriver struct {
@@ -22,9 +35,10 @@ type DBDriver struct {
 
 // Close closes the mongo-go-driver connection.
 func (d *DBDriver) Close() {
-	d.Client.Disconnect(d.Context)
+	_ = d.Client.Disconnect(d.Context)
 }
 
+// InitDB initializes a database instance
 func InitDB() (*DBDriver, error) {
 	// Define a timeout duration
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -42,12 +56,21 @@ func InitDB() (*DBDriver, error) {
 	}
 
 	// Ping the cluster to ensure we're already connected
-	ctxPing, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	ctxPing, cancelPing := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelPing()
 	if err := client.Ping(ctxPing, readpref.Primary()); err != nil {
 		return nil, err
 	}
 
 	db := client.Database(config.Database.DBName)
 	return &DBDriver{DB: db, Client: client, Context: ctx}, nil
+}
+
+// InitRedis initializes a Redis instance
+func InitRedis() *redis.Client {
+	return redis.NewClient(&redis.Options{
+		Addr:     config.Redis.Host + ":" + config.Redis.Port,
+		Password: config.Redis.Password,
+		DB:       0,  // use default DB
+	})
 }

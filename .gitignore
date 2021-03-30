@@ -40,4 +40,10 @@ log.log
 *.sln
 *.sw?
 
+# keys
 *.pem
+
+# temp images
+server/assets/teams/*.jpg
+server/assets/teams/*.jpeg
+server/assets/teams/*.png

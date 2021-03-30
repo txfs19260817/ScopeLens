@@ -7,8 +7,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-redis/redis/v8"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/txfs19260817/scopelens/server/config"
 	"github.com/txfs19260817/scopelens/server/utils/file"
+	"github.com/txfs19260817/scopelens/server/utils/logger"
 	"github.com/txfs19260817/scopelens/server/utils/showdown"
 	"github.com/txfs19260817/scopelens/server/utils/storage"
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,10 +20,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// The Team holds
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
+// Team holds
 type Team struct {
 	ID primitive.ObjectID `bson:"_id" json:"id"`
-	// User-defined
+	// User-defined fields
 	Title       string   `bson:"title" json:"title" binding:"required"`
 	Author      string   `bson:"author" json:"author" binding:"required"`
 	Format      string   `bson:"format" json:"format" binding:"required"`
@@ -28,7 +33,7 @@ type Team struct {
 	Showdown    string   `bson:"showdown" json:"showdown"`
 	Image       string   `bson:"image" json:"image"` // upload from client: base64; store in DB: URL
 	Description string   `bson:"description" json:"description"`
-	// Auto-generated
+	// Auto-generated fields
 	Uploader    string    `bson:"uploader" json:"uploader"` // User.username
 	CreatedAt   time.Time `bson:"created_at" json:"created_at"`
 	Likes       int       `bson:"likes" json:"likes"` // 0
@@ -52,14 +57,12 @@ type Search struct {
 	OrderBy     string   `json:"order_by"`
 }
 
-// Insert a team
-func (d *DBDriver) InsertTeam(team Team) (bool, error) {
-	var err error
+// InsertTeam inserts a team
+func (d *DBDriver) InsertTeam(team Team) (ok bool, err error) {
 	var fileFullPath string // image save path
+	ctx := context.Background()
 
-	// Fill fields
-	team.ID, team.CreatedAt = primitive.NewObjectID(), time.Now()
-	// Use uploaded image first
+	// use uploaded image first
 	if len(team.Image) != 0 {
 		// decode uploaded base64 string to file
 		fileFullPath, err = file.DecodeBase64AndSave(team.Image)
@@ -81,7 +84,7 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 		return false, err
 	}
 
-	// then upload to S3.
+	// upload to S3.
 	imageFile, err := os.Open(fileFullPath)
 	if err != nil {
 		return false, fmt.Errorf("failed to open file %q, %v", fileFullPath, err)
@@ -92,17 +95,25 @@ func (d *DBDriver) InsertTeam(team Team) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	// store image URL
-	team.Image = url
+
+	// fill fields
+	team.ID, team.CreatedAt, team.Image = primitive.NewObjectID(), time.Now(), url
 
 	// Insert
-	if _, err := d.DB.Collection("teams").InsertOne(context.Background(), team); err != nil {
+	if _, err := d.DB.Collection("teams").InsertOne(ctx, team); err != nil {
 		return false, err
 	}
+
+	// reset hash maps for page data
+	redisKeys := []string{Total, TimeOrderAll, LikesOrderAll}
+	if err := Rdb.Del(ctx, redisKeys...).Err(); err != nil {
+		return false, err
+	}
+	logger.SugaredLogger.Infof("keys %v was removed due to a team inserted", redisKeys)
 	return true, nil
 }
 
-// Count teams
+// GetTeamsCount counts teams
 func (d *DBDriver) GetTeamsCount(filter bson.D) (int, error) {
 	countTeams, err := d.DB.Collection("teams").
 		CountDocuments(context.Background(), filter)
@@ -112,8 +123,45 @@ func (d *DBDriver) GetTeamsCount(filter bson.D) (int, error) {
 	return int(countTeams), nil
 }
 
-// Get teams
-func (d *DBDriver) GetTeams(pageNum, pageSize int, s Search) ([]Team, int, error) {
+// GetTeams gets a page of teams and the total number of results
+func (d *DBDriver) GetTeams(pageNum, pageSize int, criteria Search, isSearching bool) (teams []Team, count int, err error) {
+	ctx := context.Background()
+	hKey, hField := criteria.OrderBy+":all", fmt.Sprintf("%d", pageNum)
+
+	// support redis cache for a page of data in non-searching scenario ONLY
+	if !isSearching {
+		// get teams cache
+		val, err := Rdb.HGet(ctx, hKey, hField).Result()
+		switch {
+		case err == redis.Nil || val == "":
+			logger.SugaredLogger.Warnf("key '%s' does not exist", hKey)
+		case err != nil:
+			logger.SugaredLogger.Errorf("an error occurred when accessing the key '%s' and field '%s': %s", hKey, hField, err.Error())
+		default:
+			logger.SugaredLogger.Infof("key '%s' was hit", hKey)
+			if err := json.Unmarshal([]byte(val), &teams); err != nil {
+				return nil, 0, err
+			}
+		}
+
+		// get count cache
+		count, err = Rdb.Get(ctx, Total).Int()
+		switch {
+		case err == redis.Nil || val == "":
+			logger.SugaredLogger.Warnf("key '%s' does not exist", Total)
+		case err != nil:
+			logger.SugaredLogger.Errorf("an error occurred when accessing the key '%s': %s", Total, err.Error())
+		default:
+			logger.SugaredLogger.Infof("key '%s' was hit", Total)
+		}
+
+		// return if hit the cache
+		if len(teams) > 0 && count > 0 {
+			logger.SugaredLogger.Infof("hit the page %d data ordered by %s, total: %d", pageNum, criteria.OrderBy, count)
+			return teams, count, nil
+		}
+	}
+
 	// get skip number
 	var skip int64
 	if pageNum > 0 {
@@ -124,66 +172,119 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, s Search) ([]Team, int, error
 	opts := options.Find()
 	opts.SetLimit(int64(pageSize))
 	opts.SetSkip(skip)
-	if s.OrderBy == "likes" {
-		opts.SetSort(bson.D{{"likes", -1}}) // order by likes dec
+	if criteria.OrderBy == "likes" {
+		opts.SetSort(bson.D{{Key: "likes", Value: -1}}) // order by likes dec
 	} else {
-		opts.SetSort(bson.D{{"created_at", -1}}) // order by time dec
+		opts.SetSort(bson.D{{Key: "created_at", Value: -1}}) // order by time dec
 	}
 
 	// filter
 	filter := bson.D{
-		{"state", 1},
+		{Key: "state", Value: 1},
 	}
-	if len(s.Format) != 0 {
-		filter = append(filter, bson.E{Key: "format", Value: s.Format})
-	}
-	if len(s.Pokemon) != 0 {
-		filter = append(filter, bson.E{Key: "pokemon", Value: bson.D{{"$all", s.Pokemon}}})
-	}
-	if s.HasShowdown {
-		filter = append(filter, bson.E{Key: "has_showdown", Value: true})
-	}
-	if s.HasRental {
-		filter = append(filter, bson.E{Key: "has_rental", Value: true})
+	if isSearching {
+		if len(criteria.Format) > 0 {
+			filter = append(filter, bson.E{Key: "format", Value: criteria.Format})
+		}
+		if len(criteria.Pokemon) > 0 {
+			filter = append(filter, bson.E{Key: "pokemon", Value: bson.D{{"$all", criteria.Pokemon}}})
+		}
+		if criteria.HasShowdown {
+			filter = append(filter, bson.E{Key: "has_showdown", Value: true})
+		}
+		if criteria.HasRental {
+			filter = append(filter, bson.E{Key: "has_rental", Value: true})
+		}
 	}
 
 	// get the number of teams
-	count, err := d.GetTeamsCount(filter)
+	count, err = d.GetTeamsCount(filter)
 	if err != nil {
-		return nil, -1, err
+		return nil, 0, err
 	}
 
 	// query
-	paginatedCursor, err := d.DB.Collection("teams").Find(context.Background(), filter, opts)
+	paginatedCursor, err := d.DB.Collection("teams").Find(ctx, filter, opts)
 	if err != nil {
-		return nil, -1, err
+		return nil, 0, err
 	}
 
 	// unmarshal retrieved data to struct and append to list
-	var res []Team
-	if err = paginatedCursor.All(context.Background(), &res); err != nil {
-		return nil, -1, err
+	if err = paginatedCursor.All(ctx, &teams); err != nil {
+		return nil, 0, err
 	}
-	return res, count, nil
+
+	// set redis cache in non-searching scenario ONLY
+	if !isSearching {
+		redisValue, err := json.MarshalToString(&teams)
+		if err != nil {
+			return nil, 0, err
+		}
+		_, err = Rdb.Pipelined(ctx, func(pipe redis.Pipeliner) error {
+			if err := Rdb.HSet(ctx, hKey, []string{hField, redisValue}).Err(); err != nil {
+				return err
+			}
+			logger.SugaredLogger.Infof("key '%s' was set", hKey)
+			if err := Rdb.Set(ctx, Total, count, 0).Err(); err != nil {
+				return err
+			}
+			logger.SugaredLogger.Infof("key '%s' was set", Total)
+			return nil
+		})
+		if err != nil {
+			return nil, 0, err
+		}
+	}
+
+	return teams, count, nil
 }
 
-// Get a team by _id
+// GetTeamByID gets a team by `_id`
 func (d *DBDriver) GetTeamByID(id string) (*Team, error) {
+	var team *Team
+	ctx := context.Background()
+
+	// redis cache
+	redisKey := "team:" + id
+	val, err := Rdb.Get(ctx, redisKey).Result()
+	switch {
+	case err == redis.Nil || val == "":
+		logger.SugaredLogger.Warnf("key '%s' does not exist", redisKey)
+	case err != nil:
+		logger.SugaredLogger.Errorf("an error occurred when accessing the key '%s': %s", redisKey, err.Error())
+	default:
+		logger.SugaredLogger.Infof("key '%s' was hit", redisKey)
+		if err := json.Unmarshal([]byte(val), &team); err != nil {
+			return nil, err
+		}
+		return team, nil
+	}
+
+	// database
 	hex, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
-	var team *Team
 	err = d.DB.Collection("teams").
-		FindOne(context.Background(), bson.M{"_id": hex}).
+		FindOne(ctx, bson.M{"_id": hex}).
 		Decode(&team)
 	if err != nil {
 		return nil, err
 	}
+
+	// set redis cache
+	redisValue, err := json.MarshalToString(&team)
+	if err != nil {
+		return nil, err
+	}
+	if err := Rdb.SetEX(ctx, redisKey, redisValue, time.Duration(config.Redis.Expiry)*time.Second).Err(); err != nil {
+		return nil, err
+	}
+	logger.SugaredLogger.Infof("key %s was set", redisKey)
 	return team, nil
 }
 
-// Get pokemon usage by format
+// GetPokemonUsageByFormat gets pokemon usage by format
 func (d *DBDriver) GetPokemonUsageByFormat(format string) ([]Usage, error) {
 	unwindStage := bson.D{{"$unwind", bson.D{{"path", "$pokemon"}, {"preserveNullAndEmptyArrays", false}}}}
 	matchStage0 := bson.D{{"$match", bson.D{{"format", format}}}}
@@ -202,6 +303,7 @@ func (d *DBDriver) GetPokemonUsageByFormat(format string) ([]Usage, error) {
 	return usages, nil
 }
 
+// GetLikedTeamsByUsername gets a user's liked teams
 func (d *DBDriver) GetLikedTeamsByUsername(pageNum, pageSize int, username string) ([]Team, int, error) {
 	// get skip number
 	var skip int64
@@ -254,7 +356,7 @@ func (d *DBDriver) GetLikedTeamsByUsername(pageNum, pageSize int, username strin
 	return res, count, nil
 }
 
-// Get uploaded teams
+// GetUploadedTeamsByUsername gets uploaded teams by user name
 func (d *DBDriver) GetUploadedTeamsByUsername(pageNum, pageSize int, username string) ([]Team, int, error) {
 	// get skip number
 	var skip int64

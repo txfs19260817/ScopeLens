@@ -15,6 +15,7 @@ var (
 	Jwt      *jwt
 	Path     *path
 	Aws      *aws
+	Redis    *redis
 )
 
 type app struct {
@@ -53,6 +54,13 @@ type aws struct {
 	Region    string
 	Bucket    string
 	TeamPath  string
+}
+
+type redis struct {
+	Host     string
+	Port     string
+	Password string
+	Expiry   int
 }
 
 func init() {
@@ -101,5 +109,11 @@ func init() {
 	Aws = new(aws)
 	if err := cfg.Section("aws").MapTo(Aws); err != nil {
 		panic(fmt.Sprintf("Fail to map [aws] to Aws: %v", err))
+	}
+
+	// [redis]
+	Redis = new(redis)
+	if err := cfg.Section("redis").MapTo(Redis); err != nil {
+		panic(fmt.Sprintf("Fail to map [redis] to Redis: %v", err))
 	}
 }

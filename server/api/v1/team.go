@@ -34,11 +34,10 @@ func GetTeams(c *gin.Context) {
 	if err != nil {
 		page = 0
 	}
-	s := models.Search{OrderBy: "time"}
 
 	// retrieve data
 	data := make(map[string]interface{})
-	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, s); err != nil {
+	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, models.Search{OrderBy: "time"}, false); err != nil {
 		logger.SugaredLogger.Error(err)
 		response.FailWithMessage(err.Error(), c)
 	} else {
@@ -46,16 +45,15 @@ func GetTeams(c *gin.Context) {
 	}
 }
 
-func GetTeamsOrderbyLikes(c *gin.Context) {
+func GetTeamsOrderByLikes(c *gin.Context) {
 	page, err := com.StrTo(c.Query("page")).Int()
 	if err != nil {
 		page = 0
 	}
-	s := models.Search{OrderBy: "likes"}
 
 	// retrieve data
 	data := make(map[string]interface{})
-	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, s); err != nil {
+	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, models.Search{OrderBy: "likes"}, false); err != nil {
 		logger.SugaredLogger.Error(err)
 		response.FailWithMessage(err.Error(), c)
 	} else {
@@ -90,7 +88,7 @@ func GetTeamsBySearchCriteria(c *gin.Context) {
 
 	// retrieve data
 	data := make(map[string]interface{})
-	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, s); err != nil {
+	if data["teams"], data["total"], err = models.Db.GetTeams(page, config.App.PageSize, s, true); err != nil {
 		logger.SugaredLogger.Error(err)
 		response.FailWithMessage(err.Error(), c)
 	} else {

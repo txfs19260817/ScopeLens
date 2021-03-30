@@ -26,14 +26,18 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	// Database Connection
 	var err error
+	// Database Connection
 	models.Db, err = models.InitDB()
 	if err != nil {
 		panic(err.Error())
 	}
 	logger.SugaredLogger.Info("Database Connected. ")
 	defer models.Db.Close()
+
+	// Redis Connection
+	models.Rdb = models.InitRedis()
+	defer models.Rdb.Close()
 
 	// S3 session establishing
 	storage.S3Client, err = storage.NewAmazonS3(config.Aws.AccessKey, config.Aws.SecretKey, config.Aws.Region, config.Aws.Bucket)

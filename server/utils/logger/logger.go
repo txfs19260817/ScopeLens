@@ -1,6 +1,9 @@
 package logger
 
 import (
+	"io"
+	"os"
+
 	"github.com/natefinch/lumberjack"
 	"github.com/txfs19260817/scopelens/server/config"
 	"go.uber.org/zap"
@@ -36,5 +39,5 @@ func getWriteSyncer() zapcore.WriteSyncer {
 		MaxAge:     60,
 		Compress:   false,
 	}
-	return zapcore.AddSync(lumberJackLogger)
+	return zapcore.AddSync(io.MultiWriter(os.Stdout, lumberJackLogger))
 }
