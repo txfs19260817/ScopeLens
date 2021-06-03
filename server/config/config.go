@@ -26,7 +26,6 @@ var (
 
 type app struct {
 	PageSize int
-	EnableHttps bool
 }
 
 type server struct {
@@ -36,6 +35,8 @@ type server struct {
 	WriteTimeout time.Duration
 	HttpsCrt     string
 	HttpsKey     string
+	EnableHttps bool
+	EnableCORS bool
 }
 
 type database struct {

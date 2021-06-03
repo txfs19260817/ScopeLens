@@ -51,7 +51,7 @@ func main() {
 	logger.SugaredLogger.Info("AWS S3 session established. ")
 
 	// Start server
-	if config.App.EnableHttps {
+	if config.Server.EnableHttps {
 		if err := s.ListenAndServeTLS(config.Server.HttpsCrt, config.Server.HttpsKey); err != nil {
 			panic(err.Error())
 		}

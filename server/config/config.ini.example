@@ -11,6 +11,8 @@ ReadTimeout = 60
 WriteTimeout = 60
 HttpsCrt = <"/path/to/fullchain.pem">
 HttpsKey = <"/path/to/privkey.pem">
+EnableHttps = false
+EnableCORS = true
 
 [database]
 Type = MongoDB

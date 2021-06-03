@@ -31,10 +31,17 @@ func InitRouters() *gin.Engine {
 	r.Use(ginzap.RecoveryWithZap(logger.Logger, true))
 
 	// CORS
-	r.Use(middleware.Cors())
-	if config.Mode == "release" {
-		r.Use(middleware.TlsHandler())
+	if config.Server.EnableCORS {
+		r.Use(middleware.Cors())
+	}
 
+	// Apply TlsHandler middleware if HTTPS enabled
+	if config.Server.EnableHttps {
+		r.Use(middleware.TlsHandler())
+	}
+
+	// Enable limiter in production env
+	if config.Mode == "release" {
 		// limit access rate by custom key (here is IP) and rate for POST
 		limiterMiddleware := limit.NewRateLimiter(func(c *gin.Context) string {
 			return c.ClientIP() // limit rate by client ip
