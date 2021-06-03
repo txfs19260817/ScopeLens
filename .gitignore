@@ -47,3 +47,6 @@ log.log
 server/assets/teams/*.jpg
 server/assets/teams/*.jpeg
 server/assets/teams/*.png
+
+# k8s
+install/

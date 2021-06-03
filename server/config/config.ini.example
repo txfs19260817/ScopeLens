@@ -2,6 +2,7 @@ Mode = debug
 
 [app]
 PageSize = 12
+EnableHttps = false
 
 [server]
 Url = http://127.0.0.1

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/txfs19260817/scopelens/server/config"
 	"github.com/txfs19260817/scopelens/server/models"
 	"github.com/txfs19260817/scopelens/server/routers"
@@ -25,12 +24,13 @@ func main() {
 		WriteTimeout:   config.Server.WriteTimeout * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+	logger.SugaredLogger.Infof("Loaded config from: %s", config.CfgPath)
 
 	var err error
 	// Database Connection
 	models.Db, err = models.InitDB()
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 	logger.SugaredLogger.Infof("Database %s Connected. ", config.Database.Type)
 	defer models.Db.Close()
@@ -38,7 +38,7 @@ func main() {
 	// Redis Connection
 	models.Rdb, err = models.InitRedis()
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 	logger.SugaredLogger.Info("Redis Connected. ")
 	defer models.Rdb.Close()
@@ -46,23 +46,18 @@ func main() {
 	// S3 session establishing
 	storage.S3Client, err = storage.NewAmazonS3(config.Aws.AccessKey, config.Aws.SecretKey, config.Aws.Region, config.Aws.Bucket)
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 	logger.SugaredLogger.Info("AWS S3 session established. ")
 
-	// Start server depending on running mode
-	switch config.Mode {
-	case "debug":
-		gin.SetMode(config.Mode)
-		if err := s.ListenAndServe(); err != nil {
-			panic(err.Error())
-		}
-	case "release":
-		gin.SetMode(config.Mode)
+	// Start server
+	if config.App.EnableHttps {
 		if err := s.ListenAndServeTLS(config.Server.HttpsCrt, config.Server.HttpsKey); err != nil {
 			panic(err.Error())
 		}
-	default:
-		panic("Running mode %v is not available: " + config.Mode)
+	} else {
+		if err := s.ListenAndServe(); err != nil {
+			panic(err)
+		}
 	}
 }

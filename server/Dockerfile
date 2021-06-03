@@ -1,21 +1,17 @@
-FROM golang:1.16.2
-
-# envs
+# Build stage
+FROM golang:1.16-alpine3.13 AS builder
 ENV GOPROXY https://goproxy.cn,direct
-ENV GIN_MODE release
-
-# copy & build
-WORKDIR $GOPATH/src/github.com/txfs19260817/scopelens/server
-COPY . $GOPATH/src/github.com/txfs19260817/scopelens/server
-RUN mv ./config/config.ini ./config/config.ini.dev && mv ./config/config.ini.prod ./config/config.ini
+WORKDIR /app
+COPY . .
 RUN go build -v .
 
-# HTTPs cert&key (-v $CERT_PATH:$CERT_PATH)
-ARG CERT_PATH
-RUN mkdir -p $CERT_PATH
-
-# set port (-p $PORT:$PORT)
-ARG PORT
+# Run stage (set port `-p $PORT:$PORT`)
+FROM alpine:3.13
+WORKDIR $GOPATH/src/github.com/txfs19260817/scopelens/server
+COPY --from=builder /app/server .
+COPY assets .
+RUN mkdir config && mkdir log
+ARG PORT=8888
 EXPOSE $PORT
 
 # run

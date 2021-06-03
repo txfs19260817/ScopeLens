@@ -18,6 +18,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
+	github.com/stretchr/testify v1.7.0
 	github.com/sugoiuguu/showgone v0.0.0-20181101115829-944ac602d5d2
 	github.com/thedevsaddam/govalidator v1.9.10
 	github.com/ugorji/go v1.2.4 // indirect
@@ -33,4 +34,5 @@ require (
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

@@ -2,12 +2,18 @@ package config
 
 import (
 	"fmt"
+	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/go-ini/ini"
 )
 
 var (
+	_, b, _, _ = runtime.Caller(0)
+	Root       = filepath.Join(filepath.Dir(b), "..") // Root folder of this project
+	CfgPath    = filepath.Join(Root, "config/config.ini") // CfgPath is the absolute path to config file
+
 	Mode     string
 	App      *app
 	Server   *server
@@ -20,6 +26,7 @@ var (
 
 type app struct {
 	PageSize int
+	EnableHttps bool
 }
 
 type server struct {
@@ -65,10 +72,9 @@ type redis struct {
 
 func init() {
 	// Load config from .ini file.
-	cfgPath := "config/config.ini"
-	cfg, err := ini.Load(cfgPath)
+	cfg, err := ini.Load(CfgPath)
 	if err != nil {
-		panic(fmt.Sprintf("Fail to parse '%v': %v", cfgPath, err))
+		panic(fmt.Errorf("fail to parse '%v': %w", CfgPath, err))
 	}
 
 	// Map from `cfg` to struct and save as global variable

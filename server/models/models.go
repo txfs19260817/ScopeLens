@@ -14,10 +14,10 @@ import (
 
 // Redis keys
 const (
-	// Keys
+	DBTimeout = 10*time.Second
+
 	Total = "total" // Total refers to a key which binds to the total number of teams a.k.a. count
 
-	// Hash keys
 	TimeOrderAll = "time:all" // TimeOrderAll refers to a hash key that stores pages of data ordered by time
 	LikesOrderAll = "likes:all" // LikesOrderAll refers to a hash key that stores pages of data ordered by likes
 )
@@ -42,7 +42,7 @@ func (d *DBDriver) Close() {
 // InitDB initializes a database instance
 func InitDB() (*DBDriver, error) {
 	// Define a timeout duration
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), DBTimeout)
 	defer cancel()
 
 	// Configure our client to use the correct URI, but we're not yet connecting to it.
@@ -57,7 +57,7 @@ func InitDB() (*DBDriver, error) {
 	}
 
 	// Ping the cluster to ensure we're already connected
-	ctxPing, cancelPing := context.WithTimeout(context.Background(), 5*time.Second)
+	ctxPing, cancelPing := context.WithTimeout(context.Background(), DBTimeout)
 	defer cancelPing()
 	if err := client.Ping(ctxPing, readpref.Primary()); err != nil {
 		return nil, err
@@ -78,7 +78,7 @@ func InitRedis() (*redis.Client, error) {
 }
 
 func ping(client *redis.Client) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), DBTimeout)
 	defer cancel()
 	pong, err := client.Ping(ctx).Result()
 	if err != nil {
