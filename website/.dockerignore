@@ -2,3 +2,6 @@
 **/dist
 **/.idea
 **/.vscode
+
+.env.production
+.env.development
