@@ -19,6 +19,7 @@ config.ini
 config.ini.prod
 .DS_Store
 node_modules
+dist
 /dist
 .env.local
 .env.*.local

@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: pokemon-classifier-service
+  labels:
+    app: classifier
+    tier: backend
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 14514
+  selector:
+    app: classifier
+  type: ClusterIP

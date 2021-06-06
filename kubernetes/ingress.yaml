@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    name: scopelens-ingress
+    namespace: scopelens
+    annotations:
+        kubernetes.io/ingress.class: alb
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/subnets: <SUBNET-A>,<SUBNET-B> # no zone overlapping
+        alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
+spec:
+    rules:
+    - host: <DOMAIN-NAME>
+      http:
+        paths:
+          - backend:
+              serviceName: scopelens-website-service
+              servicePort: 80

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pokemon-classifier-config
+  labels:
+    app: classifier
+data:
+  config.json: |
+    {
+      "arch": "shufflenetv2small",
+      "label": "./dataset/label.csv",
+      "enable_cors": true,
+      "ssl": {
+        "enable": false,
+        "certfile": "fullchain.pem",
+        "keyfile": "privkey.pem"
+      }
+    }
+  gunicorn.conf.py: |
+    workers = 2
+    worker_class = "gevent"
+    bind = "0.0.0.0:14514"
+    loglevel = 'info'
+    accesslog = '-'
+    access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'

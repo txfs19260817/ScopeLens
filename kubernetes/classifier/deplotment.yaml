@@ -1,0 +1,79 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: pokemon-classifier-deployment
+  labels:
+    app: classifier
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: classifier
+      version: v1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: classifier
+        version: v1
+    spec:
+      #serviceAccountName: pokemon-classifier-account
+      containers:
+        - name: sprites-classifier
+          image: txfs19260817/pokemon-sprites-classifier:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 14514
+          resources:
+            limits:
+              memory: 2048Mi
+              cpu: 1024m
+            requests:
+              memory: 1024Mi
+              cpu: 512m
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: INSTANCE_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+          #securityContext:
+          #  runAsUser: 1000
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /advapi/predict
+              port: 14514
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 3600
+            timeoutSeconds: 30
+          volumeMounts:
+            - name: classifier-config
+              mountPath: "/usr/src/app/configs"
+              readOnly: true
+      volumes:
+        - name: classifier-config
+          configMap:
+            name: pokemon-classifier-config
+            items:
+              - key: "config.json"
+                path: "config.json"
+              - key: "gunicorn.conf.py"
+                path: "gunicorn.conf.py"

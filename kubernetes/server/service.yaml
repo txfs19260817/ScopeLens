@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: scopelens-server-service
+  labels:
+    app: server
+    tier: backend
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8888
+  selector:
+    app: server
+  type: ClusterIP
