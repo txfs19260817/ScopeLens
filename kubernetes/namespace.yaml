@@ -1,3 +1,4 @@
+# NOT USED CURRENTLY
 apiVersion: v1
 kind: Namespace
 metadata:

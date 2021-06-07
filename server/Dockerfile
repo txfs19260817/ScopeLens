@@ -9,8 +9,8 @@ RUN go build -v .
 FROM alpine:3.13
 WORKDIR $GOPATH/src/github.com/txfs19260817/scopelens/server
 COPY --from=builder /app/server .
-COPY assets .
-RUN mkdir config && mkdir log
+RUN mkdir config log assets
+COPY assets ./assets
 ARG PORT=8888
 EXPOSE $PORT
 

@@ -1,19 +1,40 @@
-apiVersion: extensions/v1beta1
+# [DEPRECATED] Use gateway.yaml instead of this after setting Istio
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
     name: scopelens-ingress
-    namespace: scopelens
     annotations:
-        kubernetes.io/ingress.class: alb
-        alb.ingress.kubernetes.io/scheme: internet-facing
-        alb.ingress.kubernetes.io/target-type: ip
-        alb.ingress.kubernetes.io/subnets: <SUBNET-A>,<SUBNET-B> # no zone overlapping
-        alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
+      kubernetes.io/ingress.class: "istio"
 spec:
     rules:
     - host: <DOMAIN-NAME>
       http:
         paths:
-          - backend:
-              serviceName: scopelens-website-service
-              servicePort: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: scopelens-website-service
+                port: 
+                  number: 80
+          - path: /api/
+            pathType: Prefix
+            backend:
+              service:
+                name: scopelens-server-service
+                port: 
+                  number: 80
+          - path: /assets/sprites/
+            pathType: Prefix
+            backend:
+              service:
+                name: scopelens-server-service
+                port: 
+                  number: 80                
+          - path: /advapi/
+            pathType: Prefix
+            backend:
+              service:
+                name: pokemon-classifier-service
+                port: 
+                  number: 80

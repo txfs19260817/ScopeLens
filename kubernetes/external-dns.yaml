@@ -22,6 +22,9 @@ rules:
 - apiGroups: [""]
   resources: ["nodes"]
   verbs: ["list","watch"]
+- apiGroups: ["networking.istio.io"] # https://zhuanlan.zhihu.com/p/127192323
+  resources: ["gateways", "virtualservices"] # https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/istio.md
+  verbs: ["get","watch","list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -62,6 +65,8 @@ spec:
         args:
         - --source=service
         - --source=ingress
+        - --source=istio-gateway
+        - --source=istio-virtualservice
         - --domain-filter=<DOMAIN-NAME> # will make ExternalDNS see only the hosted zones matching provided domain, omit to process all available hosted zones
         - --provider=aws
         - --policy=upsert-only # would prevent ExternalDNS from deleting any records, omit to enable full synchronization

@@ -1,0 +1,49 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: scopelens-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - hosts:
+    - <DOMAIN-NAME>
+    port:
+      number: 80
+      name: http
+      protocol: HTTP
+    
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: scopelens
+spec:
+  hosts:
+  - <DOMAIN-NAME>
+  gateways:
+  - scopelens-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/
+    - uri:
+        prefix: /assets/sprites/
+    route:
+    - destination:
+        host: scopelens-server-service
+        port:
+          number: 80
+  - match:
+    - uri:
+        prefix: /advapi/
+    route:
+    - destination:
+        host: pokemon-classifier-service
+        port:
+          number: 80
+  - route: # default
+    - destination:
+        host: scopelens-website-service
+        port:
+          number: 80

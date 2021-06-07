@@ -45,6 +45,7 @@ data:
         # website
         location /
         {
+          proxy_http_version 1.1;
           root /app;
           index index.html;
           try_files $uri $uri/ /index.html;
@@ -52,32 +53,38 @@ data:
         # main service
         location /api/
         {
+          proxy_http_version 1.1;
           proxy_pass http://Scopelens;
         }
         # deep learning service
         location /advapi/
         {
+          proxy_http_version 1.1;
           proxy_pass http://Classifier;
         }
         # static resources
         location /assets/
         {
+          proxy_http_version 1.1;
           proxy_pass http://Scopelens;
         }
         # forbidden paths
         location ~ ^/(\.user.ini|\.htaccess|\.git|\.svn|\.project|LICENSE|README.md)
         {
+          proxy_http_version 1.1;
           return 404;
         }
 
         error_page 404 /404.html;
         location = /404.html
         {
+          proxy_http_version 1.1;
           root /usr/share/nginx/html;
         }
         error_page 500 502 503 504 /50x.html;
         location = /50x.html
         {
+          proxy_http_version 1.1;
           root /usr/share/nginx/html;
         }
       }

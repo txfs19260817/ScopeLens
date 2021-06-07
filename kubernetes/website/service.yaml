@@ -5,8 +5,6 @@ metadata:
   labels:
     app: website
     tier: frontend
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: <DOMAIN-NAME>
 spec:
   ports:
     - name: http
@@ -15,4 +13,4 @@ spec:
       targetPort: 80
   selector:
     app: website
-  type: LoadBalancer
+  type: ClusterIP
