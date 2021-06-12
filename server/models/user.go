@@ -3,7 +3,6 @@ package models
 import (
 	"context"
 	"fmt"
-	"github.com/txfs19260817/scopelens/server/utils/logger"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,7 +17,7 @@ type User struct {
 	Like     []string           `bson:"like"     json:"like"`
 }
 
-// GetUserByName returns the User struct pointer by the given name.
+// GetUserByUsername returns the User struct pointer by the given name.
 func (d *DBDriver) GetUserByUsername(username string) (*User, error) {
 	var user *User
 	err := d.DB.Collection("users").
@@ -30,6 +29,7 @@ func (d *DBDriver) GetUserByUsername(username string) (*User, error) {
 	return user, nil
 }
 
+// InsertLikeByUsername adds one like onto the team according to the username
 func (d *DBDriver) InsertLikeByUsername(username, id string) error {
 	ctx := context.Background()
 
@@ -51,7 +51,6 @@ func (d *DBDriver) InsertLikeByUsername(username, id string) error {
 	if err := Rdb.Del(ctx, redisKeys...).Err(); err != nil {
 		return err
 	}
-	logger.SugaredLogger.Infof("keys %v was removed due to a team liked", redisKeys)
 
 	// update user's likes list
 	_, err = d.DB.Collection("users").

@@ -11,13 +11,13 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/txfs19260817/scopelens/server/config"
 	"github.com/txfs19260817/scopelens/server/utils/file"
-	"github.com/txfs19260817/scopelens/server/utils/logger"
 	"github.com/txfs19260817/scopelens/server/utils/showdown"
 	"github.com/txfs19260817/scopelens/server/utils/storage"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/zap"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -109,7 +109,6 @@ func (d *DBDriver) InsertTeam(team Team) (ok bool, err error) {
 	if err := Rdb.Del(ctx, redisKeys...).Err(); err != nil {
 		return false, err
 	}
-	logger.SugaredLogger.Infof("keys %v was removed due to a team inserted", redisKeys)
 	return true, nil
 }
 
@@ -134,11 +133,11 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, criteria Search, isSearching 
 		val, err := Rdb.HGet(ctx, hKey, hField).Result()
 		switch {
 		case err == redis.Nil || val == "":
-			logger.SugaredLogger.Warnf("key '%s' does not exist", hKey)
+			zap.L().Warn("no such key", zap.String("redisKey", hKey))
 		case err != nil:
-			logger.SugaredLogger.Errorf("an error occurred when accessing the key '%s' and field '%s': %s", hKey, hField, err.Error())
+			zap.L().Error("an error occurred when accessing the key and field", zap.String("redisKey", hKey), zap.String("redisField", hField), zap.Error(err))
 		default:
-			logger.SugaredLogger.Infof("key '%s' was hit", hKey)
+			zap.L().Info("hit the key", zap.String("redisKey", hKey))
 			if err := json.Unmarshal([]byte(val), &teams); err != nil {
 				return nil, 0, err
 			}
@@ -148,16 +147,16 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, criteria Search, isSearching 
 		count, err = Rdb.Get(ctx, Total).Int()
 		switch {
 		case err == redis.Nil || val == "":
-			logger.SugaredLogger.Warnf("key '%s' does not exist", Total)
+			zap.L().Warn("no such key", zap.String("redisKey", Total))
 		case err != nil:
-			logger.SugaredLogger.Errorf("an error occurred when accessing the key '%s': %s", Total, err.Error())
+			zap.L().Error("an error occurred when accessing the key", zap.String("redisKey", Total), zap.Error(err))
 		default:
-			logger.SugaredLogger.Infof("key '%s' was hit", Total)
+			zap.L().Info("hit the key", zap.String("redisKey", Total))
 		}
 
 		// return if hit the cache
 		if len(teams) > 0 && count > 0 {
-			logger.SugaredLogger.Infof("hit the page %d data ordered by %s, total: %d", pageNum, criteria.OrderBy, count)
+			zap.L().Info("hit a page", zap.Int("pageNum", pageNum), zap.String("order", criteria.OrderBy), zap.Int("total", count))
 			return teams, count, nil
 		}
 	}
@@ -224,11 +223,11 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, criteria Search, isSearching 
 			if err := Rdb.HSet(ctx, hKey, []string{hField, redisValue}).Err(); err != nil {
 				return err
 			}
-			logger.SugaredLogger.Infof("key '%s' was set", hKey)
+			zap.L().Info("set a key", zap.String("redisKey", hKey))
 			if err := Rdb.Set(ctx, Total, count, 0).Err(); err != nil {
 				return err
 			}
-			logger.SugaredLogger.Infof("key '%s' was set", Total)
+			zap.L().Info("set a key", zap.String("redisKey", Total))
 			return nil
 		})
 		if err != nil {
@@ -249,11 +248,11 @@ func (d *DBDriver) GetTeamByID(id string) (*Team, error) {
 	val, err := Rdb.Get(ctx, redisKey).Result()
 	switch {
 	case err == redis.Nil || val == "":
-		logger.SugaredLogger.Warnf("key '%s' does not exist", redisKey)
+		zap.L().Warn("no such key", zap.String("redisKey", redisKey))
 	case err != nil:
-		logger.SugaredLogger.Errorf("an error occurred when accessing the key '%s': %s", redisKey, err.Error())
+		zap.L().Error("accessing the key error", zap.String("redisKey", redisKey), zap.Error(err))
 	default:
-		logger.SugaredLogger.Infof("key '%s' was hit", redisKey)
+		zap.L().Info("hit the key", zap.String("redisKey", redisKey))
 		if err := json.Unmarshal([]byte(val), &team); err != nil {
 			return nil, err
 		}
@@ -280,7 +279,7 @@ func (d *DBDriver) GetTeamByID(id string) (*Team, error) {
 	if err := Rdb.SetEX(ctx, redisKey, redisValue, time.Duration(config.Redis.Expiry)*time.Second).Err(); err != nil {
 		return nil, err
 	}
-	logger.SugaredLogger.Infof("key %s was set", redisKey)
+	zap.L().Info("set a key", zap.String("redisKey", redisKey))
 	return team, nil
 }
 

@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/txfs19260817/scopelens/server/utils/encrypt"
-	"github.com/txfs19260817/scopelens/server/utils/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -16,7 +15,7 @@ type Login struct {
 	Password string `json:"password" binding:"required"`
 }
 
-// Insert new user
+// Register inserts new user to DB
 func (d *DBDriver) Register(user User) (bool, error) {
 	var err error
 	user.ID = primitive.NewObjectID()
@@ -32,7 +31,7 @@ func (d *DBDriver) Register(user User) (bool, error) {
 	return true, nil
 }
 
-// Check username and password
+// LoginValidate validates username and password
 func (d *DBDriver) LoginValidate(loginReq Login) (bool, error) {
 	// Find password
 	var res bson.M
@@ -41,24 +40,21 @@ func (d *DBDriver) LoginValidate(loginReq Login) (bool, error) {
 		FindOne(context.Background(), bson.M{"username": loginReq.UserName}, opt).
 		Decode(&res)
 	if err != nil {
-		logger.SugaredLogger.Error(err)
 		return false, fmt.Errorf("user is not found")
 	}
 
 	// Verify password
 	hashedPassword := res["password"].(string)
 	if err := encrypt.PasswordVerification(hashedPassword, loginReq.Password); err != nil {
-		logger.SugaredLogger.Error(err)
-		return false, fmt.Errorf("password is not correct")
+		return false, fmt.Errorf("password is not correct: %w", err)
 	}
 	return true, nil
 }
 
-// Check username availability
+// CheckUsernameAvailability checks username availability
 func (d *DBDriver) CheckUsernameAvailability(username string) (bool, error) {
 	// Check if the username has already existed.
-	countUsers, err := d.DB.Collection("users").
-		CountDocuments(context.Background(), bson.M{"username": username})
+	countUsers, err := d.DB.Collection("users").CountDocuments(context.Background(), bson.M{"username": username})
 	if err != nil {
 		return false, err
 	}

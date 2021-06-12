@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"go.uber.org/zap"
 	"net/http"
 	"time"
 
@@ -8,13 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/txfs19260817/scopelens/server/config"
 	"github.com/txfs19260817/scopelens/server/middleware"
-	"github.com/txfs19260817/scopelens/server/utils/logger"
 	limit "github.com/yangxikun/gin-limit-by-key"
 	"golang.org/x/time/rate"
 )
 
 func InitRouters() *gin.Engine {
-	r := gin.Default()
+	r := gin.New()
 
 	// static resources
 	r.Static("/assets", "./assets")
@@ -24,11 +24,11 @@ func InitRouters() *gin.Engine {
 	//   - Logs all requests, like a combined access and error log.
 	//   - Logs to stdout.
 	//   - RFC3339 with UTC time format.
-	r.Use(ginzap.Ginzap(logger.Logger, time.RFC3339, false))
+	r.Use(ginzap.Ginzap(zap.L(), time.RFC3339, false))
 
 	// Logs all panic to error log
 	//   - stack means whether output the stack info.
-	r.Use(ginzap.RecoveryWithZap(logger.Logger, true))
+	r.Use(ginzap.RecoveryWithZap(zap.L(), true))
 
 	// CORS
 	if config.Server.EnableCORS {

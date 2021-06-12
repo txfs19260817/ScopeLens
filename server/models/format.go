@@ -32,7 +32,7 @@ var formats = []string{
 	"Others",
 }
 
-// Get supported formats
+// GetFormats returns supported formats
 func GetFormats() []string {
 	return formats
 }

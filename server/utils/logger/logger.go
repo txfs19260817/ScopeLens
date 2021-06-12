@@ -10,25 +10,23 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var (
-	Logger        *zap.Logger
-	SugaredLogger *zap.SugaredLogger
-)
-
-func init() {
+// CreateGlobalLogger builds a global zap logger
+func CreateGlobalLogger() (logger *zap.Logger) {
 	writeSyncer := getWriteSyncer()
 	encoder := getEncoder()
 	core := zapcore.NewCore(encoder, writeSyncer, zapcore.DebugLevel)
 
-	logger := zap.New(core, zap.AddCaller())
-	Logger, SugaredLogger = logger, logger.Sugar()
+	logger = zap.New(core, zap.AddCaller())
+	zap.ReplaceGlobals(logger)
+	return
 }
 
 func getEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	return zapcore.NewConsoleEncoder(encoderConfig)
+	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
+	return zapcore.NewJSONEncoder(encoderConfig)
 }
 
 func getWriteSyncer() zapcore.WriteSyncer {

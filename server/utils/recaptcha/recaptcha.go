@@ -9,6 +9,8 @@ import (
 	"github.com/txfs19260817/scopelens/server/config"
 )
 
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
 type reCAPTCHAResponse struct {
 	Success     bool      `json:"success"`
 	ChallengeTS time.Time `json:"challenge_ts"`
@@ -27,7 +29,6 @@ func ReCaptcha(token string) error {
 	// get response
 	defer response.Body.Close()
 	var data reCAPTCHAResponse
-	json := jsoniter.ConfigCompatibleWithStandardLibrary
 	if err = json.NewDecoder(response.Body).Decode(&data); err != nil {
 		return err
 	}
