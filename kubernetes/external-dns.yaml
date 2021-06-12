@@ -6,7 +6,7 @@ metadata:
   # Otherwise, you may safely omit it.
   annotations:
     # Substitute your account ID and IAM service role name below.
-    eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT-ID>:role/<ROLENAME>
+    eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT-ID>:role/<ROLENAME-OF-EXTERNALDNS>
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -72,6 +72,6 @@ spec:
         - --policy=upsert-only # would prevent ExternalDNS from deleting any records, omit to enable full synchronization
         - --aws-zone-type=public # only look at public hosted zones (valid values are public, private or no value for both)
         - --registry=txt
-        - --txt-owner-id=/hostedzone/<ID>
+        - --txt-owner-id=/hostedzone/<HOSTED-ZONE-ID>
       securityContext:
         fsGroup: 65534 # For ExternalDNS to be able to read Kubernetes and AWS token files

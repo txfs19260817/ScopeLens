@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ingress-cert
+  namespace: istio-system
+spec:
+  secretName: ingress-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  duration: 2160h
+  renewBefore: 360h
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  dnsNames:
+  - <DOMAIN-NAME>
+  - "*.<DOMAIN-NAME>"

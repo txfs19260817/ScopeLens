@@ -12,7 +12,15 @@ spec:
       number: 80
       name: http
       protocol: HTTP
-    
+  - hosts:
+    - <DOMAIN-NAME>
+    port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: ingress-cert # This should match the Certificate secretName
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService

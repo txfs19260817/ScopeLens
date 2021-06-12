@@ -1,0 +1,5 @@
+securityContext:
+  enabled: "true"
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT-ID>:role/<ROLENAME-OF-CERT-MANAGER>
