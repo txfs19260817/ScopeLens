@@ -186,7 +186,7 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, criteria Search, isSearching 
 			filter = append(filter, bson.E{Key: "format", Value: criteria.Format})
 		}
 		if len(criteria.Pokemon) > 0 {
-			filter = append(filter, bson.E{Key: "pokemon", Value: bson.D{{"$all", criteria.Pokemon}}})
+			filter = append(filter, bson.E{Key: "pokemon", Value: bson.D{{Key: "$all", Value: criteria.Pokemon}}})
 		}
 		if criteria.HasShowdown {
 			filter = append(filter, bson.E{Key: "has_showdown", Value: true})
@@ -285,11 +285,11 @@ func (d *DBDriver) GetTeamByID(id string) (*Team, error) {
 
 // GetPokemonUsageByFormat gets pokemon usage by format
 func (d *DBDriver) GetPokemonUsageByFormat(format string) ([]Usage, error) {
-	unwindStage := bson.D{{"$unwind", bson.D{{"path", "$pokemon"}, {"preserveNullAndEmptyArrays", false}}}}
-	matchStage0 := bson.D{{"$match", bson.D{{"format", format}}}}
-	groupStage := bson.D{{"$group", bson.D{{"_id", "$pokemon"}, {"count", bson.D{{"$sum", 1}}}}}}
-	matchStage1 := bson.D{{"$match", bson.D{{"count", bson.D{{"$gt", 1}}}}}}
-	sortStage := bson.D{{"$sort", bson.D{{"count", -1}}}}
+	unwindStage := bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$pokemon"}, {Key: "preserveNullAndEmptyArrays", Value: false}}}}
+	matchStage0 := bson.D{{Key: "$match", Value: bson.D{{Key: "format", Value: format}}}}
+	groupStage := bson.D{{Key: "$group", Value: bson.D{{Key: "_id", Value: "$pokemon"}, {Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}}}}}
+	matchStage1 := bson.D{{Key: "$match", Value: bson.D{{Key: "count", Value: bson.D{{Key: "$gt", Value: 1}}}}}}
+	sortStage := bson.D{{Key: "$sort", Value: bson.D{{Key: "count", Value: -1}}}}
 
 	cursor, err := d.DB.Collection("teams").Aggregate(context.Background(), mongo.Pipeline{unwindStage, matchStage0, groupStage, matchStage1, sortStage})
 	if err != nil {
@@ -331,8 +331,8 @@ func (d *DBDriver) GetLikedTeamsByUsername(pageNum, pageSize int, username strin
 
 	// filter
 	filter := bson.D{
-		{"state", 1},
-		{"_id", bson.D{{"$in", like}}},
+		{Key: "state", Value: 1},
+		{Key: "_id", Value: bson.D{{Key: "$in", Value: like}}},
 	}
 
 	// get the number of teams
@@ -370,8 +370,8 @@ func (d *DBDriver) GetUploadedTeamsByUsername(pageNum, pageSize int, username st
 
 	// filter
 	filter := bson.D{
-		{"state", 1},
-		{"uploader", username},
+		{Key: "state", Value: 1},
+		{Key: "uploader", Value: username},
 	}
 
 	// get the number of teams

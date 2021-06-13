@@ -11,7 +11,7 @@ import (
 
 var (
 	_, b, _, _ = runtime.Caller(0)
-	Root       = filepath.Join(filepath.Dir(b), "..") // Root folder of this project
+	Root       = filepath.Join(filepath.Dir(b), "..")     // Root folder of this project
 	CfgPath    = filepath.Join(Root, "config/config.ini") // CfgPath is the absolute path to config file
 
 	Mode     string
@@ -35,8 +35,8 @@ type server struct {
 	WriteTimeout time.Duration
 	HttpsCrt     string
 	HttpsKey     string
-	EnableHttps bool
-	EnableCORS bool
+	EnableHttps  bool
+	EnableCORS   bool
 }
 
 type database struct {

@@ -14,11 +14,11 @@ import (
 
 // Redis keys
 const (
-	DBTimeout = 10*time.Second
+	DBTimeout = 10 * time.Second
 
 	Total = "total" // Total refers to a key which binds to the total number of teams a.k.a. count
 
-	TimeOrderAll = "time:all" // TimeOrderAll refers to a hash key that stores pages of data ordered by time
+	TimeOrderAll  = "time:all"  // TimeOrderAll refers to a hash key that stores pages of data ordered by time
 	LikesOrderAll = "likes:all" // LikesOrderAll refers to a hash key that stores pages of data ordered by likes
 )
 
@@ -72,7 +72,7 @@ func InitRedis() (*redis.Client, error) {
 	c := redis.NewClient(&redis.Options{
 		Addr:     config.Redis.Host + ":" + config.Redis.Port,
 		Password: config.Redis.Password,
-		DB:       0,  // use default DB
+		DB:       0, // use default DB
 	})
 	return c, ping(c)
 }

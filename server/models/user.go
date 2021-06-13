@@ -35,8 +35,8 @@ func (d *DBDriver) InsertLikeByUsername(username, id string) error {
 
 	// filter
 	filter := bson.D{
-		{"username", username},
-		{"like", id},
+		{Key: "username", Value: username},
+		{Key: "like", Value: id},
 	}
 	count, err := d.DB.Collection("users").CountDocuments(context.Background(), filter)
 	if err != nil {
@@ -55,13 +55,13 @@ func (d *DBDriver) InsertLikeByUsername(username, id string) error {
 	// update user's likes list
 	_, err = d.DB.Collection("users").
 		UpdateOne(ctx,
-			bson.D{{"username", username}},
-			bson.D{{"$push", bson.D{{"like", id}}}})
+			bson.D{{Key: "username", Value: username}},
+			bson.D{{Key: "$push", Value: bson.D{{Key: "like", Value: id}}}})
 	if err != nil {
 		_, err = d.DB.Collection("users").
 			UpdateOne(ctx,
-				bson.D{{"username", username}},
-				bson.D{{"$set", bson.D{{"like", bson.A{id}}}}})
+				bson.D{{Key: "username", Value: username}},
+				bson.D{{Key: "$set", Value: bson.D{{Key: "like", Value: bson.A{id}}}}})
 		if err != nil {
 			return err
 		}
@@ -74,8 +74,8 @@ func (d *DBDriver) InsertLikeByUsername(username, id string) error {
 	}
 	_, err = d.DB.Collection("teams").
 		UpdateOne(ctx,
-			bson.D{{"_id", _id}},
-			bson.D{{"$inc", bson.D{{"likes", 1}}}})
+			bson.D{{Key: "_id", Value: _id}},
+			bson.D{{Key: "$inc", Value: bson.D{{Key: "likes", Value: 1}}}})
 	if err != nil {
 		return err
 	}

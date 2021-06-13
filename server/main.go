@@ -35,7 +35,7 @@ func main() {
 	// Database Connection
 	models.Db, err = models.InitDB()
 	if err != nil {
-		zap.L().Panic("Failed to connect database",zap.Error(err), zap.String("databaseType", config.Database.Type))
+		zap.L().Panic("Failed to connect database", zap.Error(err), zap.String("databaseType", config.Database.Type))
 	}
 	zap.L().Info("Database connected", zap.String("databaseType", config.Database.Type))
 	defer models.Db.Close()
@@ -43,7 +43,7 @@ func main() {
 	// Redis Connection
 	models.Rdb, err = models.InitRedis()
 	if err != nil {
-		zap.L().Panic("Failed to connect Redis",zap.Error(err), zap.String("databaseType", "Redis"))
+		zap.L().Panic("Failed to connect Redis", zap.Error(err), zap.String("databaseType", "Redis"))
 	}
 	zap.L().Info("Redis Connected", zap.String("redisHost", config.Redis.Host), zap.String("redisPort", config.Redis.Port))
 	defer models.Rdb.Close()
@@ -51,7 +51,7 @@ func main() {
 	// S3 session establishing
 	storage.S3Client, err = storage.NewAmazonS3(config.Aws.AccessKey, config.Aws.SecretKey, config.Aws.Region, config.Aws.Bucket)
 	if err != nil {
-		zap.L().Panic("Failed to connect AWS S3", zap.Error(err),zap.String("s3Bucket", config.Aws.Bucket), zap.String("s3Region", config.Aws.Region))
+		zap.L().Panic("Failed to connect AWS S3", zap.Error(err), zap.String("s3Bucket", config.Aws.Bucket), zap.String("s3Region", config.Aws.Region))
 	}
 	zap.L().Info("AWS S3 session established. ", zap.String("s3Bucket", config.Aws.Bucket), zap.String("s3Region", config.Aws.Region))
 
