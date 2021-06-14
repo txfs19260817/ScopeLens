@@ -1,0 +1,168 @@
+# https://zuozewei.blog.csdn.net/article/details/108303674
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fluentd-es
+  namespace: efk
+  labels:
+    k8s-app: fluentd-es
+    addonmanager.kubernetes.io/mode: Reconcile
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: fluentd-es
+  labels:
+    k8s-app: fluentd-es
+    addonmanager.kubernetes.io/mode: Reconcile
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - "namespaces"
+  - "pods"
+  verbs:
+  - "get"
+  - "watch"
+  - "list"
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: fluentd-es
+  labels:
+    k8s-app: fluentd-es
+    addonmanager.kubernetes.io/mode: Reconcile
+subjects:
+- kind: ServiceAccount
+  name: fluentd-es
+  namespace: efk
+  apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: fluentd-es
+  apiGroup: ""
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: elastic-credentials
+type: kubernetes.io/basic-auth
+stringData:
+  username: elastic
+  password: <ELASTIC-PW> # kubectl get secret elasticsearch-es-elastic-user -n efk -o=jsonpath='{.data.elastic}' | base64 --decode; echo
+---
+# http://www.mydlq.club/article/14
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: fluentd-priority
+value: 1000000
+globalDefault: false
+description: ""
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-es-v3.1.1
+  namespace: efk
+  labels:
+    k8s-app: fluentd-es
+    version: v3.1.1
+    addonmanager.kubernetes.io/mode: Reconcile
+spec:
+  selector:
+    matchLabels:
+      k8s-app: fluentd-es
+      version: v3.1.1
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-es
+        version: v3.1.1
+      # 此注释确保如果节点被驱逐，fluentd不会被驱逐，支持关键的基于pod注释的优先级方案。
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      priorityClassName: fluentd-priority
+      serviceAccountName: fluentd-es
+      # 设置容忍所有污点，这样可以收集所有节点日志
+      tolerations:
+      - operator: "Exists"
+      containers:
+      - name: fluentd-es
+        image: fluent/fluentd-kubernetes-daemonset:v1.12.4-debian-elasticsearch7-amd64-1.1
+        env:
+        - name: FLUENTD_ARGS
+          value: --no-supervisor -q # 不启用管理，-q 命令用平静时期于减少warn级别日志（-qq：减少error日志）
+        - name: FLUENT_ELASTICSEARCH_HOST
+          value: "elasticsearch-es-http"
+        - name: FLUENT_ELASTICSEARCH_PORT
+          value: "9200"
+        - name: FLUENT_ELASTICSEARCH_SCHEME
+          value: "http"
+        - name: 'FLUENT_ELASTICSEARCH_USER'
+          valueFrom:
+            secretKeyRef:
+              name: elastic-credentials
+              key: username
+        - name: 'FLUENT_ELASTICSEARCH_PASSWORD'
+          valueFrom:
+            secretKeyRef:
+              name: elastic-credentials
+              key: password
+        # - name: FLUENT_CONTAINER_TAIL_EXCLUDE_PATH
+        #   value: "/var/log/containers/*istio-proxy*.log"
+        - name: FLUENTD_SYSTEMD_CONF
+          value: "disable"
+        - name: FLUENTD_PROMETHEUS_CONF
+          value: "disable"
+        - name: FLUENT_KUBERNETES_METADATA_SKIP_CONTAINER_METADATA
+          value: "true"
+        - name: FLUENT_KUBERNETES_METADATA_SKIP_MASTER_URL
+          value: "true"
+        - name: FLUENT_KUBERNETES_METADATA_SKIP_NAMESPACE_METADATA
+          value: "true"
+        resources:
+          limits:
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: config-volume
+          mountPath: /fluentd/etc # /conf.d
+        ports:
+        - containerPort: 24231
+          name: prometheus
+          protocol: TCP
+        livenessProbe:
+          tcpSocket:
+            port: prometheus
+          initialDelaySeconds: 5
+          timeoutSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: prometheus
+          initialDelaySeconds: 5
+          timeoutSeconds: 10
+      terminationGracePeriodSeconds: 30 # Kubernetes 将会给应用发送 SIGTERM 信号，以优雅地关闭应用
+      volumes:
+      - name: varlog # 将 Kubernetes 节点服务器日志目录挂入
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers # 挂入 Docker 容器日志目录
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: config-volume # 挂入 Fluentd 的配置参数
+        configMap:
+          name: fluentd-es-config
