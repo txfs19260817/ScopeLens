@@ -133,11 +133,11 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, criteria Search, isSearching 
 		val, err := Rdb.HGet(ctx, hKey, hField).Result()
 		switch {
 		case err == redis.Nil || val == "":
-			zap.L().Warn("no such key", zap.String("redisKey", hKey))
+			zap.L().Warn("no such key", zap.String("redis.key", hKey))
 		case err != nil:
-			zap.L().Error("an error occurred when accessing the key and field", zap.String("redisKey", hKey), zap.String("redisField", hField), zap.Error(err))
+			zap.L().Error("an error occurred when accessing the key and field", zap.String("redis.key", hKey), zap.String("redis.field", hField), zap.Error(err))
 		default:
-			zap.L().Info("hit the key", zap.String("redisKey", hKey))
+			zap.L().Info("hit the key", zap.String("redis.key", hKey))
 			if err := json.Unmarshal([]byte(val), &teams); err != nil {
 				return nil, 0, err
 			}
@@ -147,11 +147,11 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, criteria Search, isSearching 
 		count, err = Rdb.Get(ctx, Total).Int()
 		switch {
 		case err == redis.Nil || val == "":
-			zap.L().Warn("no such key", zap.String("redisKey", Total))
+			zap.L().Warn("no such key", zap.String("redis.key", Total))
 		case err != nil:
-			zap.L().Error("an error occurred when accessing the key", zap.String("redisKey", Total), zap.Error(err))
+			zap.L().Error("an error occurred when accessing the key", zap.String("redis.key", Total), zap.Error(err))
 		default:
-			zap.L().Info("hit the key", zap.String("redisKey", Total))
+			zap.L().Info("hit the key", zap.String("redis.key", Total))
 		}
 
 		// return if hit the cache
@@ -223,11 +223,11 @@ func (d *DBDriver) GetTeams(pageNum, pageSize int, criteria Search, isSearching 
 			if err := Rdb.HSet(ctx, hKey, []string{hField, redisValue}).Err(); err != nil {
 				return err
 			}
-			zap.L().Info("set a key", zap.String("redisKey", hKey))
+			zap.L().Info("set a key", zap.String("redis.key", hKey))
 			if err := Rdb.Set(ctx, Total, count, 0).Err(); err != nil {
 				return err
 			}
-			zap.L().Info("set a key", zap.String("redisKey", Total))
+			zap.L().Info("set a key", zap.String("redis.key", Total))
 			return nil
 		})
 		if err != nil {
@@ -248,11 +248,11 @@ func (d *DBDriver) GetTeamByID(id string) (*Team, error) {
 	val, err := Rdb.Get(ctx, redisKey).Result()
 	switch {
 	case err == redis.Nil || val == "":
-		zap.L().Warn("no such key", zap.String("redisKey", redisKey))
+		zap.L().Warn("no such key", zap.String("redis.key", redisKey))
 	case err != nil:
-		zap.L().Error("accessing the key error", zap.String("redisKey", redisKey), zap.Error(err))
+		zap.L().Error("accessing the key error", zap.String("redis.key", redisKey), zap.Error(err))
 	default:
-		zap.L().Info("hit the key", zap.String("redisKey", redisKey))
+		zap.L().Info("hit the key", zap.String("redis.key", redisKey))
 		if err := json.Unmarshal([]byte(val), &team); err != nil {
 			return nil, err
 		}
@@ -279,7 +279,7 @@ func (d *DBDriver) GetTeamByID(id string) (*Team, error) {
 	if err := Rdb.SetEX(ctx, redisKey, redisValue, time.Duration(config.Redis.Expiry)*time.Second).Err(); err != nil {
 		return nil, err
 	}
-	zap.L().Info("set a key", zap.String("redisKey", redisKey))
+	zap.L().Info("set a key", zap.String("redis.key", redisKey))
 	return team, nil
 }
 

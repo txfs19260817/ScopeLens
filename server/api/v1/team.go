@@ -118,7 +118,7 @@ func GetLikedTeamsByUsername(c *gin.Context) {
 	username := c.Param("username")
 	data := make(map[string]interface{})
 	if data["teams"], data["total"], err = models.Db.GetLikedTeamsByUsername(page, config.App.PageSize, username); err != nil {
-		zap.L().Error("get liked teams by username error", zap.Error(err), zap.String("getBy", "liked"))
+		zap.L().Error("get liked teams by username error", zap.Error(err), zap.String("by", "liked"))
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithData(data, c)
@@ -134,7 +134,7 @@ func GetUploadedTeamsByUsername(c *gin.Context) {
 	username := c.Param("username")
 	data := make(map[string]interface{})
 	if data["teams"], data["total"], err = models.Db.GetUploadedTeamsByUsername(page, config.App.PageSize, username); err != nil {
-		zap.L().Error("get uploaded teams by username error", zap.Error(err), zap.String("getBy", "uploaded"))
+		zap.L().Error("get uploaded teams by username error", zap.Error(err), zap.String("by", "uploaded"))
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithData(data, c)

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -13,10 +13,10 @@ import (
 )
 
 var (
-	TokenExpired     error = errors.New("Token is expired. ")
-	TokenNotValidYet error = errors.New("Token not active yet. ")
-	TokenMalformed   error = errors.New("Illegal token. ")
-	TokenInvalid     error = errors.New("Could not handle this token: ")
+	TokenExpired     = fmt.Errorf("Token is expired. ")
+	TokenNotValidYet = fmt.Errorf("Token not active yet. ")
+	TokenMalformed   = fmt.Errorf("Illegal token. ")
+	TokenInvalid     = fmt.Errorf("Could not handle this token: ")
 )
 
 // JWTAuth middleware, validate the token

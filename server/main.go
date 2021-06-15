@@ -17,7 +17,7 @@ func main() {
 	// Setup global logger
 	l := logger.CreateGlobalLogger()
 	defer l.Sync()
-	zap.L().Info("loaded config file", zap.String("configFilePath", config.CfgPath))
+	zap.L().Info("loaded config file", zap.String("path", config.CfgPath))
 
 	// Routers
 	router := routers.InitRouters()
@@ -35,34 +35,34 @@ func main() {
 	// Database Connection
 	models.Db, err = models.InitDB()
 	if err != nil {
-		zap.L().Panic("Failed to connect database", zap.Error(err), zap.String("databaseType", config.Database.Type))
+		zap.L().Panic("Failed to connect database", zap.Error(err), zap.String("type", config.Database.Type), zap.String("name", config.Database.DBName))
 	}
-	zap.L().Info("Database connected", zap.String("databaseType", config.Database.Type))
+	zap.L().Info("Database connected", zap.String("type", config.Database.Type), zap.String("name", config.Database.DBName))
 	defer models.Db.Close()
 
 	// Redis Connection
 	models.Rdb, err = models.InitRedis()
 	if err != nil {
-		zap.L().Panic("Failed to connect Redis", zap.Error(err), zap.String("databaseType", "Redis"))
+		zap.L().Panic("Failed to connect Redis", zap.Error(err), zap.String("host", config.Redis.Host), zap.String("port", config.Redis.Port), zap.String("type", "Redis"))
 	}
-	zap.L().Info("Redis Connected", zap.String("redisHost", config.Redis.Host), zap.String("redisPort", config.Redis.Port))
+	zap.L().Info("Redis Connected", zap.String("host", config.Redis.Host), zap.String("port", config.Redis.Port), zap.String("type", "Redis"))
 	defer models.Rdb.Close()
 
 	// S3 session establishing
 	storage.S3Client, err = storage.NewAmazonS3(config.Aws.AccessKey, config.Aws.SecretKey, config.Aws.Region, config.Aws.Bucket)
 	if err != nil {
-		zap.L().Panic("Failed to connect AWS S3", zap.Error(err), zap.String("s3Bucket", config.Aws.Bucket), zap.String("s3Region", config.Aws.Region))
+		zap.L().Panic("Failed to connect AWS S3", zap.Error(err), zap.String("bucket", config.Aws.Bucket), zap.String("region", config.Aws.Region))
 	}
-	zap.L().Info("AWS S3 session established. ", zap.String("s3Bucket", config.Aws.Bucket), zap.String("s3Region", config.Aws.Region))
+	zap.L().Info("AWS S3 session established. ", zap.String("bucket", config.Aws.Bucket), zap.String("region", config.Aws.Region))
 
 	// Start server
 	if config.Server.EnableHttps {
 		if err := s.ListenAndServeTLS(config.Server.HttpsCrt, config.Server.HttpsKey); err != nil {
-			zap.L().Panic("Failed to establish HTTPs server", zap.Error(err), zap.Bool("TLS", config.Server.EnableHttps))
+			zap.L().Panic("Failed to establish HTTPs server", zap.Error(err), zap.Bool("tls", config.Server.EnableHttps))
 		}
 	} else {
 		if err := s.ListenAndServe(); err != nil {
-			zap.L().Panic("Failed to establish HTTP server", zap.Error(err), zap.Bool("TLS", config.Server.EnableHttps))
+			zap.L().Panic("Failed to establish HTTP server", zap.Error(err), zap.Bool("tls", config.Server.EnableHttps))
 		}
 	}
 }

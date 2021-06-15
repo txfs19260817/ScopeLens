@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"go.uber.org/zap"
 	"net/http"
 	"time"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/txfs19260817/scopelens/server/config"
 	"github.com/txfs19260817/scopelens/server/middleware"
 	limit "github.com/yangxikun/gin-limit-by-key"
+	"go.uber.org/zap"
 	"golang.org/x/time/rate"
 )
 

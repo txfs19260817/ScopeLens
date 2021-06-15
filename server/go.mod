@@ -25,6 +25,7 @@ require (
 	github.com/unknwon/com v1.0.1
 	github.com/unrolled/secure v1.0.8
 	github.com/yangxikun/gin-limit-by-key v0.0.0-20190512072151-520697354d5f
+	go.elastic.co/ecszap v1.0.0
 	go.mongodb.org/mongo-driver v1.5.0
 	go.uber.org/zap v1.16.0
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
