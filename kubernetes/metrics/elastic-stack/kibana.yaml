@@ -1,10 +1,10 @@
 apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
 metadata:
-  name: elasticsearch
-  namespace: efk
+  name: kibana
+  namespace: elastic-system
 spec:
-  version: 7.13.1
+  version: 7.13.2
   count: 1
   elasticsearchRef:
     name: elasticsearch
@@ -12,12 +12,6 @@ spec:
     tls: 
       selfSignedCertificate:
         disabled: true
-    service:
-      spec:
-        ports:
-          - name: http-kibana
-            port: 5601
-            targetPort: 5601
   podTemplate:
     spec:
       automountServiceAccountToken: true 
@@ -26,15 +20,15 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: kibana
-  namespace: efk
+  namespace: elastic-system
 spec:
   hosts:
-  - kibana.slen.cc
+  - <DOMAIN-NAME>
   gateways: # https://stackoverflow.com/questions/62161814/in-istio-how-a-virtualservice-defined-in-a-namespace-can-use-a-gateway-defined
   - default/scopelens-gateway
   http:
   - route:
     - destination:
-        host: elasticsearch-kb-http
+        host: kibana-kb-http
         port:
           number: 5601

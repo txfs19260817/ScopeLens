@@ -1,25 +1,18 @@
-# Run this first AFTER ECK installed
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: efk
-  labels:
-    istio-injection: enabled
----
+# Run this first after ECK installed
 apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
 metadata:
   name: elasticsearch
-  namespace: efk
+  namespace: elastic-system
 spec:
-  version: 7.13.1
+  version: 7.13.2
   http:
     tls: 
       selfSignedCertificate:
         disabled: true
   nodeSets:
   - name: master
-    count: 2
+    count: 1
     podTemplate:
       metadata:
         annotations:
@@ -28,6 +21,18 @@ spec:
           traffic.sidecar.istio.io/excludeInboundPorts: "9300"
       spec:
         automountServiceAccountToken: true
+        containers:
+        - name: elasticsearch
+          env:
+          - name: ES_JAVA_OPTS
+            value: -Xms512M -Xmx512M
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 1
+            limits:
+              memory: 1Gi
+              cpu: 1
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data
@@ -43,9 +48,9 @@ apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: elasticsearch
-  namespace: efk
+  namespace: elastic-system
 spec:
-  host: "elasticsearch-es-http.efk.svc.cluster.local"
+  host: "elasticsearch-es-http.elastic-system.svc.cluster.local"
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
