@@ -2,9 +2,12 @@ package models
 
 // Supported formats
 var formats = []string{
-	"VGC 2021 S8",
-	"[Gen 8] Battle Stadium Singles S8",
-	"VGC 2021",
+    "VGC 2021",
+	"[Gen 8] Battle Stadium Singles",
+    "VGC 2021 S10",
+	"[Gen 8] Battle Stadium Singles S10",
+    "VGC 2021 S8",
+    "[Gen 8] Battle Stadium Singles S8",
 	"VGC 2020",
 	"VGC 2019 Ultra Series",
 	"VGC 2019 Moon Series",
@@ -18,7 +21,6 @@ var formats = []string{
 	"VGC 2012",
 	"VGC 2011",
 	"VGC 2010",
-	"[Gen 8] Battle Stadium Singles",
 	"[Gen 8] Ubers",
 	"[Gen 8] OU",
 	"[Gen 8] UU",
@@ -28,7 +30,6 @@ var formats = []string{
 	"[Gen 8] Anything Goes",
 	"[Gen 8] Doubles OU",
 	"[Gen 8] Doubles UU",
-	"[Gen 8] Battle Stadium Doubles",
 	"Others",
 }
 
